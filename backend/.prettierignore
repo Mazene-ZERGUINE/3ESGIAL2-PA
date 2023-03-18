@@ -1,0 +1,6 @@
+.idea
+.vscode
+.gitignore
+.prettierignore
+
+dist
