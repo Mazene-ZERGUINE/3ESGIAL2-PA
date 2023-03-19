@@ -1,6 +1,6 @@
 const Pool = require('pg').Pool;
 
-const dbConnexion = new Pool({
+const dbConnexion: any = new Pool({
 	user: 'psql',
 	host: 'localhost',
 	database: 'java_client',
