@@ -5,5 +5,6 @@ const categoriesController: any = require('../../controllers/client/CategoryCont
 
 router.get('/', categoriesController.getAllCategories);
 router.get('/:id_category', categoriesController.getOneCategorieById);
-
+router.post('/', categoriesController.addNewCategory);
+router.delete('/:id_category', categoriesController.deleteCategory);
 module.exports = router;

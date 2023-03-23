@@ -1,6 +1,11 @@
 export default class Category {
 	id!: number;
 	title!: string;
+	desciption!: string;
+
+	get getDesciption(): string {
+		return this.desciption;
+	}
 
 	get getTitle(): string {
 		return this.title;
