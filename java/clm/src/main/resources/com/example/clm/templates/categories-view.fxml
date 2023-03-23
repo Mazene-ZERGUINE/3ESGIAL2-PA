@@ -18,17 +18,17 @@
                <top>
                   <AnchorPane prefHeight="65.0" prefWidth="1110.0" BorderPane.alignment="CENTER">
                      <children>
-                        <Text fill="RED" layoutX="430.0" layoutY="33.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Tasks" textAlignment="CENTER" AnchorPane.leftAnchor="430.0" AnchorPane.rightAnchor="630.015625" AnchorPane.topAnchor="17.53125">
+                        <Text fill="RED" layoutX="447.0" layoutY="36.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Tasks" textAlignment="CENTER" AnchorPane.leftAnchor="447.0" AnchorPane.rightAnchor="613.01953125" AnchorPane.topAnchor="16.6640625">
                            <font>
                               <Font size="20.0" />
                            </font>
                         </Text>
-                        <Text fill="WHITE" layoutX="529.0" layoutY="32.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Tiquet" AnchorPane.topAnchor="16.53125">
+                        <Text fill="WHITE" layoutX="518.0" layoutY="35.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Tiquet" AnchorPane.topAnchor="15.6640625">
                            <font>
                               <Font size="20.0" />
                            </font>
                         </Text>
-                        <Text fill="WHITE" layoutX="629.0" layoutY="32.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Planification" AnchorPane.topAnchor="16.53125">
+                        <Text fill="WHITE" layoutX="596.0" layoutY="36.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Planification" AnchorPane.topAnchor="16.6640625">
                            <font>
                               <Font size="20.0" />
                            </font>
@@ -38,18 +38,23 @@
                               <Font size="20.0" />
                            </font>
                         </Text>
+                        <Text fill="WHITE" layoutX="351.0" layoutY="37.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Members" AnchorPane.topAnchor="17.0">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                        </Text>
                      </children>
                   </AnchorPane>
                </top>
             </BorderPane>
-            <ListView fx:id="categoriesListView" layoutX="39.0" layoutY="111.0" prefHeight="487.0" prefWidth="589.0" style="-fx-border-radius: 15; -fx-padding: 5;" />
+            <ListView fx:id="categoriesListView" layoutX="39.0" layoutY="111.0" onMouseClicked="#onCategorieListSelected" prefHeight="487.0" prefWidth="589.0" style="-fx-border-radius: 15; -fx-padding: 5;" />
             <AnchorPane layoutX="641.0" layoutY="62.0" prefHeight="588.0" prefWidth="471.0">
                <children>
-                  <Button layoutX="21.0" layoutY="52.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="127.0" style="-fx-background-color: #32a834;" text="Ajouter" textFill="WHITE" />
-                  <Button layoutX="172.0" layoutY="52.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="127.0" style="-fx-background-color: #a83234;" text="Effacer" textFill="WHITE" />
+                  <Button fx:id="addBtn" layoutX="21.0" layoutY="52.0" mnemonicParsing="false" onAction="#onaddBtnClick" prefHeight="40.0" prefWidth="127.0" style="-fx-background-color: #32a834;" text="Ajouter" textFill="WHITE" />
+                  <Button fx:id="deleteBtn" layoutX="172.0" layoutY="52.0" mnemonicParsing="false" onAction="#onDeleteBtnClick" prefHeight="40.0" prefWidth="127.0" style="-fx-background-color: #a83234;" text="Effacer" textFill="WHITE" />
                   <Button layoutX="320.0" layoutY="52.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="127.0" style="-fx-background-color: #2e96ff;" text="Modifier" textFill="WHITE" />
-                  <TextField layoutX="32.0" layoutY="155.0" prefHeight="26.0" prefWidth="384.0" />
-                  <TextArea layoutX="31.0" layoutY="233.0" prefHeight="147.0" prefWidth="388.0" />
+                  <TextField fx:id="categorieTitle" layoutX="32.0" layoutY="155.0" prefHeight="26.0" prefWidth="384.0" />
+                  <TextArea fx:id="categorieDescription" layoutX="31.0" layoutY="233.0" prefHeight="147.0" prefWidth="388.0" />
                   <Text layoutX="26.0" layoutY="143.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Catégorie" wrappingWidth="77.04687118530273" />
                   <Text layoutX="27.0" layoutY="218.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Description" wrappingWidth="77.04687118530273" />
                   <Text layoutX="27.0" layoutY="415.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Author" wrappingWidth="77.04687118530273" />
