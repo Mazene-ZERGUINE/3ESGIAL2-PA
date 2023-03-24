@@ -1,2 +1,5 @@
-package com.example.clm.models;public class Tasks {
+package com.example.clm.models;
+
+public class Tasks {
+
 }

@@ -3,6 +3,7 @@ package com.example.clm.controllers;
 import com.example.clm.Main;
 import com.example.clm.models.Categorie;
 import com.example.clm.utils.ApiService;
+import com.example.clm.utils.SceneService;
 import com.github.tsohr.JSONArray;
 import com.github.tsohr.JSONObject;
 import javafx.application.Application;
@@ -10,6 +11,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
@@ -31,6 +33,8 @@ public class CategoriesController extends Application implements Initializable {
 	private ListView<String> categoriesListView ;
 
 	private final ApiService api = new ApiService() ;
+	private  final SceneService windows = new SceneService() ;
+
 	private final String baseUrl = "http://localhost:3000/api/" ;
 	@FXML
 	private Button deleteBtn;
@@ -41,6 +45,8 @@ public class CategoriesController extends Application implements Initializable {
 	private Button addBtn;
 	@FXML
 	private TextField categorieTitle;
+
+  // starting stage a modifier plus tard aprés la redirection de la page de connexion //
 	@Override
 	public void start(Stage stage) throws IOException {
 		FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("templates/categories-view.fxml"));
@@ -50,33 +56,13 @@ public class CategoriesController extends Application implements Initializable {
 		stage.show();
 	}
 
-
 	public static void main(String[] args) {
 		launch();
 	}
-
+  // récupere tous les catégorie aprés le lancement de la scene
 	@Override
 	public void initialize(URL url, ResourceBundle resourceBundle) {
 	getAllCategories();
-	}
-
-	@FXML
-	void onDeleteBtnClick(ActionEvent event) throws IOException {
-		String selectedElement = categoriesListView.getSelectionModel().getSelectedItems().get(0);
-
-	 List<Categorie> selectedCategorie = categories.stream().filter(e -> Objects.equals(e.getTitle(), selectedElement)).toList();
-	 for (Categorie element : selectedCategorie) {
-		 try {
-			 StringBuilder response = new StringBuilder();
-			 response = api.deleteTypeRequest(baseUrl + "categories/" + element.getId());
-			 JSONObject json = new JSONObject(response.toString());
-			 if (json.getInt("status_code") == 200) {
-					categoriesListView.getItems().remove(selectedElement);
-			 }
-		 } catch (IOException e) {
-			 System.out.println("error ocured while sending http delete request" + e);
-		 }
-	 }
 	}
 
 	private void getAllCategories() {
@@ -103,24 +89,58 @@ public class CategoriesController extends Application implements Initializable {
 			categoriesListView.getItems().addAll(item.getTitle());
 		}
 	}
-
+	/*
+	* buttons events : add / delete / update / delete
+	*  **/
+	@FXML
+	void onDeleteBtnClick(ActionEvent event) throws IOException {
+		// récupération de l'élement séléctionné de la listView //
+		String selectedElement = categoriesListView.getSelectionModel().getSelectedItems().get(0);
+	 List<Categorie> selectedCategorie = categories.stream().filter(e -> Objects.equals(e.getTitle(), selectedElement)).toList();
+	 for (Categorie element : selectedCategorie) {
+		 try {
+			 // evoie de la requete http //
+			 StringBuilder response = new StringBuilder();
+			 response = api.deleteTypeRequest(baseUrl + "categories/" + element.getId());
+			 JSONObject json = new JSONObject(response.toString());
+			 // si reponse 200 supression de l'element de listView
+			 if (json.getInt("status_code") == 200) {
+					categoriesListView.getItems().remove(selectedElement);
+			 }
+		 } catch (IOException e) {
+			 System.out.println("error ocured while sending http delete request" + e);
+		 }
+	 }
+	}
 	@FXML
 	void onCategorieListSelected(MouseEvent event) {
-		String selectedElement = categoriesListView.getSelectionModel().getSelectedItems().get(0);
-		List<Categorie> selectedCategorie = categories.stream().filter(e -> Objects.equals(e.getTitle(), selectedElement)).toList();
-
-		for (Categorie element : selectedCategorie) {
-			categorieTitle.setText(element.getTitle());
-			categorieDescription.setText(element.getDiscreption());
-		}
+		/*
+		* verification des nombres des click si 1 -> affichage des donnée de la ligne séléctionnée dans les chaps text
+		* 																			2 -> redirection vers la page des détaile de la catégorie
+		* **/
+		categoriesListView.setOnMouseClicked(e -> {
+			if (e.getClickCount() == 2) {
+				// redirection vers tasks-view.fxml
+				String selectedElement = categoriesListView.getSelectionModel().getSelectedItems().get(0);
+				List<Categorie> selectedCategorie = categories.stream().filter(element -> Objects.equals(element.getTitle(), selectedElement)).toList();
+				int categorieId = selectedCategorie.get(0).getId();
+				Stage tasksStage =(Stage)addBtn.getScene().getWindow() ; // récupération de stage de la scene current
+				windows.switchScene(tasksStage ,"tasks-view.fxml");
+			} else {
+				String selectedElement = categoriesListView.getSelectionModel().getSelectedItems().get(0);
+				List<Categorie> selectedCategorie = categories.stream().filter(element -> Objects.equals(element.getTitle(), selectedElement)).toList();
+				for (Categorie element : selectedCategorie) {
+					categorieTitle.setText(element.getTitle());
+					categorieDescription.setText(element.getDiscreption());
+				}
+			}
+		});
 	}
-
 	@FXML
 	void onaddBtnClick(ActionEvent event) throws IOException {
 		String title = categorieTitle.getText().toString();
 		String description = categorieDescription.getText().toString() ;
-
-
+		// création de l'object json du body de la requete
 		JSONObject data = new JSONObject() ;
 			data.put("title" , title) ;
 		  data.put("desciption" , description) ;
