@@ -10,13 +10,13 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="650.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.clm.controllers.CategoriesController">
+<AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="650.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.clm.controllers.CategoriesController">
    <children>
-      <AnchorPane prefHeight="650.0" prefWidth="1100.0">
+      <AnchorPane prefHeight="650.0" prefWidth="1100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <BorderPane prefHeight="57.0" prefWidth="1100.0" style="-fx-background-color: #000958;">
                <top>
-                  <AnchorPane prefHeight="65.0" prefWidth="1110.0" BorderPane.alignment="CENTER">
+                  <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="65.0" prefWidth="1110.0" BorderPane.alignment="CENTER">
                      <children>
                         <Text fill="RED" layoutX="447.0" layoutY="36.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Tasks" textAlignment="CENTER" AnchorPane.leftAnchor="447.0" AnchorPane.rightAnchor="613.01953125" AnchorPane.topAnchor="16.6640625">
                            <font>
@@ -52,7 +52,7 @@
                <children>
                   <Button fx:id="addBtn" layoutX="21.0" layoutY="52.0" mnemonicParsing="false" onAction="#onaddBtnClick" prefHeight="40.0" prefWidth="127.0" style="-fx-background-color: #32a834;" text="Ajouter" textFill="WHITE" />
                   <Button fx:id="deleteBtn" layoutX="172.0" layoutY="52.0" mnemonicParsing="false" onAction="#onDeleteBtnClick" prefHeight="40.0" prefWidth="127.0" style="-fx-background-color: #a83234;" text="Effacer" textFill="WHITE" />
-                  <Button layoutX="320.0" layoutY="52.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="127.0" style="-fx-background-color: #2e96ff;" text="Modifier" textFill="WHITE" />
+                  <Button fx:id="updateBtn" layoutX="320.0" layoutY="52.0" mnemonicParsing="false" onAction="#onUpdateBtnClick" prefHeight="40.0" prefWidth="127.0" style="-fx-background-color: #2e96ff;" text="Modifier" textFill="WHITE" />
                   <TextField fx:id="categorieTitle" layoutX="32.0" layoutY="155.0" prefHeight="26.0" prefWidth="384.0" />
                   <TextArea fx:id="categorieDescription" layoutX="31.0" layoutY="233.0" prefHeight="147.0" prefWidth="388.0" />
                   <Text layoutX="26.0" layoutY="143.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Catégorie" wrappingWidth="77.04687118530273" />

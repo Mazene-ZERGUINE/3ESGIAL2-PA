@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.text.Font?>
@@ -42,6 +48,28 @@
 						</AnchorPane>
 					</top>
 				</BorderPane>
+            <ImageView fx:id="backBtn" fitHeight="57.0" fitWidth="115.0" layoutX="613.0" layoutY="86.0" onMouseClicked="#onBackBtnClick" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../images/back_arrow_14447.png" />
+               </image>
+            </ImageView>
+            <Button fx:id="addBtn" layoutX="700.0" layoutY="93.0" mnemonicParsing="false" onAction="#onAddBtnClick" prefHeight="42.0" prefWidth="172.0" style="-fx-background-color: #32a834;" text="Ajouter" textFill="WHITE" />
+            <Button fx:id="deleteBtn" layoutX="892.0" layoutY="93.0" mnemonicParsing="false" onAction="#onDeleteBtnClick" prefHeight="42.0" prefWidth="172.0" style="-fx-background-color: #a83234;" text="Effacer" textFill="WHITE" />
+            <TableView layoutX="22.0" layoutY="169.0" prefHeight="450.0" prefWidth="1066.0">
+              <columns>
+                <TableColumn prefWidth="128.0" text="Task" />
+                <TableColumn prefWidth="338.0" text="description" />
+                  <TableColumn minWidth="0.0" prefWidth="138.0" text="Date de création" />
+                  <TableColumn prefWidth="166.0" text="Deadline" />
+                  <TableColumn prefWidth="169.0" text="Membres" />
+                  <TableColumn prefWidth="126.0" text="Status" />
+              </columns>
+            </TableView>
+            <AnchorPane layoutX="48.0" layoutY="94.0" prefHeight="42.0" prefWidth="181.0" style="-fx-background-color: #000958; -fx-background-radius: 25;">
+               <children>
+                  <Label fx:id="category" layoutX="61.0" layoutY="13.0" prefHeight="17.0" prefWidth="86.0" textFill="WHITE" AnchorPane.bottomAnchor="12.0" AnchorPane.leftAnchor="80.0" AnchorPane.rightAnchor="34.0" AnchorPane.topAnchor="12.0" />
+               </children>
+            </AnchorPane>
 			</children>
 		</AnchorPane>
 	</children>

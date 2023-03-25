@@ -6,6 +6,7 @@ module com.example.clm {
     requires net.synedra.validatorfx;
     requires org.kordamp.bootstrapfx.core;
     requires json;
+    requires TrayNotification;
 
     opens com.example.clm to javafx.fxml;
     exports com.example.clm;

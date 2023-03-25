@@ -69,4 +69,23 @@ public class ApiService {
 		}
 		return result;
 	}
+
+	public StringBuilder patchTypeRequest(String url , JSONObject data) throws IOException {
+		URL requestUrl = new URL(url);
+		HttpURLConnection conn = (HttpURLConnection) requestUrl.openConnection();
+		conn.setRequestMethod("PATCH");
+		conn.setDoOutput(true);
+
+		OutputStream outputStream = conn.getOutputStream();
+		outputStream.write(data.toString().getBytes(StandardCharsets.UTF_8));
+		outputStream.flush();
+		outputStream.close();
+
+		StringBuilder result = new StringBuilder();
+		BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
+		for (String line; (line = reader.readLine()) != null; ) {
+			result.append(line);
+		}
+		return result;
+	}
 }
