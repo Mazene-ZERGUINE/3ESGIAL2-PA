@@ -68,9 +68,31 @@ const deleteCategory = (req: Request, res: Response) => {
 	});
 };
 
+const updateCategory = (req: Request, res: Response) => {
+	const { title, desciption } = req.body;
+	const id: number = parseInt(req.params.id_category);
+	clientPool.query(categoriesQueries.getOneById, [id], (error: Error, results: any) => {
+		if (results.rows.length === 0) {
+			res.status(404).json({ error: 'item not found' });
+			return;
+		}
+		clientPool.query(categoriesQueries.updateQuery, [title, desciption, id], (error: Error, results: any) => {
+			if (error) {
+				res.status(501).json({
+					error: 'Internal server error',
+					details: error,
+				});
+				return;
+			}
+			res.status(200).send({ status_code: 200, message: 'category updated' });
+		});
+	});
+};
+
 module.exports = {
 	getAllCategories,
 	getOneCategorieById,
 	addNewCategory,
 	deleteCategory,
+	updateCategory,
 };
