@@ -73,7 +73,7 @@ public class ApiService {
 	public StringBuilder patchTypeRequest(String url , JSONObject data) throws IOException {
 		URL requestUrl = new URL(url);
 		HttpURLConnection conn = (HttpURLConnection) requestUrl.openConnection();
-		conn.setRequestMethod("PATCH");
+		conn.setRequestMethod("POST");
 		conn.setDoOutput(true);
 
 		OutputStream outputStream = conn.getOutputStream();
