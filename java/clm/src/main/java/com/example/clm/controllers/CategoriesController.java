@@ -170,13 +170,32 @@ public class CategoriesController extends Application implements Initializable {
 				getAllCategories();
 
 				notifierService.notify(NotificationType.SUCCESS , "Success" , "Catégorie ajouter");
-			};
+			}
 
 	}
 	@FXML
 	void onUpdateBtnClick(ActionEvent event) throws IOException {
-		System.out.println("ok");
-	}
+		String title = categorieTitle.getText().toString();
+		String description = categorieDescription.getText().toString() ;
+		if (title.equals("")) {
+			notifierService.notify(NotificationType.ERROR , "Error" , "title required to update category");
+			return;
+		}
+		String selectedElement = categoriesListView.getSelectionModel().getSelectedItems().get(0);
+		List<Categorie> selectedCategorie = categories.stream().filter(e -> Objects.equals(e.getTitle(), selectedElement)).toList();
+		JSONObject data = new JSONObject() ;
+		data.put("title" , title) ;
+		data.put("desciption" , description) ;
+		StringBuilder response = new StringBuilder() ;
+		response = api.patchTypeRequest(baseUrl + "categories/"+ selectedCategorie.get(0).getId() , data) ;
+		JSONObject json = new JSONObject(response.toString());
+		if (json.getInt("status_code") == 200) {
+			categoriesListView.getItems().clear();
+			categories.clear();
+			getAllCategories();
+			notifierService.notify(NotificationType.SUCCESS , "Success" , "Catégorie modifier");
+		}
 
+	}
 
 }
