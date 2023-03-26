@@ -43,8 +43,9 @@ public void setData(List<Categorie> categorie) {
 
 	// button events
 	@FXML
-	void onAddBtnClick(ActionEvent event) {
-		System.out.println(categoryId);
+	void onAddBtnClick(ActionEvent event) throws IOException {
+		sceneService.switchToNewWindow("add-task-view.fxml" , null);
+
 	}
 
 	@FXML
