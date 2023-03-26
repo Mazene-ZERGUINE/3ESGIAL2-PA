@@ -1,6 +1,11 @@
-const getAllQuery: string = 'SELECT * FROM categories';
-const getOneById: string = 'SELECT * FROM categories WHERE id = $1';
-const deleteQuery: string = 'DELETE FROM categories WHERE id = $1';
+import { getOneById } from '../../utils/crud';
+import { getMany } from '../../utils/crud';
+import { removeOneById } from '../../utils/crud';
+import { createOne } from '../../utils/crud';
+
+const getAllQuery: string = getMany('categories');
+const getOneQuery: string = getOneById('categories');
+const deleteQuery: string = removeOneById('categories');
 
 const addNewCategoryQuery: string = 'INSERT INTO categories (title , desciption) VALUES ($1 , $2)';
 
