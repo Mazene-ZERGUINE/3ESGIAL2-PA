@@ -1,5 +1,7 @@
 import express, { Express } from 'express';
 
+import userRouter from '../routes/client/user.router';
+
 export default class AppRouter {
 	constructor() {}
 
@@ -8,5 +10,6 @@ export default class AppRouter {
 	initRoutes = (app: Express) => {
 		app.use(express.json({ type: '*/*' }));
 		app.use('/api/categories', this.categoryRoutes);
+		app.use('/api/trello/users', userRouter);
 	};
 }
