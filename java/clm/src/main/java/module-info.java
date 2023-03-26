@@ -5,7 +5,11 @@ module com.example.clm {
     requires org.controlsfx.controls;
     requires net.synedra.validatorfx;
     requires org.kordamp.bootstrapfx.core;
+    requires json;
+    requires TrayNotification;
 
     opens com.example.clm to javafx.fxml;
     exports com.example.clm;
+    exports com.example.clm.controllers;
+    opens com.example.clm.controllers to javafx.fxml;
 }
