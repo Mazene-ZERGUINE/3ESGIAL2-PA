@@ -26,19 +26,8 @@ public class SceneService {
 		}
 	}
 
-	public void switchToNewWindow(String fileName , Parent root) throws IOException {
-		FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("templates/" + fileName));
-		if (root == null) {
-			root = fxmlLoader.load() ;
-		}
-		try {
-			Stage stage = new Stage();
-			stage.setScene(new Scene(root));
-			stage.setResizable(false);
-			stage.show();
-		} catch (Exception exception) {
-			System.out.println("can't change current scene");
-		}
+	public void switchToNewWindow(String fileName, Parent root, Stage stage) throws IOException {
+		switchScene(stage, fileName, root);
 	}
 
 

@@ -37,7 +37,7 @@ public class CategoriesController extends Application implements Initializable {
 	private  final SceneService windows = new SceneService() ;
 	private final NotifierService notifierService = new NotifierService() ;
 
-	private final String baseUrl = "http://localhost:3000/api/" ;
+	private final String baseUrl = "http://localhost:3000/api/client/" ;
 	@FXML
 	private Button deleteBtn;
 	private List<Categorie> categories = new ArrayList<>() ;

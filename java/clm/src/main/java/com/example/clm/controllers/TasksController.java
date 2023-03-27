@@ -1,9 +1,11 @@
 package com.example.clm.controllers;
 
+import com.example.clm.Main;
 import com.example.clm.models.Categorie;
 import com.example.clm.utils.SceneService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -34,6 +36,7 @@ public class TasksController implements Initializable {
 	private Label category ;
 	private String categoryTitle ;
 	private int categoryId ;
+	private Parent root;
 
 public void setData(List<Categorie> categorie) {
 	this.categoryTitle = categorie.get(0).getTitle();
@@ -44,8 +47,16 @@ public void setData(List<Categorie> categorie) {
 	// button events
 	@FXML
 	void onAddBtnClick(ActionEvent event) throws IOException {
-		sceneService.switchToNewWindow("add-task-view.fxml" , null);
-
+		FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("templates/add-task-view.fxml"));
+		try {
+			root = fxmlLoader.load();
+			addTaskController controller = fxmlLoader.getController();
+			controller.setData(categoryId);
+			Stage stage = new Stage();
+			sceneService.switchToNewWindow("add-task-view.fxml", root, stage);
+		} catch (IOException exception) {
+			System.out.println(exception.toString());
+		}
 	}
 
 	@FXML

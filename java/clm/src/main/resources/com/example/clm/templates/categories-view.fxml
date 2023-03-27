@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
@@ -57,8 +56,6 @@
                   <TextArea fx:id="categorieDescription" layoutX="31.0" layoutY="233.0" prefHeight="147.0" prefWidth="388.0" />
                   <Text layoutX="26.0" layoutY="143.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Catégorie" wrappingWidth="77.04687118530273" />
                   <Text layoutX="27.0" layoutY="218.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Description" wrappingWidth="77.04687118530273" />
-                  <Text layoutX="27.0" layoutY="415.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Author" wrappingWidth="77.04687118530273" />
-                  <ComboBox layoutX="32.0" layoutY="428.0" prefHeight="27.0" prefWidth="392.0" />
                </children>
             </AnchorPane>
          </children>
