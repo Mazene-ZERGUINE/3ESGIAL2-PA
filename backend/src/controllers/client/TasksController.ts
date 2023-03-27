@@ -3,7 +3,6 @@ const clientPool: any = require('../../db/clientPool');
 const tasksQueries: any = require('../../queries/client/tasksQueries');
 
 const addNewTask = (req: Request, res: Response) => {
-	console.log(req.body);
 	const { label, description, deadline, category_id } = req.body;
 	const created_at = new Date();
 	clientPool.query(
@@ -30,6 +29,21 @@ const addNewTask = (req: Request, res: Response) => {
 	);
 };
 
+const getAllTasksByCategory = (req: Request, res: Response) => {
+	const categoryId: number = parseInt(req.params.category_id);
+	clientPool.query(tasksQueries.getOneByCategoryQuery, [categoryId], (error: Error, reslts: any) => {
+		if (error) {
+			res.status(501).json({
+				error: 'Internal server error',
+				details: error,
+			});
+			throw error;
+		}
+		res.status(200).send({ status_code: 200, tasks: reslts.rows });
+	});
+};
+
 module.exports = {
 	addNewTask,
+	getAllTasksByCategory,
 };

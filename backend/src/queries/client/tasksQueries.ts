@@ -14,7 +14,10 @@ const insertMemebersQuery: string = ` INSERT INTO memebers_tasks(
 
 `;
 
+const getOneByCategoryQuery: string = ` SELECT * FROM tasks WHERE category_id = $1 `;
+
 module.exports = {
 	insertQuery,
 	insertMemebersQuery,
+	getOneByCategoryQuery,
 };
