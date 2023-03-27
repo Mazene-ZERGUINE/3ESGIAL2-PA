@@ -33,9 +33,7 @@ const getOneCategorieById = (req: Request, res: any) => {
 };
 
 const addNewCategory = (req: Request, res: Response) => {
-	console.log(req);
 	const { title, desciption } = req.body;
-	console.log(req.body);
 	clientPool.query(categoriesQueries.addNewCategoryQuery, [title, desciption], (error: Error, results: any) => {
 		if (error) {
 			res.status(501).json({
