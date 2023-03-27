@@ -2,7 +2,14 @@ package com.example.clm.controllers;
 
 import com.example.clm.Main;
 import com.example.clm.models.Categorie;
+import com.example.clm.models.Tasks;
+import com.example.clm.utils.ApiService;
+import com.example.clm.utils.NotifierService;
 import com.example.clm.utils.SceneService;
+import com.github.tsohr.JSONArray;
+import com.github.tsohr.JSONObject;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -11,6 +18,9 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
@@ -21,7 +31,10 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public class TasksController implements Initializable {
+	private final NotifierService notifierService = new NotifierService();
+	private final String baseUrl = "http://localhost:3000/api/client/" ;
 
+	private final static ApiService api = new ApiService();
 	private final SceneService sceneService = new SceneService();
 	@FXML
 	private Button addBtn;
@@ -33,10 +46,32 @@ public class TasksController implements Initializable {
 	private Button deleteBtn;
 
 	@FXML
+	private TableView<Tasks> tasksTable;
+
+	@FXML
+	private TableColumn<Tasks, String> creationCol;
+
+	@FXML
+	private TableColumn<Tasks, String> dealineCol;
+
+
+
+	@FXML
+	private TableColumn<Tasks, String> descriptionCol;
+
+	@FXML
+	private TableColumn<Tasks, String> statusCol;
+
+	@FXML
+	private TableColumn<Tasks, String> taskCol;
+
+	@FXML
 	private Label category ;
 	private String categoryTitle ;
 	private int categoryId ;
 	private Parent root;
+
+	private final ObservableList<Tasks> tasksList = FXCollections.observableArrayList() ;
 
 public void setData(List<Categorie> categorie) {
 	this.categoryTitle = categorie.get(0).getTitle();
@@ -67,9 +102,38 @@ public void setData(List<Categorie> categorie) {
 
 	@FXML
 	void onDeleteBtnClick(ActionEvent event) {
+	}
 
+	private void getAllTasks() throws IOException {
+		StringBuilder response = api.getTypeRequest(baseUrl + "tasks/" + categoryId) ;
+		JSONObject jsonResponse = new JSONObject(response.toString());
+		if (jsonResponse.getInt("status_code") == 200) {
+			JSONArray dataArray = jsonResponse.getJSONArray("tasks");
+			for (int i = 0 ; i< dataArray.length() ; i++) {
+				Tasks task = new Tasks(
+					dataArray.getJSONObject(i).getInt("taskid"),
+					dataArray.getJSONObject(i).getString("label"),
+					dataArray.getJSONObject(i).getString("description"),
+					dataArray.getJSONObject(i).getString("created_at"),
+					dataArray.getJSONObject(i).getString("deadline"),
+					dataArray.getJSONObject(i).getString("status")
+				);
+				tasksList.add(task);
+			}
+			tasksTable.setItems(tasksList);
+			statusCol.setCellValueFactory(new PropertyValueFactory<>("status"));
+			taskCol.setCellValueFactory(new PropertyValueFactory<>("label"));
+			dealineCol.setCellValueFactory(new PropertyValueFactory<>("deadline"));
+			descriptionCol.setCellValueFactory(new PropertyValueFactory<>("description"));
+
+		}
 	}
 	@Override
 	public void initialize(URL url, ResourceBundle resourceBundle) {
+		try {
+			getAllTasks();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 }

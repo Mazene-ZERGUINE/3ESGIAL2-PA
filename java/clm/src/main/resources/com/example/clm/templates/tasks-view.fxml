@@ -55,14 +55,14 @@
             </ImageView>
             <Button fx:id="addBtn" layoutX="700.0" layoutY="93.0" mnemonicParsing="false" onAction="#onAddBtnClick" prefHeight="42.0" prefWidth="172.0" style="-fx-background-color: #32a834;" text="Ajouter" textFill="WHITE" />
             <Button fx:id="deleteBtn" layoutX="892.0" layoutY="93.0" mnemonicParsing="false" onAction="#onDeleteBtnClick" prefHeight="42.0" prefWidth="172.0" style="-fx-background-color: #a83234;" text="Effacer" textFill="WHITE" />
-            <TableView layoutX="22.0" layoutY="169.0" prefHeight="450.0" prefWidth="1066.0">
+            <TableView fx:id="tasksTable" layoutX="22.0" layoutY="169.0" prefHeight="450.0" prefWidth="1066.0">
               <columns>
-                <TableColumn prefWidth="128.0" text="Task" />
-                <TableColumn prefWidth="338.0" text="description" />
-                  <TableColumn minWidth="0.0" prefWidth="138.0" text="Date de création" />
-                  <TableColumn prefWidth="166.0" text="Deadline" />
-                  <TableColumn prefWidth="169.0" text="Membres" />
-                  <TableColumn prefWidth="126.0" text="Status" />
+                <TableColumn fx:id="taskCol" prefWidth="128.0" text="Task" />
+                <TableColumn fx:id="descriptionCol" prefWidth="338.0" text="description" />
+                  <TableColumn fx:id="creationCol" minWidth="0.0" prefWidth="138.0" text="Date de création" />
+                  <TableColumn fx:id="dealineCol" prefWidth="166.0" text="Deadline" />
+                  <TableColumn fx:id="membersCol" prefWidth="169.0" text="Membres" />
+                  <TableColumn fx:id="statusCol" prefWidth="126.0" text="Status" />
               </columns>
             </TableView>
             <AnchorPane layoutX="48.0" layoutY="94.0" prefHeight="42.0" prefWidth="181.0" style="-fx-background-color: #000958; -fx-background-radius: 25;">

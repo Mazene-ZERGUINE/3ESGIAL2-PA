@@ -18,6 +18,8 @@ import tray.notification.NotificationType;
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -69,6 +71,12 @@ public class addTaskController implements Initializable {
 		// checking if the required fileds are empty or not
 		if (taskTitle.isEmpty() ||taskDeadline.toString().isEmpty() || selectedItems.size() == 0) {
 			notifierService.notify(NotificationType.ERROR , "Error" , "title and description and at least one member are required to create task");
+			return;
+		}
+		// checking selected date
+		LocalDate now = LocalDate.now() ;
+		if(now.compareTo(taskDeadline) >= 0) {
+			notifierService.notify(NotificationType.ERROR , "Error" , "deadline date can not be before today");
 			return;
 		}
 		//getting the id of the selected users
@@ -126,7 +134,6 @@ public class addTaskController implements Initializable {
 	}
 	@Override
 	public void initialize(URL url, ResourceBundle resourceBundle)  {
-
 		try {
 			getAllUsers();
 		} catch (IOException e) {
