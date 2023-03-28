@@ -1,3 +1,7 @@
+
+SELECT * FROM tasks;
+
+
 DROP TABLE tasks ;
 CREATE TABLE tasks (
 	taskId SERIAL PRIMARY KEY ,
@@ -7,13 +11,8 @@ CREATE TABLE tasks (
 	status VARCHAR (25) ,
 	deadline Date ,
 	created_at Date,
-	updated_at Date
+	updated_at Date,
+	members TEXT
 ) ;
 
 
-DROP TABLE memebers_tasks ;
-CREATE TABLE memebers_tasks (
-	id SERIAL PRIMARY KEY ,
-	user_id INTEGER ,
-	task_id INTEGER
-) ;

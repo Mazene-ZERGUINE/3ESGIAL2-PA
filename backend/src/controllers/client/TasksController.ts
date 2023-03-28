@@ -3,11 +3,13 @@ const clientPool: any = require('../../db/clientPool');
 const tasksQueries: any = require('../../queries/client/tasksQueries');
 
 const addNewTask = (req: Request, res: Response) => {
-	const { label, description, deadline, category_id } = req.body;
+	const { label, description, deadline, category_id, members } = req.body;
+	var membersString: string = '';
+	members.map((member: string) => (membersString += member + '\n'));
 	const created_at = new Date();
 	clientPool.query(
 		tasksQueries.insertQuery,
-		[category_id, label, description, deadline, created_at, null, 'TODO'],
+		[category_id, label, description, deadline, created_at, null, 'TODO', membersString],
 		(error: Error, results: any) => {
 			if (error) {
 				res.status(501).json({
@@ -16,14 +18,6 @@ const addNewTask = (req: Request, res: Response) => {
 				});
 				throw error;
 			}
-			const membersId: number[] = req.body.members;
-			membersId.map((id: number) => {
-				clientPool.query(tasksQueries.insertMemebersQuery, [id, results.rows[0].taskid], (error: Error, res: any) => {
-					if (error) {
-						throw error;
-					}
-				});
-			});
 			res.status(200).send({ status_code: 200, message: 'task succsufuly created' });
 		},
 	);
@@ -43,7 +37,22 @@ const getAllTasksByCategory = (req: Request, res: Response) => {
 	});
 };
 
+const getTaskMembers = (req: Request, res: Response) => {
+	const categoryId: number = parseInt(req.params.category_id);
+	clientPool.query(tasksQueries.getTaskMemenersQuery, [categoryId], (error: Error, result: any) => {
+		if (error) {
+			res.status(501).json({
+				error: 'Internal server error',
+				details: error,
+			});
+			throw error;
+		}
+		res.status(200).send({ status_code: 200, members: result.rows });
+	});
+};
+
 module.exports = {
 	addNewTask,
 	getAllTasksByCategory,
+	getTaskMembers,
 };

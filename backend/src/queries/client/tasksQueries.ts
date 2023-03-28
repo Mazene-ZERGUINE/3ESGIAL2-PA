@@ -5,19 +5,13 @@ const insertQuery: string = ` INSERT INTO tasks(
 	deadline ,
 	created_at ,
 	updated_at ,
-	status
-) VALUES ($1 , $2 , $3 , $4 , $5 , $6 , $7 ) RETURNING taskId`;
-
-const insertMemebersQuery: string = ` INSERT INTO memebers_tasks(
-	user_id ,
-	task_id) VALUES ($1 , $2)
-
-`;
+	status,
+	members
+) VALUES ($1 , $2 , $3 , $4 , $5 , $6 , $7 ,$8 ) RETURNING taskId`;
 
 const getOneByCategoryQuery: string = ` SELECT * FROM tasks WHERE category_id = $1 `;
 
 module.exports = {
 	insertQuery,
-	insertMemebersQuery,
 	getOneByCategoryQuery,
 };
