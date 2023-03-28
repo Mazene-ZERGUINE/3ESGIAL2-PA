@@ -1,15 +1,19 @@
 package com.example.clm.controllers;
 
+import com.example.clm.Main;
 import com.example.clm.models.Categorie;
 import com.example.clm.models.Users;
 import com.example.clm.utils.ApiService;
 import com.example.clm.utils.NotifierService;
+import com.example.clm.utils.SceneService;
 import com.github.tsohr.JSONArray;
 import com.github.tsohr.JSONObject;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
@@ -33,6 +37,8 @@ public class addTaskController implements Initializable {
 
 	@FXML
 	private DatePicker deadline;
+	private final static SceneService sceneService = new SceneService();
+	private Parent root;
 
 	private List<Users> users = new ArrayList<>();
 	@FXML
@@ -79,26 +85,22 @@ public class addTaskController implements Initializable {
 			notifierService.notify(NotificationType.ERROR , "Error" , "deadline date can not be before today");
 			return;
 		}
-		//getting the id of the selected users
-		List<Integer> userIds = users.stream()
-			.filter(u -> selectedItems.contains(u.getFirstName()))
-			.map(Users::getId)
-			.collect(Collectors.toList());
-
 		// creating the request json body
 		JSONObject json = new JSONObject() ;
 		json.put("category_id" , this.categoryId) ;
 		json.put("label" , taskTitle) ;
 		json.put("description" , taskDescription) ;
 		json.put("deadline" , taskDeadline.toString()) ;
-		JSONArray members = new JSONArray(userIds);  // creating a json array of the list to add it to the request body
+		JSONArray members = new JSONArray(selectedItems);  // creating a json array of the list to add it to the request body
 		json.put("members" , members) ;
-		System.out.println(json);
 		StringBuilder response = api.patchTypeRequest(baseUrl + "tasks" , json) ;
 		JSONObject jsonResponse = new JSONObject(response.toString());
-
 		// if the request is a success notifying the user and adding clearing the filds
 		if (jsonResponse.getInt("status_code") == 200) {
+			FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("templates/tasks-view.fxml"));
+			root = fxmlLoader.load() ;
+			TasksController controller = fxmlLoader.getController();
+			controller.refreshList();
 			notifierService.notify(NotificationType.SUCCESS , "Success" , "New task added");
 			this.title.clear();
 			this.deadline.setValue(null);
@@ -106,6 +108,7 @@ public class addTaskController implements Initializable {
 		} else {
 			notifierService.notify(NotificationType.ERROR , "Error" , "Error occurred while adding the new task");
 		}
+
 	}
 	@FXML
 	void onQuitBtnClick(ActionEvent event) {

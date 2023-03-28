@@ -195,7 +195,5 @@ public class CategoriesController extends Application implements Initializable {
 			getAllCategories();
 			notifierService.notify(NotificationType.SUCCESS , "Success" , "Catégorie modifier");
 		}
-
 	}
-
 }

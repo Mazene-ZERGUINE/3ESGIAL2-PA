@@ -8,6 +8,7 @@ public class Tasks {
 	private String created_at;
 	private String deadline;
 	private String status;
+	private String members;
 
 	public int getId() {
 		return id;
@@ -58,13 +59,22 @@ public class Tasks {
 		this.status = status;
 	}
 
-	public Tasks(int id, String label, String description, String created_at, String deadline, String status) {
+	public String getMembers() {
+		return members;
+	}
+
+	public void setMembers(String members) {
+		this.members = members;
+	}
+
+	public Tasks(int id, String label, String description, String created_at, String deadline, String status , String members) {
 		this.id = id;
 		this.label = label;
 		this.description = description;
 		this.created_at = created_at;
 		this.deadline = deadline;
 		this.status = status;
+		this.members = members;
 	}
 
 

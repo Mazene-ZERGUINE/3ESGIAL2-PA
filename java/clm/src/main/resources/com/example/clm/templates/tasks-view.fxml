@@ -13,7 +13,7 @@
 
 <AnchorPane prefHeight="650.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.clm.controllers.TasksController">
 	<children>
-		<AnchorPane prefHeight="650.0" prefWidth="1100.0">
+		<AnchorPane  prefHeight="650.0" prefWidth="1100.0">
 			<children>
 				<BorderPane prefHeight="57.0" prefWidth="1100.0" style="-fx-background-color: #000958;">
 					<top>
@@ -70,6 +70,11 @@
                   <Label fx:id="category" layoutX="61.0" layoutY="13.0" prefHeight="17.0" prefWidth="86.0" textFill="WHITE" AnchorPane.bottomAnchor="12.0" AnchorPane.leftAnchor="80.0" AnchorPane.rightAnchor="34.0" AnchorPane.topAnchor="12.0" />
                </children>
             </AnchorPane>
+            <ImageView fx:id="refrechBtn" fitHeight="57.0" fitWidth="115.0" layoutX="541.0" layoutY="87.0" onMouseClicked="#onRefrechBtnClicked" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../images/NicePng_refresh-icon-png_2047577.png" />
+               </image>
+            </ImageView>
 			</children>
 		</AnchorPane>
 	</children>

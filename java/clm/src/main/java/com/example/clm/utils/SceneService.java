@@ -29,6 +29,4 @@ public class SceneService {
 	public void switchToNewWindow(String fileName, Parent root, Stage stage) throws IOException {
 		switchScene(stage, fileName, root);
 	}
-
-
 }
