@@ -14,6 +14,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -26,6 +27,11 @@ import tray.notification.NotificationType;
 
 import java.io.IOException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -150,6 +156,27 @@ public class TasksController implements Initializable {
 			descriptionCol.setCellValueFactory(new PropertyValueFactory<>("description"));
 			creationCol.setCellValueFactory(new PropertyValueFactory<>("created_at"));
 			membersCol.setCellValueFactory(new PropertyValueFactory<>("members"));
+
+			// setting rappel time red line for deadline passed and yellow line for 7 days or less befor deadline
+			tasksTable.setRowFactory(tv -> {
+				TableRow<Tasks> row = new TableRow<>();
+				row.itemProperty().addListener((obs, oldItem, newItem) -> {
+					if (newItem != null && newItem.getDeadline() != null) {
+						LocalDateTime now = LocalDateTime.now();
+						Instant instant = Instant.parse(newItem.getDeadline());
+						ZoneId zoneId = ZoneId.of("America/New_York");
+						LocalDateTime time = LocalDateTime.ofInstant(instant, zoneId);
+						if (now.isAfter(time)) {
+							row.setStyle("-fx-background-color: red;");
+						} else if (ChronoUnit.DAYS.between(now , time) < 7) {
+							row.setStyle("-fx-background-color: yellow;");
+						}	else {
+							row.setStyle("");
+						}
+					}
+				});
+				return row;
+			});
 
 			// setting columns colors
 			statusCol.setCellFactory(column -> {
