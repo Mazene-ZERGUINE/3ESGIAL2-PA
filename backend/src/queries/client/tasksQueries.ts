@@ -11,7 +11,13 @@ const insertQuery: string = ` INSERT INTO tasks(
 
 const getOneByCategoryQuery: string = ` SELECT * FROM tasks WHERE category_id = $1 `;
 
+const deleteQuery: string = ` DELETE FROM tasks WHERE taskId = $1 `;
+
+const updateStatusQuery: string = `UPDATE tasks SET status = $1 WHERE taskId = $2 `;
+
 module.exports = {
 	insertQuery,
 	getOneByCategoryQuery,
+	deleteQuery,
+	updateStatusQuery,
 };

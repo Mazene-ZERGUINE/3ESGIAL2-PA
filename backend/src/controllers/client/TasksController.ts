@@ -1,4 +1,5 @@
 import { Router, Request, Response } from 'express';
+import { body } from 'express-validator';
 const clientPool: any = require('../../db/clientPool');
 const tasksQueries: any = require('../../queries/client/tasksQueries');
 
@@ -10,7 +11,7 @@ const addNewTask = (req: Request, res: Response) => {
 	clientPool.query(
 		tasksQueries.insertQuery,
 		[category_id, label, description, deadline, created_at, null, 'TODO', membersString],
-		(error: Error, results: any) => {
+		(error: Error, results: any): Response => {
 			if (error) {
 				res.status(501).json({
 					error: 'Internal server error',
@@ -18,14 +19,14 @@ const addNewTask = (req: Request, res: Response) => {
 				});
 				throw error;
 			}
-			res.status(200).send({ status_code: 200, message: 'task succsufuly created' });
+			return res.status(200).send({ status_code: 200, message: 'task succsufuly created' });
 		},
 	);
 };
 
-const getAllTasksByCategory = (req: Request, res: Response) => {
+const getAllTasksByCategory = (req: Request, res: Response): void => {
 	const categoryId: number = parseInt(req.params.category_id);
-	clientPool.query(tasksQueries.getOneByCategoryQuery, [categoryId], (error: Error, reslts: any) => {
+	clientPool.query(tasksQueries.getOneByCategoryQuery, [categoryId], (error: Error, reslts: any): Response => {
 		if (error) {
 			res.status(501).json({
 				error: 'Internal server error',
@@ -33,13 +34,13 @@ const getAllTasksByCategory = (req: Request, res: Response) => {
 			});
 			throw error;
 		}
-		res.status(200).send({ status_code: 200, tasks: reslts.rows });
+		return res.status(200).send({ status_code: 200, tasks: reslts.rows });
 	});
 };
 
-const getTaskMembers = (req: Request, res: Response) => {
-	const categoryId: number = parseInt(req.params.category_id);
-	clientPool.query(tasksQueries.getTaskMemenersQuery, [categoryId], (error: Error, result: any) => {
+const deleteTask = (req: Request, res: Response): void => {
+	const taskId: number = parseInt(req.params.task_id);
+	clientPool.query(tasksQueries.deleteQuery, [taskId], (error: Error, results: any): Response => {
 		if (error) {
 			res.status(501).json({
 				error: 'Internal server error',
@@ -47,12 +48,21 @@ const getTaskMembers = (req: Request, res: Response) => {
 			});
 			throw error;
 		}
-		res.status(200).send({ status_code: 200, members: result.rows });
+		return res.send({ status_code: 200, message: 'task deleted' });
+	});
+};
+
+const updateTaskStatus = (req: Request, res: Response): void => {
+	const taskId: number = parseInt(req.params.task_id);
+	const { status } = req.body;
+	clientPool.query(tasksQueries.updateStatusQuery, [status, taskId], (error: Error, result: any): void => {
+		res.status(200).send({ status_code: 200, message: 'task updated' });
 	});
 };
 
 module.exports = {
 	addNewTask,
 	getAllTasksByCategory,
-	getTaskMembers,
+	deleteTask,
+	updateTaskStatus,
 };

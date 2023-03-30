@@ -5,6 +5,7 @@ const tasksController: any = require('../../controllers/client/TasksController')
 
 router.post('/', tasksController.addNewTask);
 router.get('/:category_id', tasksController.getAllTasksByCategory);
-router.get('/:category_id/members', tasksController.getTaskMembers);
+router.delete('/:task_id', tasksController.deleteTask);
+router.post('/:task_id', tasksController.updateTaskStatus);
 
 module.exports = router;
