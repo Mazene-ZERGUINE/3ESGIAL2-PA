@@ -16,14 +16,13 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+import tray.notification.NotificationType;
 
 import java.io.IOException;
 import java.net.URL;
@@ -109,20 +108,24 @@ public class TasksController implements Initializable {
 
 
 	@FXML
-	void onDeleteBtnClick(ActionEvent event)  {
-
+	void onDeleteBtnClick(ActionEvent event) throws IOException {
+		int selectedID = tasksTable.getSelectionModel().getSelectedItems().get(0).getId();
+		StringBuilder response = api.deleteTypeRequest(baseUrl + "tasks/" + selectedID);
+		JSONObject jsonResponse = new JSONObject(response.toString()) ;
+		if (jsonResponse.getInt("status_code") == 200) {
+			refreshList();
+			notifierService.notify(NotificationType.SUCCESS , "SUCCESS" , "tache supprimer");
+		}
 	}
 	@FXML
 	void onRefrechBtnClicked(MouseEvent event) throws IOException {
 		refreshList();
 	}
 
-
 	public void refreshList() throws IOException {
 		tasksTable.getItems().clear();
 		getAllTasks(categoryId);
 	}
-
 	public void getAllTasks(int categoryId) throws IOException {
 		StringBuilder response = api.getTypeRequest(baseUrl + "tasks/" + categoryId);
 		JSONObject jsonResponse = new JSONObject(response.toString());
@@ -148,18 +151,70 @@ public class TasksController implements Initializable {
 			creationCol.setCellValueFactory(new PropertyValueFactory<>("created_at"));
 			membersCol.setCellValueFactory(new PropertyValueFactory<>("members"));
 
-			for (int i = 0; i < dataArray.length(); i++) {
-				if (statusCol.getCellData(i).equals("TODO")) {
-					statusCol.setStyle("-fx-text-fill: #595c57;");
-				} else if (statusCol.getCellData(i).equals("IN PROGRESS")) {
-					statusCol.setStyle("-fx-text-fill: orange;");
-				} else if (statusCol.getCellData(i).equals("DONE")) {
-					statusCol.setStyle("-fx-text-fill:#98fc6d ;");
-				} else if (statusCol.getCellData(i).equals("STUCK")) {
-					statusCol.setStyle("-fx-text-fill:red ;");
-				} else {
-					statusCol.setStyle("-fx-text-fill:green ;");
-				}
+			// setting columns colors
+			statusCol.setCellFactory(column -> {
+				return new TableCell<Tasks, String>() {
+					@Override
+					protected void updateItem(String item, boolean empty) {
+						super.updateItem(item, empty);
+						if (item == null || empty) {
+							setText(null);
+							setStyle("");
+						} else {
+							if (item.equals("TODO")) {
+								setText(item);
+								statusCol.setStyle("-fx-text-fill: #f52fe1;");
+							} else if (item.equals("IN PROGRESS")) {
+								setText(item);
+								setStyle("-fx-text-fill: orange;");
+							} else if (item.equals("DONE")) {
+								setText(item);
+								setStyle("-fx-text-fill:#98fc6d ;");
+							} else if (item.equals("STUCK")) {
+								setText(item);
+								setStyle("-fx-text-fill:red ;");
+							} else {
+								setText(item);
+								setStyle("-fx-text-fill:green ;");
+							}
+						}
+					}
+				};
+			});
+		}
+	}
+	@FXML
+	void onTaskSelect(MouseEvent event) throws IOException {
+		if (event.getClickCount() >= 1) {
+			// getting the selected row and column of the clicked item
+			TablePosition<? , ?> pos = tasksTable.getSelectionModel().getSelectedCells().get(0);
+			int row = pos.getRow();
+			int col = pos.getColumn();
+			int  taskId = tasksTable.getItems().get(row).getId();
+			// opening the status update modal window
+			if (col == 5) {
+				FXMLLoader loader = new FXMLLoader(Main.class.getResource("templates/status-pop-up.fxml"));
+				Stage statusPopUp = new Stage();
+				Scene scene = new Scene(loader.load());
+				StatusPopUpController controller = loader.getController();
+				controller.setData(taskId);
+				statusPopUp.setScene(scene);
+				statusPopUp.setResizable(false);
+				statusPopUp.initStyle(StageStyle.UNDECORATED);
+
+				Parent tasksRoot = addBtn.getScene().getRoot();
+				tasksRoot.setDisable(true);
+
+				statusPopUp.setOnHidden(e -> {
+					try {
+						refreshList();
+					} catch (IOException ex) {
+						throw new RuntimeException(ex);
+					}
+					tasksRoot.setDisable(false);
+				});
+
+				statusPopUp.show();
 			}
 		}
 	}
