@@ -60,9 +60,42 @@ const updateTaskStatus = (req: Request, res: Response): void => {
 	});
 };
 
+const getTaskById = (req: Request, res: Response): void => {
+	const taskId: number = parseInt(req.params.task_id);
+	clientPool.query(tasksQueries.getOneTaskByIdQuery, [taskId], (error: Error, results: any): void => {
+		if (error) throw error;
+		res.status(200).send({ status_code: 200, tasks: results.rows });
+	});
+};
+
+const updateTask = (req: Request, res: Response) => {
+	console.log(req.body);
+	const taskId: number = parseInt(req.params.task_id);
+	const { label, description, status, deadline, members } = req.body;
+	var membersString: string = '';
+	members.map((member: string) => (membersString += member + '\n'));
+	const updatedAt: Date = new Date();
+	clientPool.query(
+		tasksQueries.updateQuery,
+		[label, description, status, deadline, membersString, updatedAt, taskId],
+		(error: Error, results: any): void => {
+			if (error) {
+				res.status(501).send({
+					error: 'internal server error',
+					details: error,
+				});
+				throw error;
+			}
+			res.status(200).send({ status_code: 200, message: 'task updated' });
+		},
+	);
+};
+
 module.exports = {
 	addNewTask,
 	getAllTasksByCategory,
 	deleteTask,
 	updateTaskStatus,
+	getTaskById,
+	updateTask,
 };

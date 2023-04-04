@@ -15,9 +15,23 @@ const deleteQuery: string = ` DELETE FROM tasks WHERE taskId = $1 `;
 
 const updateStatusQuery: string = `UPDATE tasks SET status = $1 WHERE taskId = $2 `;
 
+const getOneTaskByIdQuery: string = `SELECT * FROM tasks WHERE taskId = $1`;
+
+const updateQuery: string = ` UPDATE tasks SET
+label = $1 ,
+description = $2 ,
+status = $3 ,
+deadline = $4 ,
+members = $5,
+updated_at = $6
+WHERE taskId = $7
+`;
+
 module.exports = {
 	insertQuery,
 	getOneByCategoryQuery,
 	deleteQuery,
 	updateStatusQuery,
+	getOneTaskByIdQuery,
+	updateQuery,
 };
