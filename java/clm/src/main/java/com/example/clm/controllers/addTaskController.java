@@ -1,7 +1,6 @@
 package com.example.clm.controllers;
 
 import com.example.clm.Main;
-import com.example.clm.models.Categorie;
 import com.example.clm.models.Users;
 import com.example.clm.utils.ApiService;
 import com.example.clm.utils.NotifierService;
@@ -15,17 +14,13 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import tray.notification.NotificationType;
 
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class addTaskController implements Initializable {
 
@@ -93,7 +88,7 @@ public class addTaskController implements Initializable {
 		json.put("deadline" , taskDeadline.toString()) ;
 		JSONArray members = new JSONArray(selectedItems);  // creating a json array of the list to add it to the request body
 		json.put("members" , members) ;
-		StringBuilder response = api.patchTypeRequest(baseUrl + "tasks" , json) ;
+		StringBuilder response = api.postTypeRequest(baseUrl + "tasks" , json) ;
 		JSONObject jsonResponse = new JSONObject(response.toString());
 		// if the request is a success notifying the user and adding clearing the filds
 		if (jsonResponse.getInt("status_code") == 200) {

@@ -171,7 +171,6 @@ public class CategoriesController extends Application implements Initializable {
 
 				notifierService.notify(NotificationType.SUCCESS , "Success" , "Catégorie ajouter");
 			}
-
 	}
 	@FXML
 	void onUpdateBtnClick(ActionEvent event) throws IOException {
@@ -187,7 +186,7 @@ public class CategoriesController extends Application implements Initializable {
 		data.put("title" , title) ;
 		data.put("desciption" , description) ;
 		StringBuilder response = new StringBuilder() ;
-		response = api.patchTypeRequest(baseUrl + "categories/"+ selectedCategorie.get(0).getId() , data) ;
+		response = api.putTypeRequest(baseUrl + "categories/"+ selectedCategorie.get(0).getId() , data) ;
 		JSONObject json = new JSONObject(response.toString());
 		if (json.getInt("status_code") == 200) {
 			categoriesListView.getItems().clear();

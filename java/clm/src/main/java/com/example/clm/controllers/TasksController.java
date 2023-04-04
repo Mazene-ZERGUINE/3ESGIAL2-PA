@@ -157,69 +157,77 @@ public class TasksController implements Initializable {
 			creationCol.setCellValueFactory(new PropertyValueFactory<>("created_at"));
 			membersCol.setCellValueFactory(new PropertyValueFactory<>("members"));
 
-			// setting rappel time red line for deadline passed and yellow line for 7 days or less befor deadline
-			tasksTable.setRowFactory(tv -> {
-				TableRow<Tasks> row = new TableRow<>();
-				row.itemProperty().addListener((obs, oldItem, newItem) -> {
-					if (newItem != null && newItem.getDeadline() != null) {
-						LocalDateTime now = LocalDateTime.now();
-						Instant instant = Instant.parse(newItem.getDeadline());
-						ZoneId zoneId = ZoneId.of("America/New_York");
-						LocalDateTime time = LocalDateTime.ofInstant(instant, zoneId);
-						if (now.isAfter(time)) {
-							row.setStyle("-fx-background-color: red;");
-						} else if (ChronoUnit.DAYS.between(now , time) < 7) {
-							row.setStyle("-fx-background-color: yellow;");
-						}	else {
-							row.setStyle("");
-						}
-					}
-				});
-				return row;
-			});
-
-			// setting columns colors
-			statusCol.setCellFactory(column -> {
-				return new TableCell<Tasks, String>() {
-					@Override
-					protected void updateItem(String item, boolean empty) {
-						super.updateItem(item, empty);
-						if (item == null || empty) {
-							setText(null);
-							setStyle("");
-						} else {
-							if (item.equals("TODO")) {
-								setText(item);
-								statusCol.setStyle("-fx-text-fill: #f52fe1;");
-							} else if (item.equals("IN PROGRESS")) {
-								setText(item);
-								setStyle("-fx-text-fill: orange;");
-							} else if (item.equals("DONE")) {
-								setText(item);
-								setStyle("-fx-text-fill:#98fc6d ;");
-							} else if (item.equals("STUCK")) {
-								setText(item);
-								setStyle("-fx-text-fill:red ;");
-							} else {
-								setText(item);
-								setStyle("-fx-text-fill:green ;");
-							}
-						}
-					}
-				};
-			});
+			datesVerifications();
 		}
 	}
+
+	public void datesVerifications() {
+		// setting rappel time red line for deadline passed and yellow line for 7 days or less befor deadline
+		tasksTable.setRowFactory(tableView -> {
+			TableRow<Tasks> row = new TableRow<>();
+			row.itemProperty().addListener((obs, oldItem, newItem) -> {
+				if (newItem != null && newItem.getDeadline() != null) {
+					LocalDateTime now = LocalDateTime.now();
+					Instant instant = Instant.parse(newItem.getDeadline());
+					ZoneId zoneId = ZoneId.of("America/New_York");
+					LocalDateTime time = LocalDateTime.ofInstant(instant, zoneId);
+					boolean doneStatusTest = now.isAfter(time) && !newItem.getStatus().equals("DONE");
+					boolean verifiedStatusTest = now.isAfter(time) && !newItem.getStatus().equals("VERIFIED") ;
+					boolean sevenDaysToDoneTest = ChronoUnit.DAYS.between(now , time) < 7 && !newItem.getStatus().equals("DONE");
+					boolean sevenDaysToVerifiedTest = ChronoUnit.DAYS.between(now , time) < 7 && !newItem.getStatus().equals("VERIFIED");
+					if ( doneStatusTest && verifiedStatusTest) {
+						row.setStyle("-fx-background-color: red;");
+					} else if (sevenDaysToDoneTest && sevenDaysToVerifiedTest){
+						row.setStyle("-fx-background-color: yellow;");
+					}	else {
+						row.setStyle("");
+					}
+				}
+			});
+			return row;
+		});
+
+		// setting columns colors
+		statusCol.setCellFactory(column -> {
+			return new TableCell<Tasks, String>() {
+				@Override
+				protected void updateItem(String item, boolean empty) {
+					super.updateItem(item, empty);
+					if (item == null || empty) {
+						setText(null);
+						setStyle("");
+					} else {
+						if (item.equals("TODO")) {
+							setText(item);
+							statusCol.setStyle("-fx-text-fill: #f52fe1;");
+						} else if (item.equals("IN PROGRESS")) {
+							setText(item);
+							setStyle("-fx-text-fill: orange;");
+						} else if (item.equals("DONE")) {
+							setText(item);
+							setStyle("-fx-text-fill:#98fc6d ;");
+						} else if (item.equals("STUCK")) {
+							setText(item);
+							setStyle("-fx-text-fill:red ;");
+						} else {
+							setText(item);
+							setStyle("-fx-text-fill:green ;");
+						}
+					}
+				}
+			};
+		});
+	}
+
 	@FXML
 	void onTaskSelect(MouseEvent event) throws IOException {
-		if (event.getClickCount() >= 1) {
+		if (event.getClickCount() >= 2) {
 			// getting the selected row and column of the clicked item
 			TablePosition<? , ?> pos = tasksTable.getSelectionModel().getSelectedCells().get(0);
 			int row = pos.getRow();
 			int col = pos.getColumn();
 			int  taskId = tasksTable.getItems().get(row).getId();
 			// opening the status update modal window
-			if (col == 5) {
 				FXMLLoader loader = new FXMLLoader(Main.class.getResource("templates/status-pop-up.fxml"));
 				Stage statusPopUp = new Stage();
 				Scene scene = new Scene(loader.load());
@@ -244,7 +252,6 @@ public class TasksController implements Initializable {
 				statusPopUp.show();
 			}
 		}
-	}
 
 	@Override
 	public void initialize(URL url, ResourceBundle resourceBundle) {
