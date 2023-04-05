@@ -47,22 +47,17 @@ const addNewCategory = (req: Request, res: Response) => {
 };
 
 const deleteCategory = (req: Request, res: Response) => {
+	console.log('ok');
 	const id: number = parseInt(req.params.id_category);
-	clientPool.query(categoriesQueries.getOneById, [id], (error: Error, results: any) => {
-		if (results.rows.length === 0) {
-			res.status(404).json({ error: 'item not found' });
+	clientPool.query(categoriesQueries.deleteQuery, [id], (error: Error, results: any) => {
+		if (error) {
+			res.status(501).json({
+				error: 'Internal server error',
+				details: error,
+			});
 			return;
 		}
-		clientPool.query(categoriesQueries.deleteQuery, [id], (error: Error, results: any) => {
-			if (error) {
-				res.status(501).json({
-					error: 'Internal server error',
-					details: error,
-				});
-				return;
-			}
-			res.status(200).send({ status_code: 200, message: 'category deleted' });
-		});
+		res.status(200).send({ status_code: 200, message: 'category deleted' });
 	});
 };
 
