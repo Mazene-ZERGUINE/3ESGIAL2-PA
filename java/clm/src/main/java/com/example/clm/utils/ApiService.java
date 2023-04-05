@@ -7,8 +7,6 @@ import java.io.OutputStream;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
 
-import com.github.tsohr.JSONArray;
-import com.github.tsohr.JSONException;
 import com.github.tsohr.JSONObject;
 
 
@@ -70,11 +68,12 @@ public class ApiService {
 		return result;
 	}
 
-	public StringBuilder patchTypeRequest(String url , JSONObject data) throws IOException {
+	public StringBuilder putTypeRequest(String url , JSONObject data) throws IOException {
 		URL requestUrl = new URL(url);
 		HttpURLConnection conn = (HttpURLConnection) requestUrl.openConnection();
-		conn.setRequestMethod("POST");
+		conn.setRequestMethod("PUT");
 		conn.setDoOutput(true);
+		conn.setRequestProperty("Content-Type", "application/json");
 
 		OutputStream outputStream = conn.getOutputStream();
 		outputStream.write(data.toString().getBytes(StandardCharsets.UTF_8));

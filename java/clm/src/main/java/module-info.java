@@ -9,7 +9,8 @@ module com.example.clm {
     requires TrayNotification;
 
     opens com.example.clm to javafx.fxml;
-    exports com.example.clm;
+	opens com.example.clm.models to javafx.base;
+	exports com.example.clm;
     exports com.example.clm.controllers;
     opens com.example.clm.controllers to javafx.fxml;
 }

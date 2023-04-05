@@ -35,7 +35,7 @@ public class Main extends Application {
 	@FXML
 	void onBtnClick(ActionEvent event) throws IOException {
 		SceneService window = new SceneService() ;
-		window.switchToNewWindow("categories-view.fxml" , null);
+		window.switchToNewWindow("categories-view.fxml" , null , new Stage());
 		Stage stage = (Stage) btn.getScene().getWindow() ;
 		stage.close();
 	}

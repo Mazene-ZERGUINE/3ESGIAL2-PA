@@ -16,7 +16,7 @@ const getAllCategories = (req: Request, res: Response) => {
 
 const getOneCategorieById = (req: Request, res: any) => {
 	const id: number = parseInt(req.params.id_category);
-	clientPool.query(categoriesQueries.getOneById, [id], (error: Error, results: any) => {
+	clientPool.query(categoriesQueries.getOneQuery, [id], (error: Error, results: any) => {
 		if (error) {
 			res.status(501).json({
 				error: 'internal server error',
@@ -33,9 +33,7 @@ const getOneCategorieById = (req: Request, res: any) => {
 };
 
 const addNewCategory = (req: Request, res: Response) => {
-	console.log(req);
 	const { title, desciption } = req.body;
-	console.log(req.body);
 	clientPool.query(categoriesQueries.addNewCategoryQuery, [title, desciption], (error: Error, results: any) => {
 		if (error) {
 			res.status(501).json({
