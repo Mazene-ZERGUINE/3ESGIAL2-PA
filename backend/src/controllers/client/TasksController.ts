@@ -8,6 +8,7 @@ const addNewTask = (req: Request, res: Response) => {
 	var membersString: string = '';
 	members.map((member: string) => (membersString += member + '\n'));
 	const created_at = new Date();
+	console.log(created_at);
 	clientPool.query(
 		tasksQueries.insertQuery,
 		[category_id, label, description, deadline, created_at, null, 'TODO', membersString],

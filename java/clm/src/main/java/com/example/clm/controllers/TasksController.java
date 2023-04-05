@@ -111,8 +111,6 @@ public class TasksController implements Initializable {
 		sceneService.switchScene(stage, "categories-view.fxml", null);
 	}
 
-
-
 	@FXML
 	void onDeleteBtnClick(ActionEvent event) throws IOException {
 		int selectedID = tasksTable.getSelectionModel().getSelectedItems().get(0).getId();
@@ -135,6 +133,7 @@ public class TasksController implements Initializable {
 	public void getAllTasks(int categoryId) throws IOException {
 		StringBuilder response = api.getTypeRequest(baseUrl + "tasks/" + categoryId);
 		JSONObject jsonResponse = new JSONObject(response.toString());
+		System.out.println(jsonResponse);
 		if (jsonResponse.getInt("status_code") == 200) {
 			JSONArray dataArray = jsonResponse.getJSONArray("tasks");
 			for (int i = 0; i < dataArray.length(); i++) {
@@ -252,7 +251,6 @@ public class TasksController implements Initializable {
 				statusPopUp.show();
 			}
 		}
-
 	@Override
 	public void initialize(URL url, ResourceBundle resourceBundle) {
 	}
