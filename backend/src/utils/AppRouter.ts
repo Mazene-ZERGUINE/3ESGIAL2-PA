@@ -1,6 +1,7 @@
 import express, { Express } from 'express';
 
 import userRouter from '../routes/client/user.router';
+import signInRouter from '../routes/client/sign-in.router';
 
 export default class AppRouter {
 	constructor() {}
@@ -13,5 +14,6 @@ export default class AppRouter {
 		app.use('/api/client/categories', this.categoryRoutes);
 		app.use('/api/client/users', userRouter);
 		app.use('/api/client/tasks', this.tasksRoutes);
+		app.use('/api/trello/signin', signInRouter);
 	};
 }
