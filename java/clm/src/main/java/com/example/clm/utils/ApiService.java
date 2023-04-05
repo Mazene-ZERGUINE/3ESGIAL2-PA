@@ -44,6 +44,24 @@ public class ApiService {
 		return result ;
 	}
 
+	public int postTypeRequestWithResponseCode(String url, JSONObject data) throws IOException {
+		URL requestUrl = new URL(url);
+		HttpURLConnection conn = (HttpURLConnection) requestUrl.openConnection();
+		conn.setRequestMethod("POST");
+		conn.setDoOutput(true);
+
+		OutputStream outputStream = conn.getOutputStream();
+		outputStream.write(data.toString().getBytes(StandardCharsets.UTF_8));
+		outputStream.flush();
+		outputStream.close();
+
+		int responseCode = conn.getResponseCode();
+
+		conn.disconnect();
+
+		return responseCode;
+	}
+
 	public StringBuilder postTypeRequest(String url, JSONObject data) throws IOException {
 		// creating request
 		URL requestUrl = new URL(url);
