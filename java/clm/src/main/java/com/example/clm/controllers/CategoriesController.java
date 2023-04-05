@@ -34,7 +34,7 @@ public class CategoriesController extends Application implements Initializable {
 	private ListView<String> categoriesListView ;
 
 	private final ApiService api = new ApiService() ;
-	private  final SceneService windows = new SceneService() ;
+	private  final SceneService sceneService = new SceneService() ;
 	private final NotifierService notifierService = new NotifierService() ;
 
 	private final String baseUrl = "http://localhost:3000/api/client/" ;
@@ -135,7 +135,7 @@ public class CategoriesController extends Application implements Initializable {
 					root = fxmlLoader.load() ;
 					TasksController controller = fxmlLoader.getController() ;
 					controller.setData(selectedCategorie);
-					windows.switchScene(stage ,"tasks-view.fxml" , root);
+					sceneService.switchScene(stage ,"tasks-view.fxml" , root);
 				} catch (IOException ex) {
 					throw new RuntimeException(ex);
 				}
@@ -193,6 +193,18 @@ public class CategoriesController extends Application implements Initializable {
 			categories.clear();
 			getAllCategories();
 			notifierService.notify(NotificationType.SUCCESS , "Success" , "Catégorie modifier");
+		}
+	}
+
+	@FXML
+	void onLogOutBtnClick(MouseEvent event) {
+		Stage stage = (Stage) addBtn.getScene().getWindow();
+		stage.close();
+
+		try {
+			sceneService.switchToNewWindow("sign-in-view.fxml", null, new Stage());
+		} catch (IOException e) {
+			this.notifierService.notify(NotificationType.ERROR, "Erreur", "Une erreur est survenue lors de la déconnexion.");
 		}
 	}
 }
