@@ -153,7 +153,7 @@ public class CategoriesController extends Application implements Initializable {
 	void onaddBtnClick(ActionEvent event) throws IOException {
 		String title = categorieTitle.getText().toString();
 		String description = categorieDescription.getText().toString() ;
-		if (title.equals("")) {
+		if (title.trim().isEmpty()) {
 			notifierService.notify(NotificationType.ERROR , "Error" , "title required to add new category");
 			return;
 		}
@@ -206,5 +206,10 @@ public class CategoriesController extends Application implements Initializable {
 		} catch (IOException e) {
 			this.notifierService.notify(NotificationType.ERROR, "Erreur", "Une erreur est survenue lors de la déconnexion.");
 		}
+	}
+	@FXML
+	void switchToPlanificationPage(MouseEvent event) throws IOException {
+			Stage stage = (Stage)this.addBtn.getScene().getWindow();
+			sceneService.switchScene(stage , "gantt-view.fxml" , null);
 	}
 }

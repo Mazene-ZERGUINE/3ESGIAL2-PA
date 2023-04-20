@@ -21,6 +21,8 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.Modality;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import tray.notification.NotificationType;
@@ -99,7 +101,24 @@ public class TasksController implements Initializable {
 			addTaskController controller = fxmlLoader.getController();
 			controller.setData(categoryId);
 			Stage stage = new Stage();
+
+			Parent tasksRoot = addBtn.getScene().getRoot();
+			tasksRoot.setDisable(true);
+
+			stage.setResizable(false);
+			stage.initStyle(StageStyle.UNDECORATED);
+			stage.centerOnScreen();
 			sceneService.switchToNewWindow("add-task-view.fxml", root, stage);
+
+			stage.setOnHidden(e -> {
+				try {
+					refreshList();
+				} catch (IOException ex) {
+					throw new RuntimeException(ex);
+				}
+				tasksRoot.setDisable(false);
+			});
+
 		} catch (IOException exception) {
 			System.out.println(exception.toString());
 		}

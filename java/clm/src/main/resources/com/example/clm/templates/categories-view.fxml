@@ -17,17 +17,17 @@
                <right>
                   <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="57.0" prefWidth="1114.0" BorderPane.alignment="CENTER">
                      <children>
-                        <Text fill="RED" layoutX="447.0" layoutY="36.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Tasks" textAlignment="CENTER" AnchorPane.leftAnchor="447.0" AnchorPane.rightAnchor="613.01953125" AnchorPane.topAnchor="16.6640625">
+                        <Text fill="RED" layoutX="447.0" layoutY="36.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Projects" textAlignment="CENTER" AnchorPane.leftAnchor="447.0" AnchorPane.rightAnchor="613.01953125" AnchorPane.topAnchor="16.6640625">
                            <font>
                               <Font size="20.0" />
                            </font>
                         </Text>
-                        <Text fill="WHITE" layoutX="518.0" layoutY="35.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Tiquet" AnchorPane.topAnchor="15.6640625">
+                        <Text fill="WHITE" layoutX="526.0" layoutY="36.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Tiquet" AnchorPane.topAnchor="16.6640625">
                            <font>
                               <Font size="20.0" />
                            </font>
                         </Text>
-                        <Text fill="WHITE" layoutX="596.0" layoutY="36.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Planification" AnchorPane.topAnchor="16.6640625">
+                        <Text fill="WHITE" layoutX="596.0" layoutY="36.0" onMouseClicked="#switchToPlanificationPage" strokeType="OUTSIDE" strokeWidth="0.0" text="Planification" AnchorPane.topAnchor="16.6640625">
                            <font>
                               <Font size="20.0" />
                            </font>
