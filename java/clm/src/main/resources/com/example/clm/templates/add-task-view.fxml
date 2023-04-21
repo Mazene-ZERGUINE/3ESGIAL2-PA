@@ -28,7 +28,8 @@
             <Button fx:id="addBtn" layoutX="27.0" layoutY="324.0" mnemonicParsing="false" onAction="#onAddBtnClick" prefHeight="26.0" prefWidth="248.0" style="-fx-background-color: #32a834;" text="Ajouter" textFill="WHITE" />
             <Button fx:id="quitBtn" layoutX="323.0" layoutY="324.0" mnemonicParsing="false" onAction="#onQuitBtnClick" prefHeight="26.0" prefWidth="248.0" style="-fx-background-color: #a83234;" text="Annuler" textFill="WHITE" />
             <Label fx:id="usersNumber" layoutX="570.0" layoutY="111.0" prefHeight="17.0" prefWidth="6.0" textFill="#50942b" />
-            <ListView fx:id="usersList" editable="true" layoutX="323.0" layoutY="103.0" prefHeight="205.0" prefWidth="248.0" />
+            <ListView fx:id="usersList" editable="true" layoutX="323.0" layoutY="140.0" prefHeight="168.0" prefWidth="248.0" />
+            <DatePicker fx:id="startDate" layoutX="323.0" layoutY="98.0" prefHeight="26.0" prefWidth="248.0" promptText="Date de début" />
          </children>
       </AnchorPane>
    </children>

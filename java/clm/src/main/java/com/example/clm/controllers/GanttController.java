@@ -2,6 +2,7 @@ package com.example.clm.controllers;
 import com.example.clm.models.Categorie;
 import com.example.clm.models.Tasks;
 import com.example.clm.utils.ApiService;
+import com.example.clm.utils.SceneService;
 import com.github.tsohr.JSONArray;
 import com.github.tsohr.JSONObject;
 import javafx.fxml.FXML;
@@ -16,6 +17,8 @@ import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
+import javafx.stage.Stage;
+
 import java.io.IOException;
 import java.net.URL;
 import java.time.Instant;
@@ -42,6 +45,7 @@ public class GanttController implements Initializable {
 
 	@FXML
 	private CategoryAxis tasksAxis;
+	private final static SceneService sceneService = new SceneService();
 	private List<Categorie> categories = new ArrayList<>() ;
 	private final String baseUrl = "http://localhost:3000/api/client/" ;
 	private final ApiService api = new ApiService() ;
@@ -81,13 +85,12 @@ public class GanttController implements Initializable {
 	}
 
 
-	@FXML
-	void onLogoutBtnClick(MouseEvent event) {
 
-	}
 
 	@FXML
 	void onProjectListSelect(MouseEvent event) throws IOException {
+		dataSeries.getData().clear();
+		chart.getData().clear();
 		// getting the selected categoryId from the listView
 		String selectedElement = projectsList.getSelectionModel().getSelectedItems().get(0);
 		List<Categorie> selectedCategorie = categories.stream().filter(element -> Objects.equals(element.getTitle(), selectedElement)).toList();
@@ -107,7 +110,8 @@ public class GanttController implements Initializable {
 					dataArray.getJSONObject(i).getString("created_at"),
 					dataArray.getJSONObject(i).getString("deadline"),
 					dataArray.getJSONObject(i).getString("status"),
-					dataArray.getJSONObject(i).getString("members")
+					dataArray.getJSONObject(i).getString("members"),
+					dataArray.getJSONObject(i).getString("start_at")
 				);
 				tasksList.add(task);
 			}
@@ -122,14 +126,14 @@ public class GanttController implements Initializable {
 		data.forEach(element -> {
 			if (!element.getStatus().equals("VERIFIED")) {
 				// parsing the dates of creatin and the deadline of each task //
-				Instant instant = Instant.parse(element.getCreated_at());
+				Instant instant = Instant.parse(element.getStartAt());
 				ZoneId parisZone = ZoneId.of("Europe/Paris");
 				LocalDateTime creatinDate = LocalDateTime.ofInstant(instant, parisZone);
-				instant = Instant.parse(element.getDeadline());
-				LocalDateTime deadline = LocalDateTime.ofInstant(instant, parisZone);
+				Instant instant2 = Instant.parse(element.getDeadline());
+				LocalDateTime deadline = LocalDateTime.ofInstant(instant2, parisZone);
 				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 				String from = formatter.format(creatinDate);
-				String to = from.formatted(deadline);
+				String to = formatter.format(deadline);
 				// getting the number of days between the tow
 				Integer numberOfDays = (int) ChronoUnit.DAYS.between(creatinDate, deadline);
 				// setting the chart data
@@ -176,20 +180,29 @@ public class GanttController implements Initializable {
 				this.dataSeries.getData().add(dataPoint);
 			}
 		});
-
 	}
 
 	@FXML
-	void onProjectsBtnClick(MouseEvent event) {
-
+	void onProjectsBtnClick(MouseEvent event) throws IOException {
+		Stage stage = (Stage) projectsList.getScene().getWindow();
+		sceneService.switchScene(stage  , "categories-view.fxml" , null);
 	}
 
+	@FXML
+	void onLogoutBtnClick(MouseEvent event) throws IOException  {
+		Stage stage = (Stage) projectsList.getScene().getWindow();
+		sceneService.switchToNewWindow("sign-in-view.fxml" , null , stage);
+	}
 
 
 	@Override
 	public void initialize(URL url, ResourceBundle resourceBundle) {
 
 		getAllProjets();
+		ScrollPane scrollPane = new ScrollPane();
+		scrollPane.setContent(chart);
+		scrollPane.setFitToWidth(true);
+		scrollPane.setFitToHeight(true);
 
 		tasksAxis.setLabel("Tasks");
 		daysAxis.setLabel("Days");

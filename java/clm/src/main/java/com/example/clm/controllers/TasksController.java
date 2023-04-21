@@ -160,10 +160,11 @@ public class TasksController implements Initializable {
 					dataArray.getJSONObject(i).getInt("taskid"),
 					dataArray.getJSONObject(i).getString("label"),
 					dataArray.getJSONObject(i).getString("description"),
-					dataArray.getJSONObject(i).getString("created_at"),
+					dataArray.getJSONObject(i).getString("start_at"),
 					dataArray.getJSONObject(i).getString("deadline"),
 					dataArray.getJSONObject(i).getString("status"),
-					dataArray.getJSONObject(i).getString("members")
+					dataArray.getJSONObject(i).getString("members"),
+					dataArray.getJSONObject(i).getString("created_at")
 				);
 				tasksList.add(task);
 			}

@@ -4,14 +4,14 @@ const clientPool: any = require('../../db/clientPool');
 const tasksQueries: any = require('../../queries/client/tasksQueries');
 
 const addNewTask = (req: Request, res: Response) => {
-	const { label, description, deadline, category_id, members } = req.body;
+	const { label, description, deadline, category_id, members, startDate } = req.body;
 	var membersString: string = '';
 	members.map((member: string) => (membersString += member + '\n'));
 	const created_at = new Date();
 	console.log(created_at);
 	clientPool.query(
 		tasksQueries.insertQuery,
-		[category_id, label, description, deadline, created_at, null, 'TODO', membersString],
+		[category_id, label, description, deadline, created_at, null, 'TODO', membersString, startDate],
 		(error: Error, results: any): Response => {
 			if (error) {
 				res.status(501).json({

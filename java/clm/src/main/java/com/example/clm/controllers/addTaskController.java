@@ -20,6 +20,7 @@ import tray.notification.NotificationType;
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 public class addTaskController implements Initializable {
@@ -30,6 +31,8 @@ public class addTaskController implements Initializable {
 	@FXML
 	private Button addBtn;
 
+	@FXML
+	private DatePicker startDate;
 	@FXML
 	private DatePicker deadline;
 	private final static SceneService sceneService = new SceneService();
@@ -65,27 +68,34 @@ public class addTaskController implements Initializable {
 		String taskTitle = title.getText();
 		String taskDescription = description.getText() ;
 		LocalDate taskDeadline = deadline.getValue();
-		LocalDate creationDate = LocalDate.now() ;
+		LocalDate creationDate = startDate.getValue() ;
 		// list of the selected items from the list
 		ObservableList<String> selectedItems = usersList.getSelectionModel().getSelectedItems();
 
 		// checking if the required fileds are empty or not
-		if (taskTitle.isEmpty() ||taskDeadline.toString().isEmpty() || selectedItems.size() == 0) {
+		if (taskTitle.isEmpty() ||taskDeadline.toString().isEmpty()  || startDate.toString().isEmpty()) {
 			notifierService.notify(NotificationType.ERROR , "Error" , "title and description and at least one member are required to create task");
 			return;
 		}
 		// checking selected date
 		LocalDate now = LocalDate.now() ;
-		if(now.compareTo(taskDeadline) >= 0) {
-			notifierService.notify(NotificationType.ERROR , "Error" , "deadline date can not be before today");
+		if(creationDate.isBefore(now) || taskDeadline.isBefore(now)) {
+			notifierService.notify(NotificationType.ERROR , "Error" , "date de début ou deadline ne peuvent pas etre avant ce jour");
 			return;
 		}
+
+		if(creationDate.isAfter(taskDeadline)) {
+			notifierService.notify(NotificationType.ERROR , "Error" , "date de début ne peut pas dépasser le deadline");
+			return;
+		}
+
 		// creating the request json body
 		JSONObject json = new JSONObject() ;
 		json.put("category_id" , this.categoryId) ;
 		json.put("label" , taskTitle) ;
 		json.put("description" , taskDescription) ;
 		json.put("deadline" , taskDeadline.toString()) ;
+		json.put("startDate" , creationDate.toString());
 		JSONArray members = new JSONArray(selectedItems);  // creating a json array of the list to add it to the request body
 		json.put("members" , members) ;
 		StringBuilder response = api.postTypeRequest(baseUrl + "tasks" , json) ;
@@ -100,6 +110,7 @@ public class addTaskController implements Initializable {
 			this.title.clear();
 			this.deadline.setValue(null);
 			this.description.clear();
+			this.startDate.setValue(null);
 		} else {
 			notifierService.notify(NotificationType.ERROR , "Error" , "Error occurred while adding the new task");
 		}
