@@ -1,8 +1,21 @@
+/**
+ * @deprecated ⚠️ We can use `getOneBy()` instead which is more generic.
+ * @see getOneBy
+ * @param model
+ */
 export function getOneById(model: string): string {
 	return `
 		SELECT *
 		FROM ${model}
 		WHERE id = $1
+	`;
+}
+
+export function getOneBy(model: string, column: [string]): string {
+	return `
+		SELECT *
+		FROM ${model}
+		WHERE ${column} = $1
 	`;
 }
 
