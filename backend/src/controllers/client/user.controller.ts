@@ -1,9 +1,10 @@
 import { Request, Response } from 'express';
-import { getMany, getOneById } from '../../utils/crud';
+import { Model } from '../../enum/model.enum';
+import { getOneBy } from '../../utils/crud';
 
 const clientPool: any = require('../../db/clientPool');
 
-const getOneUserById = (req: Request, res: any): void => {
+const getUserById = (req: Request, res: any): void => {
 	const id: number = parseInt(req.params.id);
 
 	if (!id) {
@@ -11,7 +12,7 @@ const getOneUserById = (req: Request, res: any): void => {
 		return;
 	}
 
-	clientPool.query(getOneById('client_user'), [id], (error: Error, results: any) => {
+	clientPool.query(getOneBy(Model.clientUser, ['id']), [id], (error: Error, results: any) => {
 		if (error) {
 			res.status(501).json({
 				error: 'internal server error',
@@ -31,7 +32,7 @@ const getOneUserById = (req: Request, res: any): void => {
 };
 
 const getAllUsers = (req: Request, res: Response): void => {
-	clientPool.query(getMany('client_user'), (error: Error, results: any) => {
+	clientPool.query(getMany(Model.clientUser), (error: Error, results: any) => {
 		if (error) {
 			res.status(501).send('Internal server error' + error);
 			return;
@@ -42,6 +43,6 @@ const getAllUsers = (req: Request, res: Response): void => {
 };
 
 export const userController = {
-	getOneUserById,
+	getOneUserById: getUserById,
 	getAllUsers,
 };
