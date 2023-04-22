@@ -3,6 +3,9 @@ import { userController } from '../../controllers/client/user.controller';
 
 const router: Router = Router();
 
-router.get('/', userController.getAllUsers).get('/:id', userController.getOneUserById);
+router
+	.get('/', userController.getAllUsers)
+	.get('/:id', userController.getOneUserById)
+	.post('/', userController.createUser);
 
 export default router;
