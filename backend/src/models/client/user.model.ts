@@ -2,8 +2,8 @@ export interface User {
 	id: number;
 	email: string;
 	password: string;
-	firstName: string;
-	lastName: string;
-	createdAt: number;
-	updatedAt?: number;
+	first_name: string;
+	last_name: string;
+	created_at: Date;
+	updated_at?: null | Date;
 }

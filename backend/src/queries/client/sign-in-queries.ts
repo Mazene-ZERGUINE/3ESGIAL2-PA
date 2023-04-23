@@ -1,21 +1,13 @@
-function findUser(): string {
+import { Model } from '../../enum/model.enum';
+
+function countUserByEmail(): string {
 	return `
 		SELECT COUNT(*)
-		FROM client_user
+		FROM ${Model.clientUser}
 		WHERE email = $1;
 	`;
 }
 
-function findUserWithEmailAndPassword(): string {
-	return `
-		SELECT COUNT(*)
-		FROM client_user
-		WHERE email = $1
-		AND password = $2;
-	`;
-}
-
 export const signInQuery = {
-	findUser,
-	findUserWithEmailAndPassword,
+	countUserByEmail,
 };
