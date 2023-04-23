@@ -10,6 +10,7 @@ CREATE TABLE tasks (
 	description TEXT ,
 	status VARCHAR (25) ,
 	deadline Date ,
+	start_at Date,
 	created_at Date,
 	updated_at Date,
 	members TEXT

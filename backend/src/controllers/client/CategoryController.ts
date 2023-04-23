@@ -10,7 +10,7 @@ const getAllCategories = (req: Request, res: Response) => {
 			res.status(501).send('Internal server error' + error);
 			return;
 		}
-		res.status(200).send({ categories: results.rows });
+		res.status(200).send({ status_code: 200, categories: results.rows });
 	});
 };
 

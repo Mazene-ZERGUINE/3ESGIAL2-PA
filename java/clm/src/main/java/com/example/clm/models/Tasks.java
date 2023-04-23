@@ -10,6 +10,16 @@ public class Tasks {
 	private String status;
 	private String members;
 
+	public String getStartAt() {
+		return startAt;
+	}
+
+	public void setStartAt(String startAt) {
+		this.startAt = startAt;
+	}
+
+	private String startAt;
+
 	public int getId() {
 		return id;
 	}
@@ -67,7 +77,7 @@ public class Tasks {
 		this.members = members;
 	}
 
-	public Tasks(int id, String label, String description, String created_at, String deadline, String status , String members) {
+	public Tasks(int id, String label, String description, String created_at, String deadline, String status , String members , String startAt) {
 		this.id = id;
 		this.label = label;
 		this.description = description;
@@ -75,6 +85,7 @@ public class Tasks {
 		this.deadline = deadline;
 		this.status = status;
 		this.members = members;
+		this.startAt = startAt;
 	}
 
 
