@@ -89,7 +89,25 @@ public class MembersController extends Application implements Initializable {
 	}
 
 	@FXML
-	void onDeleteBtnClick(ActionEvent event) throws IOException {
+	void onDeleteBtnClick(ActionEvent __) {
+		var selectedUser = this.tableView.getSelectionModel().getSelectedItems().get(0);
+		List<Users> selectedUsers = this.users
+			.stream()
+			.filter(user -> Objects.equals(user.getEmail(), selectedUser.getEmail()))
+			.toList();
+
+		try {
+			for (var user : selectedUsers) {
+				api.deleteTypeRequest(baseUrl + "users/" + user.getEmail());
+
+				this.tableView.getItems().remove(selectedUser);
+				getAllMembers();
+
+				notifierService.notify(NotificationType.SUCCESS, "Success", "Utilisateur supprimé.");
+			}
+		} catch (IOException e) {
+			notifierService.notify(NotificationType.ERROR, "Error", "Une erreur est survenu lors de la suppression de l'utilisateur.");
+		}
 	}
 
 	@FXML
