@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { argon2id, hash } from 'argon2';
 
 import { Model } from '../../enum/model.enum';
-import { createOne, getMany, getOneBy } from '../../utils/crud';
+import { createOne, getMany, getOneBy, removeOneBy } from '../../utils/crud';
 import { User } from '../../models/client/user.model';
 
 const clientPool: any = require('../../db/clientPool');
@@ -95,8 +95,38 @@ const createUser = (req: Request, res: Response): void => {
 	});
 };
 
+const deleteUser = (req: Request, res: Response): void => {
+	const { email } = req.params;
+
+	if (!email.trim()) {
+		res.status(400).json({ status_code: 400 });
+		return;
+	}
+
+	clientPool.query(getOneBy(Model.clientUser, ['email']), [email], async (error: Error, results: any) => {
+		if (results.rows.length <= 0) {
+			res.status(400).end();
+			return;
+		}
+
+		clientPool.query(removeOneBy(Model.clientUser, ['email']), [email], (error: Error, _: any): Response => {
+			if (error) {
+				res.status(500).json({
+					error: 'Internal server error',
+					details: error,
+				});
+
+				return;
+			}
+
+			return res.status(200).json({ status_code: 200, message: 'user successfully deleted' });
+		});
+	});
+};
+
 export const userController = {
 	getOneUserById: getUserById,
 	getAllUsers,
 	createUser,
+	deleteUser,
 };

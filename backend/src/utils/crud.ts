@@ -52,3 +52,10 @@ export function removeOneById(model: string): string {
 		WHERE id = $1
 	`;
 }
+
+export function removeOneBy(model: string, column: [string]): string {
+	return `
+		DELETE FROM ${model}
+		WHERE ${column} = $1
+	`;
+}
