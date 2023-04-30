@@ -57,6 +57,10 @@ public class MembersController extends Application implements Initializable {
 	private TextField firstNameField;
 	@FXML
 	private TextField emailField;
+	@FXML
+	private TextField passwordField;
+	@FXML
+	private TextField confirmPasswordField;
 
 	@FXML
 	private Button addBtn;
@@ -81,7 +85,55 @@ public class MembersController extends Application implements Initializable {
 	}
 
 	@FXML
-	void onAddBtnClick(ActionEvent event) throws IOException {
+	void onAddBtnClick(ActionEvent __) {
+		var lastName = lastNameField.getText().trim();
+		var firstName = firstNameField.getText().trim();
+		var email = emailField.getText().trim();
+		var password = passwordField.getText();
+		var confirmPassword = confirmPasswordField.getText();
+
+		var isOneFieldEmpty = lastName.isBlank() || firstName.isBlank() || email.isBlank() || password.isBlank() || confirmPassword.isBlank();
+		if (isOneFieldEmpty) {
+			notifierService.notify(NotificationType.ERROR, "Error", "Tous les champs sont obligatoires.");
+			return;
+		}
+
+		if (!arePasswordsSame(passwordField.getText(), confirmPasswordField.getText())) {
+			notifierService.notify(NotificationType.ERROR, "Error", "Les mots de passes ne sont pas identiques.");
+			return;
+		}
+
+		var payload = new JSONObject();
+		payload
+			.put("last_name", lastName)
+			.put("first_name", firstName)
+			.put("email", email)
+			.put("password", password);
+
+		try {
+			api.postTypeRequest(baseUrl + "users/", payload);
+
+			this.tableView.getItems().clear();
+			this.users.clear();
+			getAllMembers();
+			clearFields();
+
+			notifierService.notify(NotificationType.SUCCESS, "Success", "Utilisateur ajouté.");
+		} catch (IOException e) {
+			notifierService.notify(NotificationType.ERROR, "Error", "Une erreur est survenue lors de l'ajout d'un utilisateur.");
+		}
+	}
+
+	private boolean arePasswordsSame(String password1, String password2) {
+		return password1.equals(password2);
+	}
+
+	private void clearFields() {
+		lastNameField.clear();
+		firstNameField.clear();
+		emailField.clear();
+		passwordField.clear();
+		confirmPasswordField.clear();
 	}
 
 	@FXML
