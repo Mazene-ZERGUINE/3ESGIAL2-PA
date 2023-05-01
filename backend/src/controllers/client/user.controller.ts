@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
-import { argon2id, hash } from 'argon2';
+import { argon2id, hash, verify } from 'argon2';
 
 import { Model } from '../../enum/model.enum';
-import { createOne, getMany, getOneBy, removeOneBy } from '../../utils/crud';
+import { createOne, getMany, getOneBy, removeOneBy, updateOneBy, updateOneBy } from '../../utils/crud';
 import { User } from '../../models/client/user.model';
 
 const clientPool: any = require('../../db/clientPool');
@@ -95,6 +95,80 @@ const createUser = (req: Request, res: Response): void => {
 	});
 };
 
+const updateUser = (req: Request, res: Response): void => {
+	const { email: emailParam } = req.params;
+	const { email, first_name, last_name, password } = req.body;
+	type UserWithoutIdKey = Omit<User, 'id'>;
+
+	const isOnePropertyInvalid = !email.trim() || !first_name.trim() || !last_name.trim() || password == null;
+	if (isOnePropertyInvalid) {
+		res.status(400).end();
+		return;
+	}
+
+	clientPool.query(getOneBy(Model.clientUser, ['email']), [emailParam], async (error: Error, results: any) => {
+		if (error) {
+			res.status(500).send('Internal server error ' + error);
+			return;
+		}
+
+		if (results.rows.length <= 0) {
+			res.status(400).end();
+			return;
+		}
+
+		const foundUser = results.rows[0];
+		let isPasswordSame;
+		let isPasswordValid = typeof password === 'string' && (password as string).length >= 1;
+		if (isPasswordValid) {
+			isPasswordSame = await verify(foundUser.password, password);
+		}
+
+		const shouldUpdateUser =
+			email !== foundUser.email ||
+			first_name !== foundUser.first_name ||
+			last_name !== foundUser.last_name ||
+			typeof password === 'string' ||
+			!isPasswordSame;
+
+		if (!shouldUpdateUser) {
+			res.status(400).json({ message: 'Pas de mise à jour utilisateur à effectuer.' });
+			return;
+		}
+
+		let hashedPassword: string;
+		if (isPasswordValid) {
+			try {
+				hashedPassword = await hash(password, { type: argon2id });
+			} catch (e: any) {
+				res.status(500).send('Internal server error: ' + e.message);
+				return;
+			}
+		}
+
+		const userWithoutIdKey: UserWithoutIdKey = {
+			email,
+			first_name,
+			last_name,
+			password: !password ? foundUser.password : hashedPassword,
+			created_at: foundUser.created_at,
+			updated_at: new Date(),
+		};
+		const userColumns = Object.keys(userWithoutIdKey);
+		const userValues = Object.values(userWithoutIdKey);
+		const values = [emailParam, ...userValues];
+
+		clientPool.query(updateOneBy(Model.clientUser, userColumns, ['email']), values, (error: Error, _: any) => {
+			if (error) {
+				res.status(500).send('Internal server error ' + error);
+				return;
+			}
+
+			res.status(200).end();
+		});
+	});
+};
+
 const deleteUser = (req: Request, res: Response): void => {
 	const { email } = req.params;
 
@@ -129,4 +203,5 @@ export const userController = {
 	getAllUsers,
 	createUser,
 	deleteUser,
+	updateUser,
 };
