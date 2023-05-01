@@ -137,7 +137,49 @@ public class MembersController extends Application implements Initializable {
 	}
 
 	@FXML
-	void onUpdateBtnClick(ActionEvent event) throws IOException {
+	void onUpdateBtnClick(ActionEvent __) {
+		var lastName = lastNameField.getText().trim();
+		var firstName = firstNameField.getText().trim();
+		var email = emailField.getText().trim();
+		var password = passwordField.getText();
+		var confirmPassword = confirmPasswordField.getText();
+
+		var isOneFieldEmpty = lastName.isBlank() || firstName.isBlank() || email.isEmpty();
+		if (isOneFieldEmpty) {
+			notifierService.notify(NotificationType.ERROR, "Error", "Tous les champs sont obligatoires, sauf les mots de passe.");
+			return;
+		}
+
+		if (!arePasswordsSame(password, confirmPassword)) {
+			notifierService.notify(NotificationType.ERROR, "Error", "Les mots de passe ne sont pas identiques.");
+			return;
+		}
+
+		var selectedUser = this.tableView.getSelectionModel().getSelectedItems().get(0);
+		List<Users> selectedUsers = this.users
+			.stream()
+			.filter(user -> Objects.equals(user.getEmail(), selectedUser.getEmail()))
+			.toList();
+
+		var payload = new JSONObject();
+		payload
+			.put("last_name", lastName)
+			.put("first_name", firstName)
+			.put("email", email)
+			.put("password", password);
+
+		try {
+			api.putTypeRequest(baseUrl + "users/" + selectedUser.getEmail(), payload);
+
+			this.tableView.getItems().clear();
+			this.users.clear();
+			getAllMembers();
+			clearFields();
+
+			notifierService.notify(NotificationType.SUCCESS, "Success", "Utilisateur mis à jour.");
+		} catch (IOException e) {
+			notifierService.notify(NotificationType.ERROR, "Error", "Une erreur est survenue lors de l'ajout de l'utilisateur.");
+		}
 	}
 
 	@FXML
