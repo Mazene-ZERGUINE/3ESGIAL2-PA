@@ -207,6 +207,13 @@ public class CategoriesController extends Application implements Initializable {
 			this.notifierService.notify(NotificationType.ERROR, "Erreur", "Une erreur est survenue lors de la déconnexion.");
 		}
 	}
+
+	@FXML
+	void switchToMembersPage(MouseEvent __) throws IOException {
+		Stage stage = (Stage)this.addBtn.getScene().getWindow();
+		sceneService.switchScene(stage , "members-view.fxml" , null);
+	}
+
 	@FXML
 	void switchToPlanificationPage(MouseEvent event) throws IOException {
 			Stage stage = (Stage)this.addBtn.getScene().getWindow();

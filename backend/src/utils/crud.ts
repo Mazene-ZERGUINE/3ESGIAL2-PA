@@ -46,9 +46,29 @@ export function updateOneById(model: string, columns: string[]): string {
 	`;
 }
 
+export function updateOneBy(model: string, columns: string[], constraint: [string]): string {
+	const addToIndex = 1 + constraint.length;
+	const valuesToSetSeparatedByComma: string = columns
+		.map((column, index) => `${column} = $${index + addToIndex}`)
+		.join(', ');
+
+	return `
+		UPDATE ${model}
+		SET ${valuesToSetSeparatedByComma}
+		WHERE ${constraint} = $1
+	`;
+}
+
 export function removeOneById(model: string): string {
 	return `
 		DELETE FROM ${model}
 		WHERE id = $1
+	`;
+}
+
+export function removeOneBy(model: string, column: [string]): string {
+	return `
+		DELETE FROM ${model}
+		WHERE ${column} = $1
 	`;
 }

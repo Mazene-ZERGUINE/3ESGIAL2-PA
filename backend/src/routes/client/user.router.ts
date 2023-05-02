@@ -6,6 +6,8 @@ const router: Router = Router();
 router
 	.get('/', userController.getAllUsers)
 	.get('/:id', userController.getOneUserById)
-	.post('/', userController.createUser);
+	.post('/', userController.createUser)
+	.put('/:email', userController.updateUser)
+	.delete('/:email', userController.deleteUser);
 
 export default router;

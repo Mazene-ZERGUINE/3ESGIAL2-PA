@@ -208,4 +208,10 @@ public class GanttController implements Initializable {
 		daysAxis.setLabel("Days");
 
 	}
+
+	@FXML
+	void switchToMembersPage(MouseEvent __) throws IOException {
+		Stage stage = (Stage)this.logoutBtn.getScene().getWindow();
+		sceneService.switchScene(stage , "members-view.fxml" , null);
+	}
 }
