@@ -26,8 +26,8 @@
                   </AnchorPane>
                   <AnchorPane prefHeight="337.0" prefWidth="471.0">
                      <children>
-                        <TextField fx:id="emailField" layoutX="49.0" layoutY="120.0" prefHeight="26.0" prefWidth="374.0" promptText="Email" />
-                        <PasswordField fx:id="passwordField" layoutX="47.0" layoutY="169.0" prefHeight="26.0" prefWidth="374.0" promptText="Mot de passe" />
+                        <TextField fx:id="emailField" layoutX="49.0" layoutY="120.0" onAction="#onEnter" prefHeight="26.0" prefWidth="374.0" promptText="Email" />
+                        <PasswordField fx:id="passwordField" layoutX="47.0" layoutY="169.0" onAction="#onEnter" prefHeight="26.0" prefWidth="374.0" promptText="Mot de passe" />
                         <Button fx:id="loginBtn" layoutX="48.0" layoutY="229.0" mnemonicParsing="false" onAction="#onLogIn" prefHeight="26.0" prefWidth="374.0" style="-fx-background-color: #000958;" text="Se connecter" textFill="WHITE" />
                         <Label layoutX="164.0" layoutY="21.0" prefHeight="80.0" prefWidth="140.0" text="LOGIN" textFill="#000958">
                            <font>

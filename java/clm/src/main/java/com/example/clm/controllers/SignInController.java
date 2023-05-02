@@ -31,6 +31,11 @@ public class SignInController {
 	@FXML
 	Button loginBtn;
 
+	@FXML
+	public void onEnter(ActionEvent __){
+		onLogIn(__);
+	}
+
 	public void onLogIn(ActionEvent __) {
 		final String email = emailField.getText();
 		final String password = passwordField.getText();
