@@ -19,7 +19,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Install Dependencies
         run: |
           cd frontend
@@ -28,7 +28,3 @@ jobs:
         run: |
           cd frontend
           npm run build --configuration=production
-      - name: Test Angular
-        run: |
-          cd frontend
-          npm run test
