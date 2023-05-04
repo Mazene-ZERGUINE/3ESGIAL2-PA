@@ -27,7 +27,7 @@ jobs:
       - name: Install dependencies
         run: cd backend && npm ci
       - name: Build
-        run: cd backend && npm build
+        run: cd backend && npm run build
       - name: Build
-        run: cd backend && npm start
+        run: cd backend && npm run start
       
