@@ -18,14 +18,16 @@ jobs:
         node-version: [14.x, 16.x, 18.x]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v3      
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
-      - run: cd backend
-      - run: npm ci
-      - run: npm run build
-      - run: npm run start
+      - name: Install dependencies
+        run: cd backend && npm ci
+      - name: Build
+        run: cd backend && npm build
+      - name: Build
+        run: cd backend && npm start
       
