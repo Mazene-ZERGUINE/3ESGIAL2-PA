@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { argon2id, hash, verify } from 'argon2';
 
 import { Model } from '../../enum/model.enum';
-import { createOne, getMany, getOneBy, removeOneBy, updateOneBy, updateOneBy } from '../../utils/crud';
+import { createOne, getMany, getOneBy, removeOneBy, updateOneBy } from '../../utils/crud';
 import { User } from '../../models/client/user.model';
 
 const clientPool: any = require('../../db/clientPool');
@@ -136,7 +136,7 @@ const updateUser = (req: Request, res: Response): void => {
 			return;
 		}
 
-		let hashedPassword: string;
+		let hashedPassword = '';
 		if (isPasswordValid) {
 			try {
 				hashedPassword = await hash(password, { type: argon2id });
@@ -183,7 +183,7 @@ const deleteUser = (req: Request, res: Response): void => {
 			return;
 		}
 
-		clientPool.query(removeOneBy(Model.clientUser, ['email']), [email], (error: Error, _: any): Response => {
+		clientPool.query(removeOneBy(Model.clientUser, ['email']), [email], (error: Error, _: any) => {
 			if (error) {
 				res.status(500).json({
 					error: 'Internal server error',
