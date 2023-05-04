@@ -32,7 +32,7 @@ jobs:
         run: |
           cd backend
           npm run build
-      - name: Build
+      - name: Start
         run: |
           cd backend
           npm run start
