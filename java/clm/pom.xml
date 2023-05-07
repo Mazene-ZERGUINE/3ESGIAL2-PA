@@ -84,9 +84,11 @@
 				<version>3.0.2</version>
 			</dependency>
 			<dependency>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot</artifactId>
-				<version>3.0.2</version>
+				<groupId>com.notification</groupId>
+				<artifactId>tray-notification</artifactId>
+				<version>1.0.0</version>
+				<scope>system</scope>
+				<systemPath>${project.basedir}/src/main/lib/TrayNotification.jar</systemPath>
 			</dependency>
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
