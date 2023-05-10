@@ -85,7 +85,7 @@ public class StatusPopUpController  implements Initializable {
 		StringBuilder response = 	api.putTypeRequest(baseUrl + "tasks/" + taskId + "/update" , body) ;
 		JSONObject jsonResponse = new JSONObject(response.toString()) ;
 		if (jsonResponse.getInt("status_code") == 200) {
-			notifierService.notify(NotificationType.SUCCESS , "Success" , "Task updated");
+			notifierService.notify(NotificationType.SUCCESS , "Succès" , "Tâche mise à jour.");
 			this.stage =(Stage)updateBtn.getScene().getWindow() ;
 			stage.hide();
 			stage.close();
@@ -99,11 +99,11 @@ public class StatusPopUpController  implements Initializable {
 		StringBuilder response = api.putTypeRequest(baseUrl +"tasks/" +taskId  ,data ) ;
 		JSONObject jsonResponse = new JSONObject(response.toString());
 		if (jsonResponse.getInt("status_code") == 200) {
-			notifierService.notify(NotificationType.SUCCESS , "SUCCESS" , "Task updated");
+			notifierService.notify(NotificationType.SUCCESS , "Succès" , "Tâche mise à jour.");
 			stage.hide();
 			stage.close();
 		} else {
-			notifierService.notify(NotificationType.ERROR , "ERROR" , "Bad request");
+			notifierService.notify(NotificationType.ERROR , "Erreur" , "Mauvaise requête.");
 		}
 	}
 	private void getAllUsers() throws IOException {
@@ -140,11 +140,11 @@ public class StatusPopUpController  implements Initializable {
 			status.setValue(data.getString("status"));
 			title.setText(data.getString("label"));
 
-			status.getItems().add("TODO");
-			status.getItems().add("IN PROGRESS");
-			status.getItems().add("DONE");
-			status.getItems().add("VERIFIED");
-			status.getItems().add("STUCK");
+			status.getItems().add("A FAIRE");
+			status.getItems().add("EN COURS");
+			status.getItems().add("TERMINE");
+			status.getItems().add("VERIFIE");
+			status.getItems().add("BLOQUE");
 		}
 	}
 

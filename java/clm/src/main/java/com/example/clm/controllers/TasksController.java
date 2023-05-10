@@ -190,10 +190,10 @@ public class TasksController implements Initializable {
 					Instant instant = Instant.parse(newItem.getDeadline());
 					ZoneId zoneId = ZoneId.of("America/New_York");
 					LocalDateTime time = LocalDateTime.ofInstant(instant, zoneId);
-					boolean doneStatusTest = now.isAfter(time) && !newItem.getStatus().equals("DONE");
-					boolean verifiedStatusTest = now.isAfter(time) && !newItem.getStatus().equals("VERIFIED") ;
-					boolean sevenDaysToDoneTest = ChronoUnit.DAYS.between(now , time) < 7 && !newItem.getStatus().equals("DONE");
-					boolean sevenDaysToVerifiedTest = ChronoUnit.DAYS.between(now , time) < 7 && !newItem.getStatus().equals("VERIFIED");
+					boolean doneStatusTest = now.isAfter(time) && !newItem.getStatus().equals("TERMINE");
+					boolean verifiedStatusTest = now.isAfter(time) && !newItem.getStatus().equals("VERIFIE") ;
+					boolean sevenDaysToDoneTest = ChronoUnit.DAYS.between(now , time) < 7 && !newItem.getStatus().equals("TERMINE");
+					boolean sevenDaysToVerifiedTest = ChronoUnit.DAYS.between(now , time) < 7 && !newItem.getStatus().equals("VERIFIE");
 					if ( doneStatusTest && verifiedStatusTest) {
 						row.setStyle("-fx-background-color: red;");
 					} else if (sevenDaysToDoneTest && sevenDaysToVerifiedTest){
@@ -216,16 +216,16 @@ public class TasksController implements Initializable {
 						setText(null);
 						setStyle("");
 					} else {
-						if (item.equals("TODO")) {
+						if (item.equals("A FAIRE")) {
 							setText(item);
 							statusCol.setStyle("-fx-text-fill: #f52fe1;");
-						} else if (item.equals("IN PROGRESS")) {
+						} else if (item.equals("EN COURS")) {
 							setText(item);
 							setStyle("-fx-text-fill: orange;");
-						} else if (item.equals("DONE")) {
+						} else if (item.equals("TERMINE")) {
 							setText(item);
 							setStyle("-fx-text-fill:#98fc6d ;");
-						} else if (item.equals("STUCK")) {
+						} else if (item.equals("BLOQUE")) {
 							setText(item);
 							setStyle("-fx-text-fill:red ;");
 						} else {

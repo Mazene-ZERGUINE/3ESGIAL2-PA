@@ -19,12 +19,12 @@
                <center>
                   <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="57.0" prefWidth="1114.0" BorderPane.alignment="CENTER">
                      <children>
-                        <Text fill="WHITE" layoutX="447.0" layoutY="36.0" onMouseClicked="#switchToCategoriesPage" strokeType="OUTSIDE" strokeWidth="0.0" text="Projects" textAlignment="CENTER" AnchorPane.leftAnchor="447.0" AnchorPane.rightAnchor="613.01953125" AnchorPane.topAnchor="16.6640625">
+                        <Text fill="WHITE" layoutX="447.0" layoutY="36.0" onMouseClicked="#switchToCategoriesPage" strokeType="OUTSIDE" strokeWidth="0.0" text="Projets" textAlignment="CENTER" AnchorPane.leftAnchor="447.0" AnchorPane.rightAnchor="613.01953125" AnchorPane.topAnchor="16.6640625">
                            <font>
                               <Font size="20.0" />
                            </font>
                         </Text>
-                        <Text fill="WHITE" layoutX="526.0" layoutY="36.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Tiquet" AnchorPane.topAnchor="16.6640625">
+                        <Text fill="WHITE" layoutX="526.0" layoutY="36.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Ticket" AnchorPane.topAnchor="16.6640625">
                            <font>
                               <Font size="20.0" />
                            </font>
@@ -34,12 +34,12 @@
                               <Font size="20.0" />
                            </font>
                         </Text>
-                        <Text fx:id="logOutBtn" fill="WHITE" layoutX="1010.0" layoutY="33.0" onMouseClicked="#onLogOutBtnClick" strokeType="OUTSIDE" strokeWidth="0.0" text="Logout" AnchorPane.topAnchor="17.53125">
+                        <Text fx:id="logOutBtn" fill="WHITE" layoutX="964.0" layoutY="36.0" onMouseClicked="#onLogOutBtnClick" strokeType="OUTSIDE" strokeWidth="0.0" text="Se déconnecter" AnchorPane.topAnchor="17.53125">
                            <font>
                               <Font size="20.0" />
                            </font>
                         </Text>
-                        <Text fill="RED" layoutX="351.0" layoutY="37.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Members" AnchorPane.topAnchor="17.0">
+                        <Text fill="RED" layoutX="351.0" layoutY="37.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Membres" AnchorPane.topAnchor="17.0">
                            <font>
                               <Font size="20.0" />
                            </font>
@@ -56,7 +56,7 @@
                   <TextField fx:id="lastNameField" layoutX="32.0" layoutY="155.0" prefHeight="26.0" prefWidth="384.0" />
                   <Text layoutX="26.0" layoutY="143.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Nom" wrappingWidth="77.04687118530273" />
                   <TextField fx:id="firstNameField" layoutX="32.0" layoutY="222.0" prefHeight="26.0" prefWidth="384.0" />
-                  <Text layoutX="29.0" layoutY="210.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Prenom" wrappingWidth="77.04687118530273" />
+                  <Text layoutX="29.0" layoutY="210.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Prénom" wrappingWidth="77.04687118530273" />
                   <TextField fx:id="emailField" layoutX="32.0" layoutY="294.0" prefHeight="26.0" prefWidth="384.0" />
                   <Text layoutX="29.0" layoutY="282.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Email" wrappingWidth="77.04687118530273" />
                   <PasswordField fx:id="passwordField" layoutX="32.0" layoutY="361.0" prefHeight="26.0" prefWidth="384.0" />
@@ -68,7 +68,7 @@
             <TableView fx:id="tableView" layoutX="39.0" layoutY="111.0" onMouseClicked="#onTableViewSelected" prefHeight="491.0" prefWidth="589.0">
               <columns>
                 <TableColumn fx:id="lastNameColumn" prefWidth="154.0" text="Nom" />
-                <TableColumn fx:id="firstNameColumn" prefWidth="163.0" text="Prenom" />
+                <TableColumn fx:id="firstNameColumn" prefWidth="163.0" text="Prénom" />
 								<TableColumn fx:id="emailColumn" prefWidth="271.0" text="Email" />
               </columns>
                <opaqueInsets>

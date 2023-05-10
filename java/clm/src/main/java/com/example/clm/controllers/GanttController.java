@@ -124,7 +124,7 @@ public class GanttController implements Initializable {
 
 	private void setChartData(List<Tasks> data) {
 		data.forEach(element -> {
-			if (!element.getStatus().equals("VERIFIED")) {
+			if (!element.getStatus().equals("VERIFIE")) {
 				// parsing the dates of creatin and the deadline of each task //
 				Instant instant = Instant.parse(element.getStartAt());
 				ZoneId parisZone = ZoneId.of("Europe/Paris");
@@ -140,37 +140,37 @@ public class GanttController implements Initializable {
 				XYChart.Data<Integer, String> dataPoint = new XYChart.Data<>(numberOfDays, element.getLabel());
 				dataPoint.nodeProperty().addListener((obs, oldNode, newNode) -> {
 					if (newNode != null) {
-						Label label = new Label(from + " / " + to + " (" + numberOfDays + " Jour restant)");
+						Label label = new Label(from + " / " + to + " (" + numberOfDays + " jour(s) restant(s))");
 						label.setStyle("-fx-font-size: 10px; -fx-font-weight: bold;");
 						StackPane stackPane = (StackPane) newNode;
 						stackPane.getChildren().add(label);
 						StackPane.setAlignment(label, Pos.BASELINE_CENTER);
-						if (element.getStatus().equals("DONE")) {
+						if (element.getStatus().equals("TERMINE")) {
 							newNode.setStyle("-fx-bar-fill: green;");
 
-							Tooltip tooltip = new Tooltip("Tàche: \s\s " + element.getLabel() + "\s \s  \n" +
+							Tooltip tooltip = new Tooltip("Tâche: \s\s " + element.getLabel() + "\s \s  \n" +
 								"--------------------" + " \s\s\n" +
 								"De: \s\s" + from + " \s\s \n" +
 								"Jusqu'à:\s\s " + to + "\s\s  \n" +
-								"En attend de validation ... \s\s");
+								"En attente de validation ... \s\s");
 							tooltip.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: green;");
 							Tooltip.install(newNode, tooltip);
 						} else if (numberOfDays < 7) {
 							newNode.setStyle("-fx-bar-fill: orange;");
-							Tooltip tooltip = new Tooltip("Tàche: \s\s " + element.getLabel() + "\s \s  \n" +
+							Tooltip tooltip = new Tooltip("Tâche: \s\s " + element.getLabel() + "\s \s  \n" +
 								"--------------------" + " \s\s\n" +
 								"De: \s\s" + from + " \s\s \n" +
 								"Jusqu'à:\s\s " + to + "\s\s  \n" +
-								"il vous reste moins qu'une semaine + " + "(" + numberOfDays + " jours) \s\s");
+								"Il vous reste moins d'une semaine + " + "(" + numberOfDays + " jour(s)) \s\s");
 							tooltip.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: orange;");
 							Tooltip.install(newNode, tooltip);
 						} else {
 							newNode.setStyle("-fx-bar-fill: #eb7777;");
-							Tooltip tooltip = new Tooltip("Tàche: \s\s " + element.getLabel() + "\s \s  \n" +
+							Tooltip tooltip = new Tooltip("Taâche: \s\s " + element.getLabel() + "\s \s  \n" +
 								"--------------------" + " \s\s\n" +
 								"De: \s\s" + from + " \s\s \n" +
 								"Jusqu'à:\s\s " + to + "\s\s  \n" +
-								"il vous reste: \s\s " + numberOfDays + " jours \s\s");
+								"Il vous reste : \s\s " + numberOfDays + " jours \s\s");
 							tooltip.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #eb7777;");
 							Tooltip.install(newNode, tooltip);
 						}
@@ -204,8 +204,8 @@ public class GanttController implements Initializable {
 		scrollPane.setFitToWidth(true);
 		scrollPane.setFitToHeight(true);
 
-		tasksAxis.setLabel("Tasks");
-		daysAxis.setLabel("Days");
+		tasksAxis.setLabel("Tâches");
+		daysAxis.setLabel("Jours");
 
 	}
 
