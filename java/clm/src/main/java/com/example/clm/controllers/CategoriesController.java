@@ -109,11 +109,11 @@ public class CategoriesController extends Application implements Initializable {
 			 // si reponse 200 supression de l'element de listView
 			 if (json.getInt("status_code") == 200) {
 					categoriesListView.getItems().remove(selectedElement);
-				 notifierService.notify(NotificationType.SUCCESS , "Success" , "Catégorie supprimer");
+				 notifierService.notify(NotificationType.SUCCESS , "Succès" , "Projet supprimé.");
 			 }
 		 } catch (IOException e) {
 			 System.out.println("error ocured while sending http delete request" + e);
-			 notifierService.notify(NotificationType.ERROR , "Error" , "Can't delete category");
+			 notifierService.notify(NotificationType.ERROR , "Erreur" , "Une erreur survenue lors de la suppression.");
 		 }
 	 }
 	}
@@ -154,7 +154,7 @@ public class CategoriesController extends Application implements Initializable {
 		String title = categorieTitle.getText().toString();
 		String description = categorieDescription.getText().toString() ;
 		if (title.trim().isEmpty()) {
-			notifierService.notify(NotificationType.ERROR , "Error" , "title required to add new category");
+			notifierService.notify(NotificationType.ERROR , "Erreur" , "Le titre est obligatoire.");
 			return;
 		}
 		// création de l'object json du body de la requete
@@ -169,7 +169,7 @@ public class CategoriesController extends Application implements Initializable {
 				categories.clear();
 				getAllCategories();
 
-				notifierService.notify(NotificationType.SUCCESS , "Success" , "Catégorie ajouter");
+				notifierService.notify(NotificationType.SUCCESS , "Succès" , "Projet ajouté.");
 			}
 	}
 	@FXML
@@ -177,7 +177,7 @@ public class CategoriesController extends Application implements Initializable {
 		String title = categorieTitle.getText().toString();
 		String description = categorieDescription.getText().toString() ;
 		if (title.equals("")) {
-			notifierService.notify(NotificationType.ERROR , "Error" , "title required to update category");
+			notifierService.notify(NotificationType.ERROR , "Erreur" , "Le titre est obligatoire.");
 			return;
 		}
 		String selectedElement = categoriesListView.getSelectionModel().getSelectedItems().get(0);
@@ -192,7 +192,7 @@ public class CategoriesController extends Application implements Initializable {
 			categoriesListView.getItems().clear();
 			categories.clear();
 			getAllCategories();
-			notifierService.notify(NotificationType.SUCCESS , "Success" , "Catégorie modifier");
+			notifierService.notify(NotificationType.SUCCESS , "Succès" , "Projet modifié.");
 		}
 	}
 

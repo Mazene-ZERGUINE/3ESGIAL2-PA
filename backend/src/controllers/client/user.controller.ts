@@ -11,14 +11,14 @@ const getUserById = (req: Request, res: any): void => {
 	const id: number = parseInt(req.params.id);
 
 	if (!id) {
-		res.status(400).send('Bad request...');
+		res.status(400).send('Mauvaise requête.');
 		return;
 	}
 
 	clientPool.query(getOneBy(Model.clientUser, ['id']), [id], (error: Error, results: any) => {
 		if (error) {
 			res.status(501).json({
-				error: 'internal server error',
+				error: 'Erreur serveur interne.',
 				details: error,
 			});
 
@@ -26,7 +26,7 @@ const getUserById = (req: Request, res: any): void => {
 		}
 
 		if (results.rows.length === 0) {
-			res.status(404).json({ error: 'item not found' });
+			res.status(404).json({ error: 'Aucun résultat.' });
 			return;
 		}
 
@@ -37,7 +37,7 @@ const getUserById = (req: Request, res: any): void => {
 const getAllUsers = (req: Request, res: Response): void => {
 	clientPool.query(getMany(Model.clientUser), (error: Error, results: any) => {
 		if (error) {
-			res.status(501).send('Internal server error' + error);
+			res.status(501).send('Erreur serveur interne');
 			return;
 		}
 
@@ -56,7 +56,7 @@ const createUser = (req: Request, res: Response): void => {
 
 	clientPool.query(getOneBy(Model.clientUser, ['email']), [email], async (error: Error, results: any) => {
 		if (error) {
-			res.status(500).send('Internal server error ' + error);
+			res.status(500).send('Erreur serveur interne.');
 			return;
 		}
 
@@ -69,7 +69,7 @@ const createUser = (req: Request, res: Response): void => {
 		try {
 			hashedPassword = await hash(password, { type: argon2id });
 		} catch (e: any) {
-			res.status(500).send('Internal server error: ' + e.message);
+			res.status(500).send('Erreur serveur interne.');
 			return;
 		}
 
@@ -86,7 +86,7 @@ const createUser = (req: Request, res: Response): void => {
 		const values = Object.values(userWithoutIdKey);
 		clientPool.query(createOne(Model.clientUser, columns), values, (error: Error, _: any) => {
 			if (error) {
-				res.status(500).send('Internal server error ' + error);
+				res.status(500).send('Erreur serveur interne.');
 				return;
 			}
 
@@ -108,7 +108,7 @@ const updateUser = (req: Request, res: Response): void => {
 
 	clientPool.query(getOneBy(Model.clientUser, ['email']), [emailParam], async (error: Error, results: any) => {
 		if (error) {
-			res.status(500).send('Internal server error ' + error);
+			res.status(500).send('Erreur serveur interne.');
 			return;
 		}
 
@@ -141,7 +141,7 @@ const updateUser = (req: Request, res: Response): void => {
 			try {
 				hashedPassword = await hash(password, { type: argon2id });
 			} catch (e: any) {
-				res.status(500).send('Internal server error: ' + e.message);
+				res.status(500).send('Erreur serveur interne.');
 				return;
 			}
 		}
@@ -160,7 +160,7 @@ const updateUser = (req: Request, res: Response): void => {
 
 		clientPool.query(updateOneBy(Model.clientUser, userColumns, ['email']), values, (error: Error, _: any) => {
 			if (error) {
-				res.status(500).send('Internal server error ' + error);
+				res.status(500).send('Erreur serveur interne.');
 				return;
 			}
 
@@ -186,14 +186,14 @@ const deleteUser = (req: Request, res: Response): void => {
 		clientPool.query(removeOneBy(Model.clientUser, ['email']), [email], (error: Error, _: any) => {
 			if (error) {
 				res.status(500).json({
-					error: 'Internal server error',
+					error: 'Erreur serveur interne.',
 					details: error,
 				});
 
 				return;
 			}
 
-			return res.status(200).json({ status_code: 200, message: 'user successfully deleted' });
+			return res.status(200).json({ status_code: 200, message: 'Utilisateur créé avec succès.' });
 		});
 	});
 };

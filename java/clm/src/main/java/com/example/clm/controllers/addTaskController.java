@@ -74,18 +74,18 @@ public class addTaskController implements Initializable {
 
 		// checking if the required fileds are empty or not
 		if (taskTitle.isEmpty() ||taskDeadline.toString().isEmpty()  || startDate.toString().isEmpty()) {
-			notifierService.notify(NotificationType.ERROR , "Error" , "title and description and at least one member are required to create task");
+			notifierService.notify(NotificationType.ERROR , "Erreur" , "Le titre, la description et au moins un membre sont requis.");
 			return;
 		}
 		// checking selected date
 		LocalDate now = LocalDate.now() ;
 		if(creationDate.isBefore(now) || taskDeadline.isBefore(now)) {
-			notifierService.notify(NotificationType.ERROR , "Error" , "date de début ou deadline ne peuvent pas etre avant ce jour");
+			notifierService.notify(NotificationType.ERROR , "Erreur" , "La date de début ou la date limite ne peuvent pas être définies avant ce jour.");
 			return;
 		}
 
 		if(creationDate.isAfter(taskDeadline)) {
-			notifierService.notify(NotificationType.ERROR , "Error" , "date de début ne peut pas dépasser le deadline");
+			notifierService.notify(NotificationType.ERROR , "Erreur" , "La date de début ne peut pas dépasser la date limite.");
 			return;
 		}
 
@@ -106,13 +106,13 @@ public class addTaskController implements Initializable {
 			root = fxmlLoader.load() ;
 			TasksController controller = fxmlLoader.getController();
 			controller.refreshList();
-			notifierService.notify(NotificationType.SUCCESS , "Success" , "New task added");
+			notifierService.notify(NotificationType.SUCCESS , "Succès" , "Tâche ajoutée.");
 			this.title.clear();
 			this.deadline.setValue(null);
 			this.description.clear();
 			this.startDate.setValue(null);
 		} else {
-			notifierService.notify(NotificationType.ERROR , "Error" , "Error occurred while adding the new task");
+			notifierService.notify(NotificationType.ERROR , "Erreur" , "Une erreur est survenu lors de l'ajout.");
 		}
 
 	}

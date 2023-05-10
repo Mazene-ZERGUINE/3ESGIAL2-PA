@@ -12,7 +12,7 @@ const signIn = (req: Request, res: Response) => {
 
 	clientPool.query(signInQuery.countUserByEmail(), [email], (error: Error, results: any) => {
 		if (error) {
-			res.status(500).send('Internal server error' + error);
+			res.status(500).send('Erreur serveur interne.');
 			return;
 		}
 
@@ -24,7 +24,7 @@ const signIn = (req: Request, res: Response) => {
 
 		clientPool.query(getOneBy('client_user', ['email']), [email], async (error: Error, results: any) => {
 			if (error) {
-				res.status(500).send('Internal server error' + error);
+				res.status(500).send('Erreur serveur interne.');
 				return;
 			}
 
@@ -41,7 +41,7 @@ const signIn = (req: Request, res: Response) => {
 				res.status(204).end();
 				return;
 			} catch (e) {
-				res.status(500).send('Internal server error ' + error);
+				res.status(500).send('Erreur serveur interne.');
 			}
 		});
 	});
