@@ -7,7 +7,7 @@ const categoriesQueries: any = require('../../queries/client/CategoriesQueries')
 const getAllCategories = (req: Request, res: Response) => {
 	clientPool.query(categoriesQueries.getAllQuery, (error: Error, results: any) => {
 		if (error) {
-			res.status(501).send('Internal server error' + error);
+			res.status(501).send('Erreur serveur interne.');
 			return;
 		}
 		res.status(200).send({ status_code: 200, categories: results.rows });
@@ -19,13 +19,13 @@ const getOneCategorieById = (req: Request, res: any) => {
 	clientPool.query(categoriesQueries.getOneQuery, [id], (error: Error, results: any) => {
 		if (error) {
 			res.status(501).json({
-				error: 'internal server error',
+				error: 'Erreur serveur interne.',
 				details: error,
 			});
 			return;
 		}
 		if (results.rows.length === 0) {
-			res.status(404).json({ error: 'item not found' });
+			res.status(404).json({ error: 'Aucun résultat.' });
 			return;
 		}
 		res.status(200).send({ categories: results.rows });
@@ -37,12 +37,12 @@ const addNewCategory = (req: Request, res: Response) => {
 	clientPool.query(categoriesQueries.addNewCategoryQuery, [title, desciption], (error: Error, results: any) => {
 		if (error) {
 			res.status(501).json({
-				error: 'Internal server error',
+				error: 'Erreur serveur interne. ',
 				details: error,
 			});
 			throw error;
 		}
-		res.status(200).send({ status_code: 200, messasge: 'category added' });
+		res.status(200).send({ status_code: 200, messasge: 'Projet ajouté.' });
 	});
 };
 
@@ -52,12 +52,12 @@ const deleteCategory = (req: Request, res: Response) => {
 	clientPool.query(categoriesQueries.deleteQuery, [id], (error: Error, results: any) => {
 		if (error) {
 			res.status(501).json({
-				error: 'Internal server error',
+				error: 'Erreur serveur interne.',
 				details: error,
 			});
 			return;
 		}
-		res.status(200).send({ status_code: 200, message: 'category deleted' });
+		res.status(200).send({ status_code: 200, message: 'Projet supprimé.' });
 	});
 };
 
@@ -66,18 +66,18 @@ const updateCategory = (req: Request, res: Response) => {
 	const id: number = parseInt(req.params.id_category);
 	clientPool.query(categoriesQueries.getOneQuery, [id], (error: Error, results: any) => {
 		if (results.rows.length === 0) {
-			res.status(404).json({ error: 'item not found' });
+			res.status(404).json({ error: 'Aucun résultat.' });
 			return;
 		}
 		clientPool.query(categoriesQueries.updateQuery, [title, desciption, id], (error: Error, results: any) => {
 			if (error) {
 				res.status(501).json({
-					error: 'Internal server error',
+					error: 'Erreur serveur interne.',
 					details: error,
 				});
 				return;
 			}
-			res.status(200).send({ status_code: 200, message: 'category updated' });
+			res.status(200).send({ status_code: 200, message: 'Projet mis à jour.' });
 		});
 	});
 };
