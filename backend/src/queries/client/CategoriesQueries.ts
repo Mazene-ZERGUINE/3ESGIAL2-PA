@@ -13,7 +13,7 @@ const updateQuery = 'UPDATE categories SET title = $1, desciption = $2 WHERE id 
 
 module.exports = {
 	getAllQuery,
-	getOneById,
+	getOneQuery,
 	deleteQuery,
 	addNewCategoryQuery,
 	updateQuery,

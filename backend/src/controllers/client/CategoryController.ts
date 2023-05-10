@@ -64,7 +64,7 @@ const deleteCategory = (req: Request, res: Response) => {
 const updateCategory = (req: Request, res: Response) => {
 	const { title, desciption } = req.body;
 	const id: number = parseInt(req.params.id_category);
-	clientPool.query(categoriesQueries.getOneById, [id], (error: Error, results: any) => {
+	clientPool.query(categoriesQueries.getOneQuery, [id], (error: Error, results: any) => {
 		if (results.rows.length === 0) {
 			res.status(404).json({ error: 'item not found' });
 			return;
