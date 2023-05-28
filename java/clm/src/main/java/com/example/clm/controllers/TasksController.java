@@ -121,6 +121,7 @@ public class TasksController implements Initializable {
 
 		} catch (IOException exception) {
 			System.out.println(exception.toString());
+			System.out.println(exception.getCause() + "\n" + exception.getMessage());
 		}
 	}
 
