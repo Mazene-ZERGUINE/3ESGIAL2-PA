@@ -6,6 +6,7 @@ import { AppComponent } from './app.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ComponentsModule } from './shared/components/components.module';
 import { DefaultUrlSerializer, UrlSerializer, UrlTree } from '@angular/router';
+import { ToastComponent } from './shared/components/toast/toast.component';
 
 export class LowerCaseUrlSerializer extends DefaultUrlSerializer {
   override parse(url: string): UrlTree {
@@ -15,7 +16,7 @@ export class LowerCaseUrlSerializer extends DefaultUrlSerializer {
 
 @NgModule({
   declarations: [AppComponent],
-  imports: [BrowserModule, NgbModule, AppRoutingModule, ComponentsModule],
+  imports: [BrowserModule, NgbModule, AppRoutingModule, ComponentsModule, ToastComponent],
   providers: [
     {
       provide: UrlSerializer,
