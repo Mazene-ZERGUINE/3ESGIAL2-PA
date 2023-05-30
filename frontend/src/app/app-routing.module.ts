@@ -17,6 +17,10 @@ const routes: Routes = [
   {
     path: 'signup',
     loadChildren: () => import('./pages/sign-up/sign-up.module').then((m) => m.SignUpModule),
+    data: {
+      hideHeader: true,
+      hideFooter: true,
+    },
   },
   {
     path: 'user',

@@ -1,1 +1,33 @@
-<p>sign-up works!</p>
+<div class="col">
+  <h2 class="my-3">Inscription</h2>
+  <form class="border border-secondary rounded p-3" *ngIf="form" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="mb-3">
+      <label class="form-label required" for="email">Email</label>
+      <input class="form-control" type="text" id="email" name="email" formControlName="email" required autofocus />
+      <div
+        class="text-danger my-2"
+        *ngIf="form.get('email')?.touched && form.get('email')?.dirty && form.get('email')?.getError('email')"
+      >
+        Le champs doit contenir un courriel.
+      </div>
+    </div>
+    <div class="mb-3">
+      <label class="form-label required" for="password">Mot de passe (taille minimale : {{ passwordMinLength }})</label>
+      <input class="form-control" type="password" id="password" name="password" formControlName="password" required />
+      <div
+        class="text-danger my-2"
+        *ngIf="form.get('password')?.touched && form.get('password')?.dirty && form.get('password')?.invalid"
+      >
+        Le mot de passe doit contenir au moins {{ passwordMinLength }} caractères.
+      </div>
+    </div>
+    <div class="mb-3">
+      <label class="form-label required" for="username">Nom d'utilisateur (lettres et chiffres autorisés)</label>
+      <input class="form-control" type="text" id="username" name="username" formControlName="username" required />
+      <div class="text-danger my-2" *ngIf="form.get('username')?.dirty && form.get('username')?.getError('pattern')">
+        Le champ doit commencer par une lettre et doit que contenir que des chiffres et des lettres.
+      </div>
+    </div>
+    <button class="btn btn-success" [disabled]="form.invalid">S'inscrire</button>
+  </form>
+</div>
