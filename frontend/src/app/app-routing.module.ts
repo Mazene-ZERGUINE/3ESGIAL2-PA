@@ -1,6 +1,9 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
+import { applicationTitle } from './shared/utils/app-title';
+
+const combinedTitle = `| ${applicationTitle}`;
 const routes: Routes = [
   {
     path: '',
@@ -9,6 +12,7 @@ const routes: Routes = [
   {
     path: 'administration',
     loadChildren: () => import('./pages/administration/administration.module').then((m) => m.AdministrationModule),
+    title: `Administration ${combinedTitle}`,
   },
   {
     path: 'login',
@@ -17,6 +21,7 @@ const routes: Routes = [
       hideHeader: true,
       hideFooter: true,
     },
+    title: `Connexion ${combinedTitle}`,
   },
   {
     path: 'signup',
@@ -25,14 +30,17 @@ const routes: Routes = [
       hideHeader: true,
       hideFooter: true,
     },
+    title: `Inscription ${combinedTitle}`,
   },
   {
     path: 'user',
     loadChildren: () => import('./pages/user/user.module').then((m) => m.UserModule),
+    title: `Mon profil ${combinedTitle}`,
   },
   {
     path: '**',
     loadChildren: () => import('./shared/pages/not-found/not-found.module').then((m) => m.NotFoundModule),
+    title: `Page introuvable ${combinedTitle}`,
   },
 ];
 
