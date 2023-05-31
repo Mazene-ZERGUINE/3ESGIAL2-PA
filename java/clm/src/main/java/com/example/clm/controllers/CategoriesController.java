@@ -2,12 +2,15 @@ package com.example.clm.controllers;
 
 import com.example.clm.Main;
 import com.example.clm.models.Categorie;
+import com.example.clm.models.Users;
 import com.example.clm.utils.ApiService;
+import com.example.clm.utils.AuthService;
 import com.example.clm.utils.NotifierService;
 import com.example.clm.utils.SceneService;
 import com.github.tsohr.JSONArray;
 import com.github.tsohr.JSONObject;
 import javafx.application.Application;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -15,23 +18,35 @@ import javafx.fxml.Initializable;
 
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
+import java.util.stream.Collectors;
+
 import tray.notification.NotificationType;
 
 
 
 public class CategoriesController extends Application implements Initializable {
 
+	private static final AuthService auth = new AuthService() ;
+
+	@FXML
+	AnchorPane mainPane;
 	@FXML
 	private ListView<String> categoriesListView ;
+
+	@FXML
+	private  ListView<String> membersList  ;
+
+	private List<Users> users = new ArrayList<>();
+
+	@FXML
+	private ListView<String> devProjects;
 
 	private final ApiService api = new ApiService() ;
 	private  final SceneService sceneService = new SceneService() ;
@@ -65,7 +80,22 @@ public class CategoriesController extends Application implements Initializable {
   // récupere tous les catégorie aprés le lancement de la scene
 	@Override
 	public void initialize(URL url, ResourceBundle resourceBundle) {
-	getAllCategories();
+
+		AuthService auth = new AuthService();
+		if(auth.checkUserRole()) {
+			getAllCategories();
+			try {
+				getAllUsers();
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		} else {
+			try {
+				devProjects();
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		}
 	}
 
 	private void getAllCategories() {
@@ -145,6 +175,7 @@ public class CategoriesController extends Application implements Initializable {
 				for (Categorie element : selectedCategorie) {
 					categorieTitle.setText(element.getTitle());
 					categorieDescription.setText(element.getDiscreption());
+					// TODO : add the selected members of the project to be selected in the list //
 				}
 			}
 		});
@@ -158,9 +189,14 @@ public class CategoriesController extends Application implements Initializable {
 			return;
 		}
 		// création de l'object json du body de la requete
+		ObservableList<String> selectedItems = membersList.getSelectionModel().getSelectedItems();
+
+		List<Users> selectedUsers = users.stream().filter(user -> selectedItems.contains(user.getFirstName())).collect(Collectors.toList());
+		List<Integer> usersId = selectedUsers.stream().map(e -> e.getId()).collect(Collectors.toList());
 		JSONObject data = new JSONObject() ;
 			data.put("title" , title) ;
 		  data.put("desciption" , description) ;
+			data.put("members" , usersId);
 			StringBuilder response = new StringBuilder() ;
 			response = api.postTypeRequest(baseUrl + "categories/" , data) ;
 			JSONObject json = new JSONObject(response.toString());
@@ -198,7 +234,7 @@ public class CategoriesController extends Application implements Initializable {
 
 	@FXML
 	void onLogOutBtnClick(MouseEvent event) {
-		Stage stage = (Stage) addBtn.getScene().getWindow();
+		Stage stage = (Stage) mainPane.getScene().getWindow();
 		stage.close();
 
 		try {
@@ -210,13 +246,43 @@ public class CategoriesController extends Application implements Initializable {
 
 	@FXML
 	void switchToMembersPage(MouseEvent __) throws IOException {
-		Stage stage = (Stage)this.addBtn.getScene().getWindow();
+		Stage stage = (Stage)this.mainPane.getScene().getWindow();
 		sceneService.switchScene(stage , "members-view.fxml" , null);
 	}
 
 	@FXML
 	void switchToPlanificationPage(MouseEvent event) throws IOException {
-			Stage stage = (Stage)this.addBtn.getScene().getWindow();
+			Stage stage = (Stage)this.mainPane.getScene().getWindow();
 			sceneService.switchScene(stage , "gantt-view.fxml" , null);
 	}
+
+	private void getAllUsers() throws IOException {
+		StringBuilder response = api.getTypeRequest(baseUrl + "users/") ;
+		JSONObject json = new JSONObject(response.toString()) ;
+		JSONArray dataArray = json.getJSONArray("users") ;
+		for (int i = 0 ; i < dataArray.length() ; i++) {
+			Users user = new Users(
+				dataArray.getJSONObject(i).getInt("id"),
+				dataArray.getJSONObject(i).getString("first_name"),
+				dataArray.getJSONObject(i).getString("last_name"),
+				dataArray.getJSONObject(i).getString("email"),
+				dataArray.getJSONObject(i).getString("password"),
+				dataArray.getJSONObject(i).getString("created_at"),
+				dataArray.getJSONObject(i).getString("role")
+				//dataArray.getJSONObject(i).getString("updated_at")
+			);
+			users.add(user) ;
+			membersList.getItems().add( dataArray.getJSONObject(i).getString("first_name")) ;
+		}
+		membersList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE); ;
+	}
+
+	public void devProjects() throws IOException {
+		int userId = auth.getUserId();
+		System.out.println(userId);
+		StringBuilder response = api.getTypeRequest(baseUrl + "categories/dev/" + userId);
+		JSONObject jsonResponse = new JSONObject(response.toString());
+		System.out.println(jsonResponse);
+	}
+
 }

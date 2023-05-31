@@ -13,10 +13,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
@@ -32,7 +29,7 @@ import java.util.ResourceBundle;
 import static javafx.collections.FXCollections.observableArrayList;
 
 
-public class MembersController extends Application implements Initializable {
+public class MembersController  implements Initializable {
 
 	private final ApiService api = new ApiService();
 	private final SceneService sceneService = new SceneService();
@@ -49,6 +46,9 @@ public class MembersController extends Application implements Initializable {
 	private TableColumn lastNameColumn;
 	@FXML
 	private TableColumn firstNameColumn;
+
+	@FXML
+	private ComboBox<String> roleCombo ;
 	@FXML
 	private TableColumn emailColumn;
 	@FXML
@@ -65,21 +65,12 @@ public class MembersController extends Application implements Initializable {
 	@FXML
 	private Button addBtn;
 
-	@Override
-	public void start(Stage stage) throws IOException {
-		FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("templates/members-view.fxml"));
-		Scene scene = new Scene(fxmlLoader.load(), 1100, 650);
-		stage.setTitle("CLM");
-		stage.setScene(scene);
-		stage.show();
-	}
 
-	public static void main(String[] args) {
-		launch();
-	}
 
 	@Override
 	public void initialize(URL url, ResourceBundle resourceBundle) {
+		roleCombo.getItems().add("ADMIN");
+		roleCombo.getItems().add("DEV");
 		setColumns();
 		getAllMembers();
 	}
@@ -90,16 +81,11 @@ public class MembersController extends Application implements Initializable {
 		var firstName = firstNameField.getText().trim();
 		var email = emailField.getText().trim();
 		var password = passwordField.getText();
-		var confirmPassword = confirmPasswordField.getText();
+		var role = roleCombo.getValue() ;
 
-		var isOneFieldEmpty = lastName.isBlank() || firstName.isBlank() || email.isBlank() || password.isBlank() || confirmPassword.isBlank();
+		var isOneFieldEmpty = lastName.isBlank() || firstName.isBlank() || email.isBlank() || password.isBlank()  || role.isBlank();
 		if (isOneFieldEmpty) {
 			notifierService.notify(NotificationType.ERROR, "Error", "Tous les champs sont obligatoires.");
-			return;
-		}
-
-		if (!arePasswordsSame(passwordField.getText(), confirmPasswordField.getText())) {
-			notifierService.notify(NotificationType.ERROR, "Error", "Les mots de passes ne sont pas identiques.");
 			return;
 		}
 
@@ -108,7 +94,8 @@ public class MembersController extends Application implements Initializable {
 			.put("last_name", lastName)
 			.put("first_name", firstName)
 			.put("email", email)
-			.put("password", password);
+			.put("password", password)
+			.put("role" , role) ;
 
 		try {
 			api.postTypeRequest(baseUrl + "users/", payload);
@@ -133,7 +120,8 @@ public class MembersController extends Application implements Initializable {
 		firstNameField.clear();
 		emailField.clear();
 		passwordField.clear();
-		confirmPasswordField.clear();
+		roleCombo.setValue("");
+
 	}
 
 	@FXML
@@ -142,16 +130,11 @@ public class MembersController extends Application implements Initializable {
 		var firstName = firstNameField.getText().trim();
 		var email = emailField.getText().trim();
 		var password = passwordField.getText();
-		var confirmPassword = confirmPasswordField.getText();
+		var role = roleCombo.getValue();
 
 		var isOneFieldEmpty = lastName.isBlank() || firstName.isBlank() || email.isEmpty();
 		if (isOneFieldEmpty) {
 			notifierService.notify(NotificationType.ERROR, "Error", "Tous les champs sont obligatoires, sauf les mots de passe.");
-			return;
-		}
-
-		if (!arePasswordsSame(password, confirmPassword)) {
-			notifierService.notify(NotificationType.ERROR, "Error", "Les mots de passe ne sont pas identiques.");
 			return;
 		}
 
@@ -166,7 +149,8 @@ public class MembersController extends Application implements Initializable {
 			.put("last_name", lastName)
 			.put("first_name", firstName)
 			.put("email", email)
-			.put("password", password);
+			.put("password", password)
+			.put("role" , role) ;
 
 		try {
 			api.putTypeRequest(baseUrl + "users/" + selectedUser.getEmail(), payload);
@@ -229,6 +213,7 @@ public class MembersController extends Application implements Initializable {
 				lastNameField.setText(user.getLastName());
 				firstNameField.setText(user.getFirstName());
 				emailField.setText(user.getEmail());
+				roleCombo.setValue(user.getRole());
 			}
 		});
 	}
@@ -259,7 +244,8 @@ public class MembersController extends Application implements Initializable {
 					jsonUsers.getJSONObject(i).getString("last_name"),
 					jsonUsers.getJSONObject(i).getString("email"),
 					jsonUsers.getJSONObject(i).getString("password"),
-					jsonUsers.getJSONObject(i).getString("created_at")
+					jsonUsers.getJSONObject(i).getString("created_at") ,
+					jsonUsers.getJSONObject(i).getString("role")
 				);
 
 				users.add(newUser);

@@ -117,7 +117,8 @@ public class StatusPopUpController  implements Initializable {
 				dataArray.getJSONObject(i).getString("last_name"),
 				dataArray.getJSONObject(i).getString("email"),
 				dataArray.getJSONObject(i).getString("password"),
-				dataArray.getJSONObject(i).getString("created_at")
+				dataArray.getJSONObject(i).getString("created_at"),
+				dataArray.getJSONObject(i).getString("role")
 				//dataArray.getJSONObject(i).getString("updated_at")
 			);
 			users.add(user) ;

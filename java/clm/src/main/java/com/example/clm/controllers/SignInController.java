@@ -1,6 +1,7 @@
 package com.example.clm.controllers;
 
 import com.example.clm.utils.ApiService;
+import com.example.clm.utils.AuthService;
 import com.example.clm.utils.NotifierService;
 import com.example.clm.utils.SceneService;
 import com.github.tsohr.JSONException;
@@ -13,7 +14,10 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import tray.notification.NotificationType;
 
+import java.io.*;
+import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 
 public class SignInController {
 
@@ -70,14 +74,50 @@ public class SignInController {
 		}
 
 		try {
-			this.sceneService.switchToNewWindow("categories-view.fxml" , null , new Stage());
-			this.notifierService.notify(NotificationType.SUCCESS, "Succès", "Vous êtes connecté.e !");
+			StringBuilder response = api.postTypeRequest(baseUrl + "trello/signin" , data);
+			JSONObject json = new JSONObject((response.toString()));
 
+			String filePath = "../configs/userInfo.txt";
+			File file = new File(filePath);
+
+			File parentDir = file.getParentFile();
+			if (!parentDir.exists()) {
+				parentDir.mkdirs();
+			}
+			if (!file.exists()) {
+				file.createNewFile();
+			}
+
+			file.setWritable(true, true);
+
+			BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+			writer.write(json.toString());
+			writer.close();
+
+			file.setReadable(false, false);
+			file.setWritable(false, false);
+			file.setExecutable(false, false);
+
+			AuthService authentication = new AuthService() ;
+			boolean isAdmin = authentication.checkUserRole() ;
+
+			if (isAdmin) {
+				this.sceneService.switchToNewWindow("categories-view.fxml" , null , new Stage());
+				this.notifierService.notify(NotificationType.SUCCESS, "Succès", "Vous êtes connecté.e !");
+
+			} else {
+				this.sceneService.switchToNewWindow("categories-dev-view.fxml" , null , new Stage());
+				this.notifierService.notify(NotificationType.SUCCESS, "Succès", "Vous êtes connecté.e !");
+			}
 			Stage stage = (Stage) this.loginBtn.getScene().getWindow() ;
 			stage.close();
 		} catch (IOException e) {
 			notifierService.notify(NotificationType.ERROR, "Erreur", "Un problème est survenu...");
+			System.out.println(e.getMessage() + " " + e.getCause());
 		}
 	}
+
+	// checkig the users role if <admin> || <dev> //
+
 
 }
