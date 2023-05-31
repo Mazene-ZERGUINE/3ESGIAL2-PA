@@ -2,31 +2,85 @@
   <h2 class="my-3">Inscription</h2>
   <form class="border border-secondary rounded p-3" *ngIf="form" [formGroup]="form" (ngSubmit)="onSubmit()">
     <div class="mb-3">
+      <label class="form-label required" for="nom">Nom</label>
+      <input class="form-control" type="text" id="nom" name="nom" formControlName="nom" required autofocus />
+      <small
+        class="text-danger my-2"
+        *ngIf="form.get('nom')?.touched && form.get('nom')?.dirty && form.get('nom')?.getError('pattern')"
+      >
+        Le champ doit contenir des lettres.
+      </small>
+    </div>
+    <div class="mb-3">
+      <label class="form-label required" for="prenom">Prénom</label>
+      <input class="form-control" type="text" id="prenom" name="prenom" formControlName="prenom" required />
+      <small
+        class="text-danger my-2"
+        *ngIf="form.get('prenom')?.touched && form.get('prenom')?.dirty && form.get('prenom')?.getError('pattern')"
+      >
+        Le champ doit contenir des lettres.
+      </small>
+    </div>
+    <div class="mb-3">
       <label class="form-label required" for="email">Email</label>
-      <input class="form-control" type="text" id="email" name="email" formControlName="email" required autofocus />
-      <div
+      <input class="form-control" type="text" id="email" name="email" formControlName="email" required />
+      <small
         class="text-danger my-2"
         *ngIf="form.get('email')?.touched && form.get('email')?.dirty && form.get('email')?.getError('email')"
       >
-        Le champs doit contenir un courriel.
-      </div>
+        Le champ doit contenir un courriel.
+      </small>
     </div>
     <div class="mb-3">
       <label class="form-label required" for="password">Mot de passe (taille minimale : {{ passwordMinLength }})</label>
       <input class="form-control" type="password" id="password" name="password" formControlName="password" required />
-      <div
+      <small
         class="text-danger my-2"
-        *ngIf="form.get('password')?.touched && form.get('password')?.dirty && form.get('password')?.invalid"
+        *ngIf="
+          form.get('password')?.touched && form.get('password')?.dirty && form.get('password')?.getError('minlength')
+        "
       >
         Le mot de passe doit contenir au moins {{ passwordMinLength }} caractères.
-      </div>
+      </small>
     </div>
     <div class="mb-3">
-      <label class="form-label required" for="username">Nom d'utilisateur (lettres et chiffres autorisés)</label>
-      <input class="form-control" type="text" id="username" name="username" formControlName="username" required />
-      <div class="text-danger my-2" *ngIf="form.get('username')?.dirty && form.get('username')?.getError('pattern')">
-        Le champ doit commencer par une lettre et doit que contenir que des chiffres et des lettres.
-      </div>
+      <label class="form-label required" for="pseudonyme">Pseudonyme</label>
+      <input
+        class="form-control"
+        type="pseudonyme"
+        id="pseudonyme"
+        name="pseudonyme"
+        formControlName="pseudonyme"
+        required
+      />
+    </div>
+    <div class="mb-3">
+      <label class="form-label required" for="ville">Ville</label>
+      <input class="form-control" type="ville" id="ville" name="ville" formControlName="ville" required />
+      <small
+        class="text-danger my-2"
+        *ngIf="form.get('ville')?.touched && form.get('ville')?.dirty && form.get('ville')?.getError('pattern')"
+      >
+        Le champ doit contenir des lettres.
+      </small>
+    </div>
+    <div class="mb-3">
+      <label class="form-label required" for="departement">Votre département</label>
+      <select class="form-select" formControlName="departement" id="departement" aria-label="Sélection de département">
+        <option *ngFor="let department of frenchDepartments" [value]="department.code">
+          {{ department.code }} - {{ department.name }}
+        </option>
+      </select>
+      <small
+        class="text-danger my-2"
+        *ngIf="
+          form.get('departement')?.touched &&
+          form.get('departement')?.dirty &&
+          form.get('departement')?.getError('pattern')
+        "
+      >
+        Le champ est incorrect.
+      </small>
     </div>
     <button class="btn btn-success" [disabled]="form.invalid">S'inscrire</button>
   </form>
