@@ -46,7 +46,7 @@ const getAllUsers = (req: Request, res: Response): void => {
 };
 
 const createUser = (req: Request, res: Response): void => {
-	const { email, first_name, last_name, password } = req.body;
+	const { email, first_name, last_name, password, role } = req.body;
 	type UserWithoutIdKey = Omit<User, 'id'>;
 
 	const isOnePropertyInvalid = !email.trim() || !first_name.trim() || !last_name.trim() || !password.trim();
@@ -78,6 +78,7 @@ const createUser = (req: Request, res: Response): void => {
 			first_name,
 			last_name,
 			password: hashedPassword,
+			role,
 			created_at: new Date(),
 			updated_at: null,
 		};
@@ -97,7 +98,7 @@ const createUser = (req: Request, res: Response): void => {
 
 const updateUser = (req: Request, res: Response): void => {
 	const { email: emailParam } = req.params;
-	const { email, first_name, last_name, password } = req.body;
+	const { email, first_name, last_name, password, role } = req.body;
 	type UserWithoutIdKey = Omit<User, 'id'>;
 
 	const isOnePropertyInvalid = !email.trim() || !first_name.trim() || !last_name.trim() || password == null;
@@ -151,6 +152,7 @@ const updateUser = (req: Request, res: Response): void => {
 			first_name,
 			last_name,
 			password: !password ? foundUser.password : hashedPassword,
+			role,
 			created_at: foundUser.created_at,
 			updated_at: new Date(),
 		};

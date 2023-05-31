@@ -1,4 +1,4 @@
-import { Router, Request, Response } from 'express';
+import e, { Router, Request, Response } from 'express';
 import Category from '../../models/client/Categories';
 
 const clientPool: any = require('../../db/clientPool');
@@ -33,6 +33,7 @@ const getOneCategorieById = (req: Request, res: any) => {
 };
 
 const addNewCategory = (req: Request, res: Response) => {
+	const members: number[] = req.body.members;
 	const { title, desciption } = req.body;
 	clientPool.query(categoriesQueries.addNewCategoryQuery, [title, desciption], (error: Error, results: any) => {
 		if (error) {
@@ -40,10 +41,25 @@ const addNewCategory = (req: Request, res: Response) => {
 				error: 'Erreur serveur interne. ',
 				details: error,
 			});
-			throw error;
+			return;
 		}
-		res.status(200).send({ status_code: 200, messasge: 'Projet ajouté.' });
+		members.forEach((member: number) => {
+			clientPool.query(
+				categoriesQueries.addProjectsMumbers,
+				[results.rows[0].id, member],
+				(error: Error, resuts: any) => {
+					if (error) {
+						res.status(501).json({
+							error: 'Erreur serveur interne. ',
+							details: error,
+						});
+						return;
+					}
+				},
+			);
+		});
 	});
+	res.status(200).send({ status_code: 200, messasge: 'Projet ajouté.' });
 };
 
 const deleteCategory = (req: Request, res: Response) => {
@@ -82,10 +98,27 @@ const updateCategory = (req: Request, res: Response) => {
 	});
 };
 
+const getDevProjects = (req: Request, res: Response): void => {
+	const userId: number = parseInt(req.params.user_id);
+	console.log(userId);
+	clientPool.query(categoriesQueries.getUserProjectsQuery, [userId], (error: Error, results: any) => {
+		if (error) {
+			res.status(501).json({
+				error: 'Erreur serveur interne.',
+				details: error,
+			});
+			throw error;
+			return;
+		}
+		res.status(200).send({ projects: results.rows }).end();
+	});
+};
+
 module.exports = {
 	getAllCategories,
 	getOneCategorieById,
 	addNewCategory,
 	deleteCategory,
 	updateCategory,
+	getDevProjects,
 };
