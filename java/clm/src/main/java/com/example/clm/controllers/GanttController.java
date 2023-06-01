@@ -2,6 +2,7 @@ package com.example.clm.controllers;
 import com.example.clm.models.Categorie;
 import com.example.clm.models.Tasks;
 import com.example.clm.utils.ApiService;
+import com.example.clm.utils.AuthService;
 import com.example.clm.utils.SceneService;
 import com.github.tsohr.JSONArray;
 import com.github.tsohr.JSONObject;
@@ -37,6 +38,7 @@ public class GanttController implements Initializable {
 	@FXML
 	private BarChart<Integer, String> chart;
 
+	private final static AuthService auth = new AuthService() ;
 	@FXML
 	private NumberAxis daysAxis;
 
@@ -57,7 +59,21 @@ public class GanttController implements Initializable {
 	private final XYChart.Series<Integer, String> dataSeries = new XYChart.Series<>();
 
 
-
+	public void devProjects() throws IOException {
+		int userId = auth.getUserId();
+		StringBuilder response = api.getTypeRequest(baseUrl + "categories/dev/" + userId);
+		JSONObject jsonResponse = new JSONObject(response.toString());
+		JSONArray dataArray = jsonResponse.getJSONArray("projects") ;
+		for (int i = 0 ; i < dataArray.length() ; i++) {
+			Categorie categorie = new Categorie(
+				dataArray.getJSONObject(i).getInt("id"),
+				dataArray.getJSONObject(i).getString("title"),
+				dataArray.getJSONObject(i).getString("desciption")
+			);
+			categories.add(categorie) ;
+			projectsList.getItems().add(dataArray.getJSONObject(i).getString("title"));
+		}
+	}
 
 	public void getAllProjets() {
 		StringBuilder response = new StringBuilder() ;
@@ -184,8 +200,13 @@ public class GanttController implements Initializable {
 
 	@FXML
 	void onProjectsBtnClick(MouseEvent event) throws IOException {
-		Stage stage = (Stage) projectsList.getScene().getWindow();
-		sceneService.switchScene(stage  , "categories-view.fxml" , null);
+		if (auth.checkUserRole()) {
+			Stage stage = (Stage) this.logoutBtn.getScene().getWindow();
+			sceneService.switchScene(stage, "categories-view.fxml", null);
+		} else {
+			Stage stage = (Stage) this.logoutBtn.getScene().getWindow();
+			sceneService.switchScene(stage, "categories-dev-view.fxml", null);
+		}
 	}
 
 	@FXML
@@ -197,8 +218,18 @@ public class GanttController implements Initializable {
 
 	@Override
 	public void initialize(URL url, ResourceBundle resourceBundle) {
+		if (!auth.checkUserRole()) {
+			try {
+				System.out.println("dev");
+				devProjects();
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		} else {
+			System.out.println("admin");
+			getAllProjets();
 
-		getAllProjets();
+		}
 		ScrollPane scrollPane = new ScrollPane();
 		scrollPane.setContent(chart);
 		scrollPane.setFitToWidth(true);
@@ -211,7 +242,13 @@ public class GanttController implements Initializable {
 
 	@FXML
 	void switchToMembersPage(MouseEvent __) throws IOException {
-		Stage stage = (Stage)this.logoutBtn.getScene().getWindow();
-		sceneService.switchScene(stage , "members-view.fxml" , null);
+		if (auth.checkUserRole()) {
+			Stage stage = (Stage) this.logoutBtn.getScene().getWindow();
+			sceneService.switchScene(stage, "members-view.fxml", null);
+		} else {
+			Stage stage = (Stage) this.logoutBtn.getScene().getWindow();
+			sceneService.switchScene(stage, "dev-members-view.fxml", null);
+		}
+
 	}
 }

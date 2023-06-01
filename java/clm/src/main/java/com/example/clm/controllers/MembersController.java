@@ -3,6 +3,7 @@ package com.example.clm.controllers;
 import com.example.clm.Main;
 import com.example.clm.models.Users;
 import com.example.clm.utils.ApiService;
+import com.example.clm.utils.AuthService;
 import com.example.clm.utils.NotifierService;
 import com.example.clm.utils.SceneService;
 import com.github.tsohr.JSONObject;
@@ -65,12 +66,16 @@ public class MembersController  implements Initializable {
 	@FXML
 	private Button addBtn;
 
+	private final  static AuthService auth = new AuthService();
 
 
 	@Override
 	public void initialize(URL url, ResourceBundle resourceBundle) {
-		roleCombo.getItems().add("ADMIN");
-		roleCombo.getItems().add("DEV");
+		if (auth.checkUserRole()) {
+			roleCombo.getItems().add("ADMIN");
+			roleCombo.getItems().add("DEV");
+		}
+
 		setColumns();
 		getAllMembers();
 	}
@@ -220,14 +225,24 @@ public class MembersController  implements Initializable {
 
 	@FXML
 	void switchToCategoriesPage(MouseEvent __) throws IOException {
-		Stage stage = (Stage) this.addBtn.getScene().getWindow();
-		sceneService.switchScene(stage, "categories-view.fxml", null);
+		if (auth.checkUserRole()) {
+			Stage stage = (Stage) this.addBtn.getScene().getWindow();
+			sceneService.switchScene(stage, "categories-view.fxml", null);
+		} else {
+			Stage stage = (Stage) this.tableView.getScene().getWindow();
+			sceneService.switchScene(stage, "categories-dev-view.fxml", null);
+		}
 	}
 
 	@FXML
 	void switchToPlanificationPage(MouseEvent event) throws IOException {
-		Stage stage = (Stage) this.addBtn.getScene().getWindow();
-		sceneService.switchScene(stage, "gantt-view.fxml", null);
+		if (auth.checkUserRole()) {
+			Stage stage = (Stage) this.addBtn.getScene().getWindow();
+			sceneService.switchScene(stage, "gantt-view.fxml", null);
+		} else {
+			Stage stage = (Stage) this.tableView.getScene().getWindow();
+			sceneService.switchScene(stage, "gantt-view.fxml", null);
+		}
 	}
 
 	private void getAllMembers() {

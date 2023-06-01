@@ -42,6 +42,8 @@ public class CategoriesController extends Application implements Initializable {
 
 	@FXML
 	private  ListView<String> membersList  ;
+	private 		List<Categorie> projects = new ArrayList<>();
+
 
 	private List<Users> users = new ArrayList<>();
 
@@ -150,35 +152,74 @@ public class CategoriesController extends Application implements Initializable {
 	@FXML
 	void onCategorieListSelected(MouseEvent event) {
 		/*
-		* verification des nombres des click si 1 -> affichage des donnée de la ligne séléctionnée dans les chaps text
-		* 																			2 -> redirection vers la page des détaile de la catégorie
-		* **/
-		categoriesListView.setOnMouseClicked(e -> {
-			if (e.getClickCount() == 2) {
-				// redirection vers tasks-view.fxml
-				String selectedElement = categoriesListView.getSelectionModel().getSelectedItems().get(0);
-				List<Categorie> selectedCategorie = categories.stream().filter(element -> Objects.equals(element.getTitle(), selectedElement)).toList();
-				int categorieId = selectedCategorie.get(0).getId();
-				Stage stage =(Stage)addBtn.getScene().getWindow() ; // récupération de stage de la scene current
-				FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("templates/tasks-view.fxml"));
-				try {
-					root = fxmlLoader.load() ;
-					TasksController controller = fxmlLoader.getController() ;
-					controller.setData(selectedCategorie);
-					sceneService.switchScene(stage ,"tasks-view.fxml" , root);
-				} catch (IOException ex) {
-					throw new RuntimeException(ex);
+		 * verification des nombres des click si 1 -> affichage des donnée de la ligne séléctionnée dans les chaps text
+		 * 																			2 -> redirection vers la page des détaile de la catégorie
+		 * **/
+
+		if (!auth.checkUserRole()) {
+			devProjects.setOnMouseClicked(e -> {
+				if (e.getClickCount() == 2) {
+					// redirection vers tasks-view.fxml
+					String selectedElement = devProjects.getSelectionModel().getSelectedItems().get(0);
+					System.out.println(selectedElement);
+					List<Categorie> selectedCategorie = projects.stream().filter(element -> Objects.equals(element.getTitle(), selectedElement)).toList();
+					int categorieId = selectedCategorie.get(0).getId();
+					selectedCategorie.forEach(ex -> System.out.println(ex.getId()));
+					Stage stage = (Stage) mainPane.getScene().getWindow(); // récupération de stage de la scene current
+					FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("templates/tasks-view.fxml"));
+					try {
+						root = fxmlLoader.load();
+						TasksController controller = fxmlLoader.getController();
+						controller.setData(selectedCategorie);
+						sceneService.switchScene(stage, "tasks-view.fxml", root);
+					} catch (IOException ex) {
+						throw new RuntimeException(ex);
+					}
 				}
-			} else {
-				String selectedElement = categoriesListView.getSelectionModel().getSelectedItems().get(0);
-				List<Categorie> selectedCategorie = categories.stream().filter(element -> Objects.equals(element.getTitle(), selectedElement)).toList();
-				for (Categorie element : selectedCategorie) {
-					categorieTitle.setText(element.getTitle());
-					categorieDescription.setText(element.getDiscreption());
-					// TODO : add the selected members of the project to be selected in the list //
+			});
+		} else {
+
+			categoriesListView.setOnMouseClicked(e -> {
+				if (e.getClickCount() == 2) {
+					// redirection vers tasks-view.fxml
+					String selectedElement = categoriesListView.getSelectionModel().getSelectedItems().get(0);
+					List<Categorie> selectedCategorie = categories.stream().filter(element -> Objects.equals(element.getTitle(), selectedElement)).toList();
+					int categorieId = selectedCategorie.get(0).getId();
+					Stage stage = (Stage) addBtn.getScene().getWindow(); // récupération de stage de la scene current
+					FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("templates/tasks-view.fxml"));
+					try {
+						root = fxmlLoader.load();
+						TasksController controller = fxmlLoader.getController();
+						controller.setData(selectedCategorie);
+						sceneService.switchScene(stage, "tasks-view.fxml", root);
+					} catch (IOException ex) {
+						throw new RuntimeException(ex);
+					}
+				} else {
+					membersList.getSelectionModel().clearSelection();
+					String selectedElement = categoriesListView.getSelectionModel().getSelectedItems().get(0);
+					List<Categorie> selectedCategorie = categories.stream().filter(element -> Objects.equals(element.getTitle(), selectedElement)).toList();
+					for (Categorie element : selectedCategorie) {
+						categorieTitle.setText(element.getTitle());
+						categorieDescription.setText(element.getDiscreption());
+						int userId = auth.getUserId();
+						StringBuilder response = null;
+						try {
+							response = api.getTypeRequest(baseUrl + "categories/project/" + selectedCategorie.get(0).getId());
+						} catch (IOException ex) {
+							System.out.println(ex.getCause());
+						}
+						JSONObject jsonResponse = new JSONObject(response.toString());
+						JSONArray dataArray = jsonResponse.getJSONArray("projects") ;
+						System.out.println(dataArray.toString());
+						for (int i = 0 ; i< dataArray.length() ; i++){
+							System.out.println(dataArray.getJSONObject(i).getString("first_name"));
+								membersList.getSelectionModel().select(dataArray.getJSONObject(i).getString("first_name"));
+						}
+					}
 				}
-			}
-		});
+			});
+		}
 	}
 	@FXML
 	void onaddBtnClick(ActionEvent event) throws IOException {
@@ -219,8 +260,12 @@ public class CategoriesController extends Application implements Initializable {
 		String selectedElement = categoriesListView.getSelectionModel().getSelectedItems().get(0);
 		List<Categorie> selectedCategorie = categories.stream().filter(e -> Objects.equals(e.getTitle(), selectedElement)).toList();
 		JSONObject data = new JSONObject() ;
+		ObservableList<String> selectedItems = membersList.getSelectionModel().getSelectedItems();
+		List<Users> selectedUsers = users.stream().filter(user -> selectedItems.contains(user.getFirstName())).collect(Collectors.toList());
+		List<Integer> usersId = selectedUsers.stream().map(e -> e.getId()).collect(Collectors.toList());
 		data.put("title" , title) ;
 		data.put("desciption" , description) ;
+		data.put("members" , usersId);
 		StringBuilder response = new StringBuilder() ;
 		response = api.putTypeRequest(baseUrl + "categories/"+ selectedCategorie.get(0).getId() , data) ;
 		JSONObject json = new JSONObject(response.toString());
@@ -247,7 +292,12 @@ public class CategoriesController extends Application implements Initializable {
 	@FXML
 	void switchToMembersPage(MouseEvent __) throws IOException {
 		Stage stage = (Stage)this.mainPane.getScene().getWindow();
-		sceneService.switchScene(stage , "members-view.fxml" , null);
+		if (!auth.checkUserRole()) {
+			sceneService.switchScene(stage , "dev-members-view.fxml" , null);
+		} else {
+			sceneService.switchScene(stage , "members-view.fxml" , null);
+
+		}
 	}
 
 	@FXML
@@ -279,10 +329,18 @@ public class CategoriesController extends Application implements Initializable {
 
 	public void devProjects() throws IOException {
 		int userId = auth.getUserId();
-		System.out.println(userId);
 		StringBuilder response = api.getTypeRequest(baseUrl + "categories/dev/" + userId);
 		JSONObject jsonResponse = new JSONObject(response.toString());
-		System.out.println(jsonResponse);
+		JSONArray dataArray = jsonResponse.getJSONArray("projects") ;
+		for (int i = 0 ; i < dataArray.length() ; i++) {
+			Categorie categorie = new Categorie(
+				dataArray.getJSONObject(i).getInt("category_id"),
+				dataArray.getJSONObject(i).getString("title"),
+				dataArray.getJSONObject(i).getString("desciption")
+			);
+			projects.add(categorie) ;
+			devProjects.getItems().add(dataArray.getJSONObject(i).getString("title"));
+		}
 	}
 
 }
