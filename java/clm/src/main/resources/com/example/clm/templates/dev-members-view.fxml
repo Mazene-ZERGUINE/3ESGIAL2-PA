@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="650.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.clm.controllers.MembersController">
+	<children>
+		<AnchorPane fx:id="mainPane" prefHeight="650.0" prefWidth="1100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+			<children>
+				<BorderPane prefHeight="57.0" prefWidth="1100.0" style="-fx-background-color: #000958;">
+					<center>
+						<AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="57.0" prefWidth="1114.0" BorderPane.alignment="CENTER">
+							<children>
+								<Text fill="WHITE" layoutX="447.0" layoutY="36.0" onMouseClicked="#switchToCategoriesPage" strokeType="OUTSIDE" strokeWidth="0.0" text="Projets" textAlignment="CENTER" AnchorPane.leftAnchor="447.0" AnchorPane.rightAnchor="613.01953125" AnchorPane.topAnchor="16.6640625">
+									<font>
+										<Font size="20.0" />
+									</font>
+								</Text>
+								<Text fill="WHITE" layoutX="526.0" layoutY="36.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Ticket" AnchorPane.topAnchor="16.6640625">
+									<font>
+										<Font size="20.0" />
+									</font>
+								</Text>
+								<Text fill="WHITE" layoutX="596.0" layoutY="36.0" onMouseClicked="#switchToPlanificationPage" strokeType="OUTSIDE" strokeWidth="0.0" text="Planification" AnchorPane.topAnchor="16.6640625">
+									<font>
+										<Font size="20.0" />
+									</font>
+								</Text>
+								<Text fx:id="logOutBtn" fill="WHITE" layoutX="964.0" layoutY="36.0" onMouseClicked="#onLogOutBtnClick" strokeType="OUTSIDE" strokeWidth="0.0" text="Se déconnecter" AnchorPane.topAnchor="17.53125">
+									<font>
+										<Font size="20.0" />
+									</font>
+								</Text>
+								<Text fill="RED" layoutX="351.0" layoutY="37.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Membres" AnchorPane.topAnchor="17.0">
+									<font>
+										<Font size="20.0" />
+									</font>
+								</Text>
+							</children>
+						</AnchorPane>
+					</center>
+				</BorderPane>
+				<TableView fx:id="tableView" layoutX="127.0" layoutY="111.0" onMouseClicked="#onTableViewSelected" prefHeight="491.0" prefWidth="878.0">
+					<columns>
+						<TableColumn fx:id="lastNameColumn" prefWidth="292.0" text="Nom" />
+						<TableColumn fx:id="firstNameColumn" minWidth="0.0" prefWidth="306.0" text="Prénom" />
+						<TableColumn fx:id="emailColumn" prefWidth="279.0" text="Email" />
+					</columns>
+					<opaqueInsets>
+						<Insets />
+					</opaqueInsets>
+				</TableView>
+			</children>
+		</AnchorPane>
+	</children>
+</AnchorPane>
