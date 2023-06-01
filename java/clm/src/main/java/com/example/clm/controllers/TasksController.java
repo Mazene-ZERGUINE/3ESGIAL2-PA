@@ -4,6 +4,7 @@ import com.example.clm.Main;
 import com.example.clm.models.Categorie;
 import com.example.clm.models.Tasks;
 import com.example.clm.utils.ApiService;
+import com.example.clm.utils.AuthService;
 import com.example.clm.utils.NotifierService;
 import com.example.clm.utils.SceneService;
 import com.github.tsohr.JSONArray;
@@ -46,6 +47,7 @@ public class TasksController implements Initializable {
 	@FXML
 	private Button addBtn;
 
+	private final static AuthService auth = new AuthService();
 	@FXML
 	private ImageView backBtn;
 
@@ -128,7 +130,12 @@ public class TasksController implements Initializable {
 	@FXML
 	void onBackBtnClick(MouseEvent event) throws IOException {
 		Stage stage = (Stage) deleteBtn.getScene().getWindow();
-		sceneService.switchScene(stage, "categories-view.fxml", null);
+		if(!auth.checkUserRole()) {
+			sceneService.switchScene(stage, "categories-dev-view.fxml", null);
+
+		} else {
+			sceneService.switchScene(stage, "categories-view.fxml", null);
+		}
 	}
 
 	@FXML

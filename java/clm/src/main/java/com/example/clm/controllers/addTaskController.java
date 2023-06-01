@@ -60,6 +60,30 @@ public class addTaskController implements Initializable {
 
 	public void setData(int categoryId) {
 			this.categoryId = categoryId ;
+		StringBuilder response = null;
+		try {
+			response = api.getTypeRequest(baseUrl + "categories/project/" + categoryId);
+		} catch (IOException ex) {
+			System.out.println(ex.getCause());
+		}
+		JSONObject jsonResponse = new JSONObject(response.toString());
+		JSONArray dataArray = jsonResponse.getJSONArray("projects") ;
+		System.out.println(dataArray.toString());
+		for (int i = 0 ; i< dataArray.length() ; i++){
+			Users user = new Users(
+				dataArray.getJSONObject(i).getInt("id"),
+				dataArray.getJSONObject(i).getString("first_name"),
+				dataArray.getJSONObject(i).getString("last_name"),
+				dataArray.getJSONObject(i).getString("email"),
+				dataArray.getJSONObject(i).getString("password"),
+				dataArray.getJSONObject(i).getString("created_at"),
+				dataArray.getJSONObject(i).getString("role")
+				//dataArray.getJSONObject(i).getString("updated_at")
+			);
+			users.add(user) ;
+			usersList.getItems().add( dataArray.getJSONObject(i).getString("first_name")) ;
+		}
+		usersList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE); ;
 	}
 
 	@FXML
@@ -122,33 +146,10 @@ public class addTaskController implements Initializable {
 		stage.close();
 	}
 
-	private void getAllUsers() throws IOException {
-		StringBuilder response = api.getTypeRequest(baseUrl + "users/") ;
-		JSONObject json = new JSONObject(response.toString()) ;
-		JSONArray dataArray = json.getJSONArray("users") ;
-		for (int i = 0 ; i < dataArray.length() ; i++) {
-			Users user = new Users(
-				dataArray.getJSONObject(i).getInt("id"),
-				dataArray.getJSONObject(i).getString("first_name"),
-				dataArray.getJSONObject(i).getString("last_name"),
-				dataArray.getJSONObject(i).getString("email"),
-				dataArray.getJSONObject(i).getString("password"),
-				dataArray.getJSONObject(i).getString("created_at"),
-				dataArray.getJSONObject(i).getString("role")
-				//dataArray.getJSONObject(i).getString("updated_at")
-			);
-			users.add(user) ;
-			usersList.getItems().add( dataArray.getJSONObject(i).getString("first_name")) ;
-		}
-		usersList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE); ;
-	}
+
 	@Override
 	public void initialize(URL url, ResourceBundle resourceBundle)  {
-		try {
-			getAllUsers();
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+
 	}
 }
 
