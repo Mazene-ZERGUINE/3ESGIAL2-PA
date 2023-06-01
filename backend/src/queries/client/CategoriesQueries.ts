@@ -13,9 +13,21 @@ const updateQuery = 'UPDATE categories SET title = $1, desciption = $2 WHERE id 
 
 const addProjectsMumbers: string = 'INSERT INTO categories_members (id_project , id_member) VALUES($1 , $2)';
 
-const getUserProjectsQuery: string = `SELECT * FROM categories_members WHERE id_member = $1 INNER JOIN categories_members
-	ON id_project = id
-	`;
+const getUserProjectsQuery: string = `
+SELECT c.id AS category_id, u.id AS user_id, c.*, u.*
+FROM categories_members cm
+JOIN categories c ON cm.id_project = c.id
+JOIN client_user u ON cm.id_member = u.id
+WHERE u.id = $1;
+`;
+
+const allProjectQuery: string = `
+SELECT c.*, u.*
+FROM categories_members cm
+JOIN categories c ON cm.id_project = c.id
+JOIN client_user u ON cm.id_member = u.id
+WHERE c.id = $1
+`;
 
 module.exports = {
 	getAllQuery,
@@ -25,4 +37,5 @@ module.exports = {
 	updateQuery,
 	addProjectsMumbers,
 	getUserProjectsQuery,
+	allProjectQuery,
 };
