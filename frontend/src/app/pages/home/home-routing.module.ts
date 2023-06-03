@@ -12,8 +12,8 @@ const routes: Routes = [
     children: [
       {
         path: '',
-        loadChildren: () => import('./../items/items.module').then((m) => m.ItemsModule),
-        title: `Objets ${combinedTitle}`,
+        loadChildren: () => import('./../posts/posts.module').then((m) => m.PostsModule),
+        title: `Publications ${combinedTitle}`,
       },
       {
         path: 'chat',
