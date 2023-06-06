@@ -13,7 +13,7 @@ const routes: Routes = [
       {
         path: '',
         loadChildren: () => import('./../posts/posts.module').then((m) => m.PostsModule),
-        title: `Publications ${combinedTitle}`,
+        title: `Accueil ${combinedTitle}`,
       },
       {
         path: 'chat',
