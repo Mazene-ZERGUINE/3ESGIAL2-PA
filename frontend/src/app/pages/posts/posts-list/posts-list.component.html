@@ -1,0 +1,55 @@
+<h2 class="my-3">Liste des publications</h2>
+<div class="row justify-content-center">
+  <div *ngIf="!posts || posts?.length === 0; else elsePostsBlock">
+    <p>Il n'y a pas de publications.</p>
+  </div>
+  <ng-template #elsePostsBlock>
+    <div class="col-7 my-5" *ngFor="let post of posts; trackBy: trackById">
+      <!-- TODO statut -->
+      <div class="col card mb-3" *ngIf="post.statut == 'actif'">
+        <a class="text-reset text-decoration-none" [routerLink]="'/posts/' + post.publication_id">
+          <div class="row g-0">
+            <div class="col-md-4">
+              <div class="ratio ratio-1x1">
+                <span
+                  *ngIf="post.images.length === 0; else elseImageBlock"
+                  class="text-secondary py-5 d-flex align-items-center justify-content-center"
+                  >Pas d'image</span
+                >
+                <ng-template #elseImageBlock>
+                  <img [src]="post.images[0].lien" class="img-fluid rounded-start" [alt]="post.images[0].libelle" />
+                </ng-template>
+              </div>
+            </div>
+            <div class="col-md-8">
+              <div class="card-body">
+                <h5 class="card-title">Titre</h5>
+                <p class="card-text">
+                  <small class="text-body-secondary">Par : </small>
+                </p>
+              </div>
+            </div>
+            <div class="card-footer d-flex justify-content-around" (click)="stopPropagation($event)">
+              <!-- TODO -->
+              <button title="Cliquer pour aimer" class="btn btn-outline-secondary" (click)="onLike($event)">
+                <i class="bi bi-hand-thumbs-up"></i>
+              </button>
+              <button title="Cliquer pour ne plus aimer" class="btn btn-outline-secondary" (click)="onDislike($event)">
+                <i class="bi bi-hand-thumbs-up-fill"></i>
+              </button>
+              <button class="btn btn-info mx-2" (click)="onReport($event)">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+              </button>
+              <button class="btn btn-warning mx-2" (click)="onEdit($event, post.publication_id)">
+                <i class="bi bi-pencil-fill"></i>
+              </button>
+              <button class="btn btn-danger mx-2" (click)="onDelete($event)">
+                <i class="bi bi-trash-fill"></i>
+              </button>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </ng-template>
+</div>
