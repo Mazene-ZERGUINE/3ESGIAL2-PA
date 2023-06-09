@@ -1,34 +1,53 @@
-<h2 class="my-3">Titre</h2>
-<div class="row justify-content-center">
-  <div class="col-sd-auto col-md-6">
-    <ngbd-carousel-basic [images]="images"></ngbd-carousel-basic>
-  </div>
-</div>
 <div class="row">
+  <!-- TODO -->
   <div class="col my-3" *ngIf="true">
     <!--    <p *ngFor="categorie in post.categories">-->
+    <div class="d-flex justify-content-between">
+      <h1 class="my-3">post.titre</h1>
+      <!-- TODO -->
+      <div>
+        <button title="Aimer." class="btn btn-outline-secondary" (click)="onUnstar()">
+          <i class="bi bi-star-fill"></i>
+        </button>
+        <button title="Aimer." class="btn btn-outline-secondary" (click)="onStar()">
+          <i class="bi bi-star"></i>
+        </button>
+      </div>
+    </div>
     <p>
       <span class="badge rounded-pill text-bg-secondary">categorie.libelle</span>
     </p>
+    <p>
+      <small class="text-body-secondary">Par : post.utilisateur.utilisateur_id</small>
+    </p>
+    <p>
+      <small class="text-body-secondary">Le : post.created_at</small>
+    </p>
     <p>Description : post.description</p>
-    <p>Par : post.utilisateur.prenom post.utilisateur.nom</p>
-    <button title="Cliquer pour aimer" class="btn btn-outline-secondary">
+    <div class="row justify-content-center">
+      <div class="col-sd-auto col-md-6">
+        <ngbd-carousel-basic [images]="images"></ngbd-carousel-basic>
+      </div>
+    </div>
+    <button title="Aimer." class="btn btn-outline-secondary">
       <i class="bi bi-hand-thumbs-up"></i>
     </button>
-    <button title="Cliquer pour ne plus aimer" class="btn btn-outline-secondary">
+    <button title="Ne plus aimer." class="btn btn-outline-secondary">
       <i class="bi bi-hand-thumbs-up-fill"></i>
     </button>
     <button class="btn btn-info mx-2">
       <i class="bi bi-exclamation-triangle-fill"></i>
     </button>
-    <button class="btn btn-warning mx-2">
+    <!-- TODO -->
+    <button class="btn btn-warning mx-2" (click)="onEdit(2)">
       <i class="bi bi-pencil-fill"></i>
     </button>
-    <button class="btn btn-danger mx-2">
+    <button class="btn btn-danger mx-2" (click)="onDelete()">
       <i class="bi bi-trash-fill"></i>
     </button>
   </div>
 </div>
+<hr class="my-4" />
 <div class="row">
   <div class="col my-3" *ngIf="true">
     <app-post-comments></app-post-comments>

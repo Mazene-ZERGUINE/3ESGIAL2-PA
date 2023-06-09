@@ -1,12 +1,12 @@
-<h2 class="my-3">Liste des publications</h2>
+<h1 class="my-3">Liste des publications</h1>
+
 <div class="row justify-content-center">
   <div *ngIf="!posts || posts?.length === 0; else elsePostsBlock">
     <p>Il n'y a pas de publications.</p>
   </div>
   <ng-template #elsePostsBlock>
-    <div class="col-7 my-5" *ngFor="let post of posts; trackBy: trackById">
-      <!-- TODO statut -->
-      <div class="col card mb-3" *ngIf="post.statut == 'actif'">
+    <div class="col-10 col-sm-7" *ngFor="let post of posts; trackBy: trackById">
+      <div class="col card my-5 mb-3" *ngIf="post.statut === activeStatus">
         <a class="text-reset text-decoration-none" [routerLink]="'/posts/' + post.publication_id">
           <div class="row g-0">
             <div class="col-md-4">
@@ -14,8 +14,9 @@
                 <span
                   *ngIf="post.images.length === 0; else elseImageBlock"
                   class="text-secondary py-5 d-flex align-items-center justify-content-center"
-                  >Pas d'image</span
                 >
+                  Pas d'image
+                </span>
                 <ng-template #elseImageBlock>
                   <img [src]="post.images[0].lien" class="img-fluid rounded-start" [alt]="post.images[0].libelle" />
                 </ng-template>
@@ -23,18 +24,30 @@
             </div>
             <div class="col-md-8">
               <div class="card-body">
-                <h5 class="card-title">Titre</h5>
+                <div class="d-flex justify-content-between">
+                  <h5 class="card-title">Titre</h5>
+                  <!-- TODO -->
+                  <button title="Aimer." class="btn btn-outline-secondary" (click)="onUnstar($event)">
+                    <i class="bi bi-star-fill"></i>
+                  </button>
+                  <button title="Aimer." class="btn btn-outline-secondary" (click)="onStar($event)">
+                    <i class="bi bi-star"></i>
+                  </button>
+                </div>
                 <p class="card-text">
-                  <small class="text-body-secondary">Par : </small>
+                  <small class="text-body-secondary">Par : post.utilisateur.utilisateur_id</small>
+                </p>
+                <p class="card-text">
+                  <small class="text-body-secondary">Le : post.created_at</small>
                 </p>
               </div>
             </div>
             <div class="card-footer d-flex justify-content-around" (click)="stopPropagation($event)">
               <!-- TODO -->
-              <button title="Cliquer pour aimer" class="btn btn-outline-secondary" (click)="onLike($event)">
+              <button title="Aimer." class="btn btn-outline-secondary" (click)="onLike($event)">
                 <i class="bi bi-hand-thumbs-up"></i>
               </button>
-              <button title="Cliquer pour ne plus aimer" class="btn btn-outline-secondary" (click)="onDislike($event)">
+              <button title="Ne plus aimer." class="btn btn-outline-secondary" (click)="onDislike($event)">
                 <i class="bi bi-hand-thumbs-up-fill"></i>
               </button>
               <button class="btn btn-info mx-2" (click)="onReport($event)">

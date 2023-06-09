@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { NgbCarouselModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgFor, NgIf } from '@angular/common';
+import { Image } from '../../../pages/posts/shared/models/post.interface';
 
 @Component({
   // selector: 'app-carousel-basic',
@@ -11,5 +12,5 @@ import { NgFor, NgIf } from '@angular/common';
   styleUrls: ['./carousel-basic.component.scss'],
 })
 export class CarouselBasicComponent {
-  @Input() images: string[] = []; // TODO
+  @Input() images: Image[] = [];
 }

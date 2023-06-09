@@ -1,16 +1,14 @@
-<div class="row no-gutters">
+<!--<div class="row no-gutters">-->
+<div class="container-fluid min-vh-100">
   <div class="col">
     <app-header *ngIf="!hideHeader"></app-header>
-
-    <main class="row p-4">
+    <main class="row py-4 content">
       <div class="col my-3">
         <router-outlet></router-outlet>
       </div>
     </main>
-
     <app-footer *ngIf="!hideFooter"></app-footer>
   </div>
 </div>
-<app-footer></app-footer>
 
 <app-toast aria-live="polite" aria-atomic="true"></app-toast>

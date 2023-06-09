@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { Status } from '../../sign-up/shared/enums/status.enum';
 
 @Component({
   selector: 'app-post-form',
@@ -35,7 +36,7 @@ export class PostFormComponent implements OnInit {
       images: this.fb.array([]),
     });
 
-    const statut = 'actif'; // TODO
+    const statut = Status.active;
   }
 
   onSubmit(): void {

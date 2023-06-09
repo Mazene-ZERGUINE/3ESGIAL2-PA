@@ -1,11 +1,12 @@
-<ngb-carousel *ngIf="images.length > 0; else elseBlock">
+<ngb-carousel *ngIf="images.length > 0">
   <ng-template ngbSlide *ngFor="let image of images; let index = index">
     <div class="picsum-img-wrapper">
+      <!-- TODO -->
       <img [src]="images[index]" alt="..." />
     </div>
   </ng-template>
 </ngb-carousel>
 
-<ng-template #elseBlock>
-  <p class="text-secondary text-center">Pas d'image disponible</p>
-</ng-template>
+<!--<ng-template #elseBlock>-->
+<!--  <p class="text-secondary text-center">Pas d'image disponible</p>-->
+<!--</ng-template>-->
