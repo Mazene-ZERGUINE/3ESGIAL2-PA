@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Post } from './shared/models/post.interface';
 import { Observable, of } from 'rxjs';
+import { Status } from '../sign-up/shared/enums/status.enum';
+import { ViewportScroller } from '@angular/common';
 
 @Component({
   selector: 'app-posts',
@@ -8,12 +10,15 @@ import { Observable, of } from 'rxjs';
   styleUrls: ['./posts.component.scss'],
 })
 export class PostsComponent implements OnInit {
+  page = 1;
   posts$?: Observable<null | Post[]>;
   selectedPost?: Post;
 
-  constructor() {}
+  constructor(private viewportScroller: ViewportScroller) {}
 
   ngOnInit(): void {
+    this.viewportScroller.scrollToPosition([0, 0]);
+
     this.getPosts();
   }
 
@@ -27,7 +32,7 @@ export class PostsComponent implements OnInit {
         publication_id: i + 1,
         titre: `titre ${i}`,
         description: `description ${i}`,
-        statut: 'actif',
+        statut: Status.active,
         images: [
           {
             image_id: 1,
@@ -57,14 +62,14 @@ export class PostsComponent implements OnInit {
       publication_id: arr.length + 1,
       titre: `titre ${arr.length + 1}`,
       description: `description ${arr.length + 1}`,
-      statut: 'actif',
+      statut: Status.active,
       images: [],
     });
     arr.push({
       publication_id: arr.length + 1,
       titre: `titre ${arr.length + 1}`,
       description: `description ${arr.length + 1}`,
-      statut: 'inactif',
+      statut: Status.inactive,
       images: [],
     });
 

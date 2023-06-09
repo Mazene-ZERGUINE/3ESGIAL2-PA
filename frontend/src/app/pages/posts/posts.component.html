@@ -1,3 +1,10 @@
 <div class="col">
   <app-posts-list [posts]="posts$ | async" (selected)="selectPost($event)"></app-posts-list>
+  <div class="d-flex justify-content-center mt-5" *ngIf="posts$">
+    <ngb-pagination
+      [collectionSize]="(posts$ | async)?.length ?? 0"
+      [(page)]="page"
+      aria-label="Posts pagination"
+    ></ngb-pagination>
+  </div>
 </div>

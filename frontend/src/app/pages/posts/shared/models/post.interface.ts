@@ -1,3 +1,5 @@
+import { Status } from '../../../sign-up/shared/enums/status.enum';
+
 export interface Categorie {
   categorie_id: number;
   libelle: string;
@@ -13,7 +15,7 @@ export interface Image {
 export interface PostDTO {
   titre: string;
   description: string;
-  statut: string; // TODO
+  statut: Status;
   images: Image[];
 }
 

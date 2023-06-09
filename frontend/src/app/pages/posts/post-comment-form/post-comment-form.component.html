@@ -1,0 +1,23 @@
+<div class="col">
+  <form *ngIf="form" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="mb-3">
+      <label class="form-label" for="comment">Ajouter un commentaire</label>
+      <textarea
+        class="form-control"
+        id="comment"
+        rows="3"
+        name="comment"
+        formControlName="comment"
+        placeholder="Votre commentaire..."
+        (click)="onTextAreaClick()"
+      ></textarea>
+      <div
+        class="text-danger my-2"
+        *ngIf="form.get('comment')?.touched && form.get('comment')?.dirty && form.get('comment')?.getError('minLength')"
+      >
+        Le champ doit contenir un commentaire.
+      </div>
+    </div>
+    <button class="btn btn-success" [disabled]="form.invalid" *ngIf="isAuthenticated">Comment</button>
+  </form>
+</div>

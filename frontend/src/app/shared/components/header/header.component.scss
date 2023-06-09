@@ -1,4 +1,19 @@
-.logo-img {
-  object-fit: contain;
-  width: 7%;
+.navbar-brand {
+  //max-width: 40%;
+
+  .logo-img {
+    max-width: 7rem;
+  }
+}
+
+.navbar-collapse {
+  flex-grow: 0;
+}
+
+a {
+  cursor: pointer;
+
+  &.nav-link.active {
+    color: darkgreen;
+  }
 }

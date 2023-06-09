@@ -17,19 +17,19 @@ const routes: Routes = [
   {
     path: 'login',
     loadChildren: () => import('./pages/log-in/log-in.module').then((m) => m.LogInModule),
-    data: {
-      hideHeader: true,
-      hideFooter: true,
-    },
+    // data: {
+    //   hideHeader: true,
+    //   hideFooter: true,
+    // },
     title: `Connexion ${combinedTitle}`,
   },
   {
     path: 'signup',
     loadChildren: () => import('./pages/sign-up/sign-up.module').then((m) => m.SignUpModule),
-    data: {
-      hideHeader: true,
-      hideFooter: true,
-    },
+    // data: {
+    //   hideHeader: true,
+    //   hideFooter: true,
+    // },
     title: `Inscription ${combinedTitle}`,
   },
   {
@@ -45,7 +45,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes, { scrollPositionRestoration: 'enabled' })],
   exports: [RouterModule],
 })
 export class AppRoutingModule {}

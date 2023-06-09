@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Post } from '../shared/models/post.interface';
 import { Router } from '@angular/router';
+import { Status } from '../../sign-up/shared/enums/status.enum';
 
 @Component({
   selector: 'app-posts-list',
@@ -10,6 +11,8 @@ import { Router } from '@angular/router';
 export class PostsListComponent {
   @Input() posts: null | Post[] = [];
   @Output() selected = new EventEmitter<Post>();
+
+  readonly activeStatus = Status.active;
 
   constructor(private readonly router: Router) {}
 
@@ -34,6 +37,16 @@ export class PostsListComponent {
   }
 
   onReport(e: MouseEvent): void {
+    this.stopPropagation(e);
+    // TODO
+  }
+
+  onStar(e: MouseEvent): void {
+    this.stopPropagation(e);
+    // TODO
+  }
+
+  onUnstar(e: MouseEvent): void {
     this.stopPropagation(e);
     // TODO
   }
