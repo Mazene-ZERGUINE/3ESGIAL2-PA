@@ -1,0 +1,30 @@
+<div class="col">
+  <h1 class="my-3">{{ canEdit ? 'Edition de catégorie' : 'Ajout de catégorie' }}</h1>
+
+  <form
+    class="border border-secondary border-opacity-50 rounded p-3"
+    *ngIf="form"
+    [formGroup]="form"
+    (ngSubmit)="onSubmit()"
+  >
+    <div class="mb-3">
+      <label class="rounded form-label" for="libelle">Libellé</label>
+      <input
+        class="form-control"
+        type="text"
+        id="libelle"
+        name="libelle"
+        formControlName="libelle"
+        required
+        autofocus
+      />
+      <div
+        class="text-danger my-2"
+        *ngIf="form.get('libelle')?.touched && form.get('libelle')?.dirty && form.get('libelle')?.getError('minLength')"
+      >
+        Le champ doit contenir un libellé.
+      </div>
+    </div>
+    <button class="btn btn-success" [disabled]="form.invalid">{{ canEdit ? 'Editer' : 'Ajouter' }}</button>
+  </form>
+</div>

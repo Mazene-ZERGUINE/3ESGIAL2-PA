@@ -1,0 +1,122 @@
+<div class="col">
+  <h1 class="my-3">{{ canEdit ? 'Edition' : 'Ajout' }} d'utilisateur</h1>
+  <form
+    class="border border-secondary border-opacity-50 rounded p-3"
+    *ngIf="form"
+    [formGroup]="form"
+    (ngSubmit)="onSubmit()"
+  >
+    <div class="mb-3">
+      <label class="form-label required" for="nom">Nom</label>
+      <input class="form-control" type="text" id="nom" name="nom" formControlName="nom" required autofocus />
+      <small
+        class="text-danger my-2"
+        *ngIf="form.get('nom')?.touched && form.get('nom')?.dirty && form.get('nom')?.getError('pattern')"
+      >
+        Le champ doit contenir des lettres.
+      </small>
+    </div>
+    <div class="mb-3">
+      <label class="form-label required" for="prenom">Prénom</label>
+      <input class="form-control" type="text" id="prenom" name="prenom" formControlName="prenom" required />
+      <small
+        class="text-danger my-2"
+        *ngIf="form.get('prenom')?.touched && form.get('prenom')?.dirty && form.get('prenom')?.getError('pattern')"
+      >
+        Le champ doit contenir des lettres.
+      </small>
+    </div>
+    <div class="mb-3">
+      <label class="form-label required" for="email">Email</label>
+      <input class="form-control" type="text" id="email" name="email" formControlName="email" required />
+      <small
+        class="text-danger my-2"
+        *ngIf="form.get('email')?.touched && form.get('email')?.dirty && form.get('email')?.getError('email')"
+      >
+        Le champ doit contenir un courriel.
+      </small>
+    </div>
+    <div class="mb-3">
+      <label class="form-label required" for="password">Mot de passe (taille minimale : {{ passwordMinLength }})</label>
+      <input class="form-control" type="password" id="password" name="password" formControlName="password" required />
+      <small
+        class="text-danger my-2"
+        *ngIf="
+          form.get('password')?.touched && form.get('password')?.dirty && form.get('password')?.getError('minlength')
+        "
+      >
+        Le mot de passe doit contenir au moins {{ passwordMinLength }} caractères.
+      </small>
+    </div>
+    <div class="mb-3">
+      <label class="form-label required" for="pseudonyme">Pseudonyme</label>
+      <input
+        class="form-control"
+        type="pseudonyme"
+        id="pseudonyme"
+        name="pseudonyme"
+        formControlName="pseudonyme"
+        required
+      />
+    </div>
+    <div class="mb-3">
+      <label class="form-label required" for="ville">Ville</label>
+      <input class="form-control" type="ville" id="ville" name="ville" formControlName="ville" required />
+      <small
+        class="text-danger my-2"
+        *ngIf="form.get('ville')?.touched && form.get('ville')?.dirty && form.get('ville')?.getError('pattern')"
+      >
+        Le champ doit contenir des lettres.
+      </small>
+    </div>
+    <div class="mb-3">
+      <label class="form-label required" for="departement">Département</label>
+      <select class="form-select" formControlName="departement" id="departement" aria-label="Sélection de département">
+        <option *ngFor="let department of frenchDepartments" [value]="department.code">
+          {{ department.code }} - {{ department.name }}
+        </option>
+      </select>
+      <small
+        class="text-danger my-2"
+        *ngIf="
+          form.get('departement')?.touched &&
+          form.get('departement')?.dirty &&
+          form.get('departement')?.getError('pattern')
+        "
+      >
+        Le champ est incorrect.
+      </small>
+    </div>
+    <div class="mb-3">
+      <label class="form-label required" for="role">Rôle</label>
+      <select class="form-select" formControlName="role" id="role" aria-label="Sélection de département">
+        <option *ngFor="let role of roles" [value]="role">
+          {{ role }}
+        </option>
+      </select>
+      <small
+        class="text-danger my-2"
+        *ngIf="form.get('role')?.touched && form.get('role')?.dirty && form.get('role')?.getError('pattern')"
+      >
+        Le champ est incorrect.
+      </small>
+    </div>
+    <div class="mb-3">
+      <label class="form-label required" for="statut">Statut</label>
+      <select class="form-select" formControlName="statut" id="statut" aria-label="Sélection de statut">
+        <option *ngFor="let status of statuses" [value]="status">
+          {{ status }}
+        </option>
+      </select>
+      <small
+        class="text-danger my-2"
+        *ngIf="form.get('statut')?.touched && form.get('statut')?.dirty && form.get('statut')?.getError('pattern')"
+      >
+        Le champ est incorrect.
+      </small>
+    </div>
+    <button [ngClass]="canEdit ? 'btn btn-warning' : 'btn btn-success'" [disabled]="form.invalid">
+      {{ canEdit ? 'Editer' : 'Ajouter' }}
+    </button>
+  </form>
+</div>

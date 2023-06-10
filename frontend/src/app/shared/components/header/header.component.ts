@@ -9,8 +9,18 @@ import { Router } from '@angular/router';
 export class HeaderComponent implements OnInit {
   isAuthenticated = !false;
 
+  backOfficeRoutes: ReadonlyArray<{ path: string; label: string }> = [
+    { path: '/administration/categories', label: 'Catégories' },
+    { path: '/administration/categories/add', label: 'Catégories (ajout)' },
+    { path: '/administration/posts', label: 'Publications' },
+    // { path: '/administration/posts/add', label: 'Publications (ajout)' },
+    { path: '/administration/reported-users', label: 'Signalement utilisateurs' },
+    { path: '/administration/reported-posts/', label: 'Signalement publications' },
+    { path: '/administration/users', label: 'Utilisateurs' },
+    { path: '/administration/users/add', label: 'Utilisateurs (ajout)' },
+  ];
+
   initialRoutes: ReadonlyArray<{ path: string; label: string }> = [
-    { path: '/administration', label: 'Administration' },
     { path: '/posts/add', label: 'Publier' },
     { path: '/chat', label: 'Messagerie' },
     { path: '/users', label: 'Profil' },

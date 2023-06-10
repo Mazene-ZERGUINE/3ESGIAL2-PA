@@ -17,3 +17,16 @@ a {
     color: darkgreen;
   }
 }
+
+li {
+  list-style-type: none;
+}
+
+.nav-item {
+  color: rgba(0, 0, 0, 0.55);
+}
+
+.dropdown-item.active,
+.dropdown-item:active {
+  background-color: darkgreen;
+}

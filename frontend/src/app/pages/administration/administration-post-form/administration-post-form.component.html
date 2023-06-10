@@ -1,0 +1,44 @@
+<div class="col">
+  <h1 class="my-3">Edition de publication</h1>
+  <form class="border border-secondary rounded p-3" *ngIf="form" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="mb-3">
+      <label class="form-label required" for="titre">Titre</label>
+      <input class="form-control" type="text" id="titre" name="titre" formControlName="titre" required autofocus />
+      <div
+        class="text-danger my-2"
+        *ngIf="form.get('titre')?.touched && form.get('titre')?.dirty && form.get('titre')?.getError('titre')"
+      >
+        Le champs doit contenir un courriel.
+      </div>
+    </div>
+    <div class="mb-3">
+      <label class="form-label required" for="description">Description</label>
+      <input class="form-control" type="text" id="description" name="description" formControlName="description" />
+      <div
+        class="text-danger my-2"
+        *ngIf="
+          form.get('description')?.touched &&
+          form.get('description')?.dirty &&
+          form.get('description')?.getError('description')
+        "
+      >
+        Le champs doit contenir un courriel.
+      </div>
+    </div>
+    <div class="mb-3">
+      <label class="form-label required" for="statut">Statut</label>
+      <select class="form-select" formControlName="statut" id="statut" aria-label="Sélection de statut">
+        <option *ngFor="let status of statuses" [value]="status">
+          {{ status }}
+        </option>
+      </select>
+      <small
+        class="text-danger my-2"
+        *ngIf="form.get('statut')?.touched && form.get('statut')?.dirty && form.get('statut')?.getError('pattern')"
+      >
+        Le champ est incorrect.
+      </small>
+    </div>
+    <button class="btn btn-warning" [disabled]="form.invalid">Editer</button>
+  </form>
+</div>
