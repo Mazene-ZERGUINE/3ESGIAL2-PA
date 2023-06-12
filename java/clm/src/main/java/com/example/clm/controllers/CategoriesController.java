@@ -306,6 +306,12 @@ public class CategoriesController extends Application implements Initializable {
 			sceneService.switchScene(stage , "gantt-view.fxml" , null);
 	}
 
+	@FXML
+	void switchToTicketPage(MouseEvent event) throws IOException {
+		Stage stage = (Stage)this.mainPane.getScene().getWindow();
+		sceneService.switchScene(stage , "tickets-view.fxml" , null);
+	}
+
 	private void getAllUsers() throws IOException {
 		StringBuilder response = api.getTypeRequest(baseUrl + "users/") ;
 		JSONObject json = new JSONObject(response.toString()) ;

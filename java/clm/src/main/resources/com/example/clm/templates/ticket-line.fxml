@@ -1,14 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-						xmlns:fx="http://javafx.com/fxml"
-						fx:controller="com.example.clm.templates.TicketLine"
-						prefHeight="400.0" prefWidth="600.0">
 
+<AnchorPane onMouseClicked="#handleTicketLineClicked" prefHeight="114.0" prefWidth="732.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.clm.controllers.TicketsLineController">
+   <children>
+      <AnchorPane layoutX="10.0" layoutY="10.0" prefHeight="87.0" prefWidth="722.0" styleClass="ticket-line" stylesheets="@../styles/style.css">
+         <children>
+            <HBox layoutX="-4.0" layoutY="2.0" prefHeight="84.0" prefWidth="720.0">
+               <children>
+                  <AnchorPane prefHeight="84.0" prefWidth="230.0">
+                     <children>
+                        <Label fx:id="ticketName" layoutX="22.0" layoutY="18.0">
+                           <font>
+                              <Font size="25.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="createdBy" layoutX="24.0" layoutY="45.0" textFill="#ff8a8a" />
+                        <Label fx:id="creatingDate" layoutX="26.0" layoutY="62.0" textFill="#ff8a8a" />
+                     </children>
+                  </AnchorPane>
+                  <AnchorPane prefHeight="84.0" prefWidth="160.0">
+                     <children>
+                        <AnchorPane layoutY="29.0" prefHeight="33.0" prefWidth="147.0" styleClass="tag" stylesheets="@../styles/style.css">
+                           <children>
+                              <Label fx:id="tagTitle" layoutX="38.0" layoutY="9.0" />
+                           </children>
+                        </AnchorPane>
+                     </children>
+                  </AnchorPane>
+                  <AnchorPane prefHeight="84.0" prefWidth="179.0">
+                     <children>
+                        <Label fx:id="member" layoutX="75.0" layoutY="33.0" />
+                     </children>
+                  </AnchorPane>
+                  <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                     <children>
+                        <Label fx:id="status" layoutX="46.0" layoutY="28.0" text="A FAIRE" textFill="#2a9e00">
+                           <font>
+                              <Font size="25.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </AnchorPane>
+               </children>
+            </HBox>
+         </children>
+      </AnchorPane>
+   </children>
 </AnchorPane>
