@@ -22,7 +22,7 @@
                               <Font size="20.0" />
                            </font>
                         </Text>
-                        <Text fill="WHITE" layoutX="526.0" layoutY="36.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Ticket" AnchorPane.topAnchor="16.6640625">
+                        <Text fx:id="ticketBtn" fill="WHITE" layoutX="526.0" layoutY="36.0" onMouseClicked="#switchToTicketPage" strokeType="OUTSIDE" strokeWidth="0.0" text="Ticket" AnchorPane.topAnchor="16.6640625">
                            <font>
                               <Font size="20.0" />
                            </font>
