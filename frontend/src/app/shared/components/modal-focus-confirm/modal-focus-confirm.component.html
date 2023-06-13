@@ -1,0 +1,17 @@
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-title">Suppression</h4>
+  <button type="button" class="btn-close" aria-describedby="modal-title" (click)="modal.dismiss('')"></button>
+</div>
+<div class="modal-body">
+  <p>
+    <strong>Etes-vous sûr de vouloir supprimer ?</strong>
+  </p>
+  <p>
+    Toutes les informations associées seront supprimées définitivement.
+    <span class="text-danger">Cette opération est irréversible.</span>
+  </p>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss('')">Annuler</button>
+  <button type="button" class="btn btn-danger" (click)="modal.close('OK')">Ok</button>
+</div>
