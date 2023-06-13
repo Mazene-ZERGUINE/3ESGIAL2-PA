@@ -43,21 +43,15 @@
               </div>
             </div>
             <div class="card-footer d-flex justify-content-around" (click)="stopPropagation($event)">
+              <button class="btn btn-info mx-2" (click)="onReport($event)">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+              </button>
               <!-- TODO -->
               <button title="Aimer." class="btn btn-outline-secondary" (click)="onLike($event)">
                 <i class="bi bi-hand-thumbs-up"></i>
               </button>
               <button title="Ne plus aimer." class="btn btn-outline-secondary" (click)="onDislike($event)">
                 <i class="bi bi-hand-thumbs-up-fill"></i>
-              </button>
-              <button class="btn btn-info mx-2" (click)="onReport($event)">
-                <i class="bi bi-exclamation-triangle-fill"></i>
-              </button>
-              <button class="btn btn-warning mx-2" (click)="onEdit($event, post.publication_id)">
-                <i class="bi bi-pencil-fill"></i>
-              </button>
-              <button class="btn btn-danger mx-2" (click)="onDelete($event)">
-                <i class="bi bi-trash-fill"></i>
               </button>
             </div>
           </div>

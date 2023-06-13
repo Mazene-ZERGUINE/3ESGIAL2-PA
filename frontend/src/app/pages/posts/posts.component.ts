@@ -76,6 +76,11 @@ export class PostsComponent implements OnInit {
     this.posts$ = of(arr);
   }
 
+  onPageChange(page: number): void {
+    this.page = page;
+    // TODO
+  }
+
   selectPost(post: Post): void {
     this.selectedPost = post;
   }

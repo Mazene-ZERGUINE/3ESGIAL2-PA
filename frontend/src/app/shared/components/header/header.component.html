@@ -47,9 +47,25 @@
               {{ initialRoute.label }}
             </a>
           </li>
-          <li class="navbar-nav justify-content-center">
+          <li class="nav-item dropdown">
+              <a class="nav-link p-2 m-2 dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Mon espace
+              </a>
+              <ul class="dropdown-menu">
+                <li>
+                  <a
+                    *ngFor="let userRoute of userRoutes"
+                    class="dropdown-item"
+                    [routerLink]="userRoute.path"
+                    routerLinkActive="active"
+                    [routerLinkActiveOptions]="{ exact: true }"
+                  >
+                    {{ userRoute.label }}
+                  </a>
+                </li>
+              </ul>
+            </li>
             <a *ngIf="isAuthenticated" class="nav-link p-2 m-2" (click)="onLogoutClick()"> Déconnexion </a>
-          </li>
           <ng-container *ngIf="!isAuthenticated">
             <li class="navbar-nav justify-content-center">
               <a

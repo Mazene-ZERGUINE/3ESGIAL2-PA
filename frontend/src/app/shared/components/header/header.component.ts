@@ -22,8 +22,12 @@ export class HeaderComponent implements OnInit {
 
   initialRoutes: ReadonlyArray<{ path: string; label: string }> = [
     { path: '/posts/add', label: 'Publier' },
+  ];
+
+  userRoutes: ReadonlyArray<{ path: string; label: string }> = [
     { path: '/chat', label: 'Messagerie' },
-    { path: '/users', label: 'Profil' },
+    { path: '/users/profile/me', label: 'Profil' },
+    { path: '/users/posts', label: 'Publications' },
   ];
 
   visitorRoutes: ReadonlyArray<{ path: string; label: string }> = [
@@ -37,12 +41,12 @@ export class HeaderComponent implements OnInit {
     this.checkAuthentication();
   }
 
-  onSignupClick(): void {
-    this._router.navigate(['signup']);
+  async onSignupClick(): Promise<void> {
+    await this._router.navigate(['signup']);
   }
 
-  onLoginClick(): void {
-    this._router.navigate(['login']);
+  async onLoginClick(): Promise<void> {
+    await this._router.navigate(['login']);
   }
 
   /**

@@ -16,19 +16,9 @@ export class PostsListComponent {
 
   constructor(private readonly router: Router) {}
 
-  onDelete(e: MouseEvent): void {
-    this.stopPropagation(e);
-    // TODO
-  }
-
   onDislike(e: MouseEvent): void {
     this.stopPropagation(e);
     // TODO
-  }
-
-  async onEdit(e: MouseEvent, id: number): Promise<void> {
-    this.stopPropagation(e);
-    await this.router.navigateByUrl(`posts/${id}/edit`);
   }
 
   onLike(e: MouseEvent): void {

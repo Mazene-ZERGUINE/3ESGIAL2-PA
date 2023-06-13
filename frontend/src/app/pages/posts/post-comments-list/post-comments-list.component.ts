@@ -1,5 +1,7 @@
 import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { PostComment } from '../shared/models/post-comment.interface';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ModalFocusConfirmComponent } from '../../../shared/components/modal-focus-confirm/modal-focus-confirm.component';
 
 @Component({
   selector: 'app-post-comments-list',
@@ -12,6 +14,8 @@ export class PostCommentsListComponent implements OnInit {
 
   isLoading = false;
   page = 1;
+
+  constructor(private readonly modalService: NgbModal) {}
 
   ngOnInit(): void {
     // TODO: data from service
@@ -62,7 +66,16 @@ export class PostCommentsListComponent implements OnInit {
     this.isLoading = false;
   }
 
-  onDelete(publicationId: number, utilisateurId: number): void {
+  async onDelete(publicationId: number, utilisateurId: number): Promise<void> {
+    let hasUserValidated;
+    try {
+      hasUserValidated = await this.modalService.open(ModalFocusConfirmComponent).result;
+    } catch (_) {}
+
+    if (!hasUserValidated) {
+      return;
+    }
+
     // TODO
   }
 }

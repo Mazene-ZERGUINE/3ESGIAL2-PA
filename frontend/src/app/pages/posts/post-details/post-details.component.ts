@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { Post } from '../shared/models/post.interface';
+import { ModalFocusConfirmComponent } from '../../../shared/components/modal-focus-confirm/modal-focus-confirm.component';
 
 @Component({
   selector: 'app-post-details',
@@ -12,7 +14,7 @@ export class PostDetailsComponent implements OnInit {
   images = [];
   post?: Post; // TODO: data in service?
 
-  constructor(private readonly router: Router) {}
+  constructor(private readonly modalService: NgbModal, private readonly router: Router) {}
 
   ngOnInit(): void {
     this.setImages();
@@ -22,7 +24,16 @@ export class PostDetailsComponent implements OnInit {
     // TODO
   }
 
-  onDelete(): void {
+  async onDelete(): Promise<void> {
+    let hasUserValidated;
+    try {
+      hasUserValidated = await this.modalService.open(ModalFocusConfirmComponent).result;
+    } catch (_) {}
+
+    if (!hasUserValidated) {
+      return;
+    }
+
     // TODO
   }
 
