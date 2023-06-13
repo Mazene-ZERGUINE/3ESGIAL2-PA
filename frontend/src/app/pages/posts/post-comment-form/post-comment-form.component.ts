@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { minLengthValidator } from '../../../shared/utils/validator.utils';
 
 @Component({
   selector: 'app-post-comment-form',
@@ -19,7 +20,7 @@ export class PostCommentFormComponent implements OnInit {
 
   initForm(): void {
     this.form = this.fb.group({
-      comment: this.fb.control('', [Validators.required, this.minLengthValidator]),
+      comment: this.fb.control('', [Validators.required, minLengthValidator]),
     });
   }
 
@@ -37,14 +38,5 @@ export class PostCommentFormComponent implements OnInit {
     }
 
     // TODO
-  }
-
-  private minLengthValidator(control: any): null | { minLength: true } {
-    const value = String(control.value).trim() || '';
-    if (value.length > 0) {
-      return null;
-    }
-
-    return { minLength: true };
   }
 }

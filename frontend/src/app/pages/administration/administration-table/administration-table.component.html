@@ -1,0 +1,65 @@
+<h1>Administration de {{ entityName }}s</h1>
+
+<div class="d-flex justify-content-end" *ngIf="path">
+  <button class="btn btn-success" (click)="onAdd(path)" *ngIf="path !== postsPath">
+    <i class="bi bi-plus-lg"></i>
+  </button>
+</div>
+
+<div class="table-responsive">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <ng-container *ngFor="let item of $any(items[0]) | keyvalue; let firstItem = first">
+          <th scope="col" *ngIf="firstItem; else elseThBlock">Identifiant</th>
+          <ng-template #elseThBlock>
+            <th scope="col">
+              {{ $any(item.key) | titlecase }}
+            </th>
+          </ng-template>
+        </ng-container>
+        <th scope="col" *ngIf="path !== reportedPostsPath && path !== reportedUsersPath">Edition</th>
+        <th scope="col">Suppression</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of items">
+        <ng-container *ngFor="let prop of $any(item) | keyvalue; let firstItem = first">
+          <th scope="row" *ngIf="firstItem; else elseTd">
+            {{ prop.value }}
+          </th>
+          <ng-template #elseTd>
+            <td>
+              {{ prop.value }}
+            </td>
+          </ng-template>
+        </ng-container>
+        <td>
+          <button
+            class="btn btn-warning"
+            *ngIf="path && path !== reportedPostsPath && path !== reportedUsersPath"
+            (click)="onEdit(path, $any(item)[entityName + '_id'])"
+          >
+            <i class="bi bi-pencil-fill"></i>
+          </button>
+        </td>
+        <td>
+          <button class="btn btn-danger" (click)="onDelete($any(item)[entityName + '_id'])">
+            <i class="bi bi-trash-fill"></i>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<ngb-pagination
+  class="d-flex justify-content-center mt-5"
+  aria-label="Posts pagination"
+  [collectionSize]="items.length"
+  [(page)]="page"
+  (pageChange)="onPageChange($event)"
+  *ngIf="items.length >= 1"
+></ngb-pagination>
+
+<app-back-to-top></app-back-to-top>

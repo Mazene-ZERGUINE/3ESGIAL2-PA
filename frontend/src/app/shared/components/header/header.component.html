@@ -17,7 +17,26 @@
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-          <div class="navbar-nav justify-content-center">
+          <!--          <div class="navbar-nav justify-content-center">-->
+          <li class="nav-item dropdown">
+            <a class="nav-link p-2 m-2 dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Administration
+            </a>
+            <ul class="dropdown-menu">
+              <li>
+                <a
+                  *ngFor="let backOfficeRoute of backOfficeRoutes"
+                  class="dropdown-item"
+                  [routerLink]="backOfficeRoute.path"
+                  routerLinkActive="active"
+                  [routerLinkActiveOptions]="{ exact: true }"
+                >
+                  {{ backOfficeRoute.label }}
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li class="navbar-nav justify-content-center">
             <a
               *ngFor="let initialRoute of initialRoutes"
               class="nav-link p-2 m-2"
@@ -27,8 +46,12 @@
             >
               {{ initialRoute.label }}
             </a>
+          </li>
+          <li class="navbar-nav justify-content-center">
             <a *ngIf="isAuthenticated" class="nav-link p-2 m-2" (click)="onLogoutClick()"> Déconnexion </a>
-            <ng-container *ngIf="!isAuthenticated">
+          </li>
+          <ng-container *ngIf="!isAuthenticated">
+            <li class="navbar-nav justify-content-center">
               <a
                 *ngFor="let visitorRoute of visitorRoutes"
                 class="nav-link p-2 m-2"
@@ -38,8 +61,9 @@
               >
                 {{ visitorRoute.label }}
               </a>
-            </ng-container>
-          </div>
+            </li>
+          </ng-container>
+          <!--          </div>-->
         </div>
       </div>
     </nav>

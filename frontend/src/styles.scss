@@ -4,3 +4,14 @@
   content: ' *';
   color: red;
 }
+
+/*#region table */
+th,
+td {
+  vertical-align: middle;
+}
+
+.table-responsive {
+  overflow-x: auto;
+}
+/*#endregion */

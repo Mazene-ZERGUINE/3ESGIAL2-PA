@@ -1,0 +1,49 @@
+<div class="col">
+  <form *ngIf="form" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="mb-3">
+      <label class="form-label required" for="publication_id">Identifiant de publication</label>
+      <input
+        class="form-control"
+        type="number"
+        id="publication_id"
+        name="publication_id"
+        formControlName="publication_id"
+        required
+        autofocus
+      />
+      <small
+        class="text-danger my-2"
+        *ngIf="
+          form.get('publication_id')?.touched &&
+          form.get('publication_id')?.dirty &&
+          (form.get('publication_id')?.getError('pattern') || form.get('publication_id')?.getError('min'))
+        "
+      >
+        Le champ doit contenir l'identifiant de publication.
+      </small>
+    </div>
+    <div class="mb-3">
+      <label class="form-label required" for="description">Ajouter une description</label>
+      <textarea
+        class="form-control"
+        id="description"
+        rows="3"
+        name="description"
+        formControlName="description"
+        placeholder="Votre description..."
+        required="required"
+      ></textarea>
+      <div
+        class="text-danger my-2"
+        *ngIf="
+          form.get('description')?.touched &&
+          form.get('description')?.dirty &&
+          form.get('description')?.getError('minLength')
+        "
+      >
+        Le champ doit contenir une description.
+      </div>
+    </div>
+    <button class="btn btn-success" [disabled]="form.invalid">Ajouter</button>
+  </form>
+</div>
