@@ -17,6 +17,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import tray.notification.NotificationType;
@@ -42,6 +43,7 @@ public class TicketsController implements Initializable {
 
 	@FXML
 	private Text logOutBtn;
+
 	@FXML
 	private TextField ticketTitle;
 
@@ -165,6 +167,12 @@ public class TicketsController implements Initializable {
 						data.getJSONObject(i).getString("tag"),auth.getUserName(),
 						LocalDate.now().toString());
 
+					if (data.getJSONObject(i).getString("tag").equals("BUG")) {
+						controller.setPaneColor("red");
+					} else if (data.getJSONObject(i).getString("tag").equals("Question")) {
+						controller.setPaneColor("blue");
+					}
+					// TODO: ------ other colors here -----
 
 					vbox.getChildren().add(ticketLine);
 

@@ -3,9 +3,11 @@ package com.example.clm.controllers;
 import com.example.clm.Main;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Region;
 
 import java.io.IOException;
 
@@ -30,6 +32,9 @@ public class TicketsLineController  {
 	@FXML
 	private Label ticketName;
 
+	@FXML
+	private AnchorPane tagPane;
+
 
 	public void setData(String ticketName , String tag , String createdBy , String creatinDate) {
 		this.createdBy.setText(createdBy);
@@ -40,6 +45,11 @@ public class TicketsLineController  {
 
 	@FXML
 	public void handleTicketLineClicked(MouseEvent event) {
+
+	}
+
+	public void setPaneColor(String color) {
+		tagPane.setStyle("-fx-background-color: " + color +  ";");
 
 	}
 

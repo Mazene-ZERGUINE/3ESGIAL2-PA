@@ -135,6 +135,7 @@ public class addTaskController implements Initializable {
 			this.deadline.setValue(null);
 			this.description.clear();
 			this.startDate.setValue(null);
+
 		} else {
 			notifierService.notify(NotificationType.ERROR , "Erreur" , "Une erreur est survenu lors de l'ajout.");
 		}
