@@ -23,6 +23,7 @@ public class SceneService {
 			stage.show();
 		} catch (Exception exception) {
 			System.out.println("can't change current scene");
+			System.out.println(exception.getCause() + " " + exception.getMessage());
 		}
 	}
 
