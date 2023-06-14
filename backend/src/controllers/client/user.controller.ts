@@ -1,9 +1,11 @@
-import { Request, Response } from 'express';
+import e, { Request, Response } from 'express';
 import { argon2id, hash, verify } from 'argon2';
 
 import { Model } from '../../enum/model.enum';
 import { createOne, getMany, getOneBy, removeOneBy, updateOneBy } from '../../utils/crud';
 import { User } from '../../models/client/user.model';
+
+const nodemailer = require('nodemailer');
 
 const clientPool: any = require('../../db/clientPool');
 
@@ -200,10 +202,42 @@ const deleteUser = (req: Request, res: Response): void => {
 	});
 };
 
+const updatePassword = async (req: Request, res: Response): Promise<void> => {
+	const userId = req.params.user_id;
+	const password = req.body.password;
+
+	console.log(userId);
+	console.log(password);
+
+	let hashedPassword: string;
+	try {
+		hashedPassword = await hash(password, { type: argon2id });
+	} catch (e: any) {
+		res.status(500).send('Erreur serveur interne.');
+		return;
+	}
+
+	clientPool.query(
+		'UPDATE client_user SET password = $1 WHERE id = $2;',
+		[hashedPassword, userId],
+		(error: Error, results: any) => {
+			if (error) {
+				res.status(500).json({
+					error: 'Erreur serveur interne.',
+					details: error,
+				});
+				return;
+			}
+			return res.status(200).json({ status_code: 200, message: 'password updated' });
+		},
+	);
+};
+
 export const userController = {
 	getOneUserById: getUserById,
 	getAllUsers,
 	createUser,
 	deleteUser,
 	updateUser,
+	updatePassword,
 };

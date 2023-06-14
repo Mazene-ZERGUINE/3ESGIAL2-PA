@@ -2,6 +2,7 @@ import express, { Express } from 'express';
 
 import userRouter from '../routes/client/user.router';
 import signInRouter from '../routes/client/sign-in.router';
+import { recoverPassword } from './security';
 
 export default class AppRouter {
 	constructor() {}
@@ -17,5 +18,6 @@ export default class AppRouter {
 		app.use('/api/client/tasks', this.tasksRoutes);
 		app.use('/api/trello/signin', signInRouter);
 		app.use('/api/client/tickets', this.ticketsRouts);
+		app.post('/api/client/recover_password', recoverPassword);
 	};
 }
