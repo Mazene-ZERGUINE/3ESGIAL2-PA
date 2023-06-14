@@ -34,7 +34,7 @@
                               <Font name="Serif Bold" size="40.0" />
                            </font>
                         </Label>
-                        <Label layoutX="150.0" layoutY="274.0" prefHeight="20.0" prefWidth="173.0" text="Mot de passe oublié ?">
+                        <Label layoutX="150.0" layoutY="274.0" onMouseClicked="#recoverPassword" prefHeight="20.0" prefWidth="173.0" text="Mot de passe oublié ?">
                            <font>
                               <Font size="16.0" />
                            </font>

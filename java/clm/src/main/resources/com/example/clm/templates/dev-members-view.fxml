@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -45,16 +48,42 @@
 						</AnchorPane>
 					</center>
 				</BorderPane>
-				<TableView fx:id="tableView" layoutX="127.0" layoutY="111.0" onMouseClicked="#onTableViewSelected" prefHeight="491.0" prefWidth="878.0">
+				<TableView fx:id="tableView" layoutX="36.0" layoutY="93.0" onMouseClicked="#onTableViewSelected" prefHeight="501.0" prefWidth="592.0">
 					<columns>
-						<TableColumn fx:id="lastNameColumn" prefWidth="292.0" text="Nom" />
-						<TableColumn fx:id="firstNameColumn" minWidth="0.0" prefWidth="306.0" text="Prénom" />
-						<TableColumn fx:id="emailColumn" prefWidth="279.0" text="Email" />
+						<TableColumn fx:id="lastNameColumn" prefWidth="193.0" text="Nom" />
+						<TableColumn fx:id="firstNameColumn" minWidth="0.0" prefWidth="201.0" text="Prénom" />
+						<TableColumn fx:id="emailColumn" prefWidth="193.0" text="Email" />
 					</columns>
 					<opaqueInsets>
 						<Insets />
 					</opaqueInsets>
 				</TableView>
+            <AnchorPane layoutX="656.0" layoutY="93.0" prefHeight="309.0" prefWidth="440.0" style="-fx-border-color: black; -fx-border-width: 2; -fx-border-radius: 25;">
+               <children>
+                  <Label fx:id="userRole" layoutX="36.0" layoutY="52.0" textFill="#ee7474">
+                     <font>
+                        <Font size="28.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="userName" layoutX="36.0" layoutY="100.0">
+                     <font>
+                        <Font size="17.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="userLastName" layoutX="36.0" layoutY="130.0">
+                     <font>
+                        <Font size="17.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="userEmail" layoutX="36.0" layoutY="164.0">
+                     <font>
+                        <Font size="17.0" />
+                     </font>
+                  </Label>
+                  <PasswordField fx:id="updatePassword" layoutX="36.0" layoutY="216.0" prefHeight="26.0" prefWidth="359.0" promptText="Modifier votre mot de passe" />
+                  <Button fx:id="updatePasswordBtn" layoutX="36.0" layoutY="257.0" mnemonicParsing="false" onAction="#onUpdatePasswordBtnClick" prefHeight="26.0" prefWidth="359.0" style="-fx-background-color: #2e96ff;" text="Modifier" textFill="WHITE" />
+               </children>
+            </AnchorPane>
 			</children>
 		</AnchorPane>
 	</children>
