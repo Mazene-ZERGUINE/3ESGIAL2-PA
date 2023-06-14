@@ -3,6 +3,7 @@ package com.example.clm.controllers;
 import com.example.clm.Main;
 import com.example.clm.models.Users;
 import com.example.clm.utils.ApiService;
+import com.example.clm.utils.AuthService;
 import com.example.clm.utils.NotifierService;
 import com.example.clm.utils.SceneService;
 import com.github.tsohr.JSONObject;
@@ -13,10 +14,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
@@ -32,7 +30,7 @@ import java.util.ResourceBundle;
 import static javafx.collections.FXCollections.observableArrayList;
 
 
-public class MembersController extends Application implements Initializable {
+public class MembersController  implements Initializable {
 
 	private final ApiService api = new ApiService();
 	private final SceneService sceneService = new SceneService();
@@ -49,6 +47,9 @@ public class MembersController extends Application implements Initializable {
 	private TableColumn lastNameColumn;
 	@FXML
 	private TableColumn firstNameColumn;
+
+	@FXML
+	private ComboBox<String> roleCombo ;
 	@FXML
 	private TableColumn emailColumn;
 	@FXML
@@ -59,27 +60,49 @@ public class MembersController extends Application implements Initializable {
 	private TextField emailField;
 	@FXML
 	private TextField passwordField;
+
 	@FXML
-	private TextField confirmPasswordField;
+	private PasswordField updatePassword;
+
+	@FXML
+	private Button updatePasswordBtn;
+
+	@FXML
+	private Label userEmail;
+
+	@FXML
+	private Label userLastName;
+
+	@FXML
+	private Label userName;
+
+	@FXML
+	private Label userRole;
 
 	@FXML
 	private Button addBtn;
 
-	@Override
-	public void start(Stage stage) throws IOException {
-		FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("templates/members-view.fxml"));
-		Scene scene = new Scene(fxmlLoader.load(), 1100, 650);
-		stage.setTitle("CLM");
-		stage.setScene(scene);
-		stage.show();
-	}
+	private final  static AuthService auth = new AuthService();
 
-	public static void main(String[] args) {
-		launch();
-	}
 
 	@Override
 	public void initialize(URL url, ResourceBundle resourceBundle) {
+		if (auth.checkUserRole()) {
+			roleCombo.getItems().add("ADMIN");
+			roleCombo.getItems().add("DEV");
+		}
+
+		if (!auth.checkUserRole()) {
+			System.out.println("ok");
+			JSONObject userData = auth.getUserData();
+			System.out.println(userData.toString());
+			this.userRole.setText(userData.getString("role"));
+			this.userEmail.setText(userData.getString("email"));
+			this.userName.setText(userData.getString("first_name"));
+			this.userLastName.setText(userData.getString("last_name"));
+
+		}
+
 		setColumns();
 		getAllMembers();
 	}
@@ -90,16 +113,11 @@ public class MembersController extends Application implements Initializable {
 		var firstName = firstNameField.getText().trim();
 		var email = emailField.getText().trim();
 		var password = passwordField.getText();
-		var confirmPassword = confirmPasswordField.getText();
+		var role = roleCombo.getValue() ;
 
-		var isOneFieldEmpty = lastName.isBlank() || firstName.isBlank() || email.isBlank() || password.isBlank() || confirmPassword.isBlank();
+		var isOneFieldEmpty = lastName.isBlank() || firstName.isBlank() || email.isBlank() || password.isBlank()  || role.isBlank();
 		if (isOneFieldEmpty) {
 			notifierService.notify(NotificationType.ERROR, "Error", "Tous les champs sont obligatoires.");
-			return;
-		}
-
-		if (!arePasswordsSame(passwordField.getText(), confirmPasswordField.getText())) {
-			notifierService.notify(NotificationType.ERROR, "Error", "Les mots de passes ne sont pas identiques.");
 			return;
 		}
 
@@ -108,7 +126,8 @@ public class MembersController extends Application implements Initializable {
 			.put("last_name", lastName)
 			.put("first_name", firstName)
 			.put("email", email)
-			.put("password", password);
+			.put("password", password)
+			.put("role" , role) ;
 
 		try {
 			api.postTypeRequest(baseUrl + "users/", payload);
@@ -133,7 +152,8 @@ public class MembersController extends Application implements Initializable {
 		firstNameField.clear();
 		emailField.clear();
 		passwordField.clear();
-		confirmPasswordField.clear();
+		roleCombo.setValue("");
+
 	}
 
 	@FXML
@@ -142,16 +162,11 @@ public class MembersController extends Application implements Initializable {
 		var firstName = firstNameField.getText().trim();
 		var email = emailField.getText().trim();
 		var password = passwordField.getText();
-		var confirmPassword = confirmPasswordField.getText();
+		var role = roleCombo.getValue();
 
 		var isOneFieldEmpty = lastName.isBlank() || firstName.isBlank() || email.isEmpty();
 		if (isOneFieldEmpty) {
 			notifierService.notify(NotificationType.ERROR, "Error", "Tous les champs sont obligatoires, sauf les mots de passe.");
-			return;
-		}
-
-		if (!arePasswordsSame(password, confirmPassword)) {
-			notifierService.notify(NotificationType.ERROR, "Error", "Les mots de passe ne sont pas identiques.");
 			return;
 		}
 
@@ -166,7 +181,8 @@ public class MembersController extends Application implements Initializable {
 			.put("last_name", lastName)
 			.put("first_name", firstName)
 			.put("email", email)
-			.put("password", password);
+			.put("password", password)
+			.put("role" , role) ;
 
 		try {
 			api.putTypeRequest(baseUrl + "users/" + selectedUser.getEmail(), payload);
@@ -229,20 +245,31 @@ public class MembersController extends Application implements Initializable {
 				lastNameField.setText(user.getLastName());
 				firstNameField.setText(user.getFirstName());
 				emailField.setText(user.getEmail());
+				roleCombo.setValue(user.getRole());
 			}
 		});
 	}
 
 	@FXML
 	void switchToCategoriesPage(MouseEvent __) throws IOException {
-		Stage stage = (Stage) this.addBtn.getScene().getWindow();
-		sceneService.switchScene(stage, "categories-view.fxml", null);
+		if (auth.checkUserRole()) {
+			Stage stage = (Stage) this.addBtn.getScene().getWindow();
+			sceneService.switchScene(stage, "categories-view.fxml", null);
+		} else {
+			Stage stage = (Stage) this.tableView.getScene().getWindow();
+			sceneService.switchScene(stage, "categories-dev-view.fxml", null);
+		}
 	}
 
 	@FXML
 	void switchToPlanificationPage(MouseEvent event) throws IOException {
-		Stage stage = (Stage) this.addBtn.getScene().getWindow();
-		sceneService.switchScene(stage, "gantt-view.fxml", null);
+		if (auth.checkUserRole()) {
+			Stage stage = (Stage) this.addBtn.getScene().getWindow();
+			sceneService.switchScene(stage, "gantt-view.fxml", null);
+		} else {
+			Stage stage = (Stage) this.tableView.getScene().getWindow();
+			sceneService.switchScene(stage, "gantt-view.fxml", null);
+		}
 	}
 
 	private void getAllMembers() {
@@ -259,7 +286,8 @@ public class MembersController extends Application implements Initializable {
 					jsonUsers.getJSONObject(i).getString("last_name"),
 					jsonUsers.getJSONObject(i).getString("email"),
 					jsonUsers.getJSONObject(i).getString("password"),
-					jsonUsers.getJSONObject(i).getString("created_at")
+					jsonUsers.getJSONObject(i).getString("created_at") ,
+					jsonUsers.getJSONObject(i).getString("role")
 				);
 
 				users.add(newUser);
@@ -277,4 +305,19 @@ public class MembersController extends Application implements Initializable {
 		firstNameColumn.setCellValueFactory(new PropertyValueFactory<>("firstName"));
 		emailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
 	}
+	@FXML
+	void onUpdatePasswordBtnClick(ActionEvent event) throws IOException {
+			String password = this.updatePassword.getText();
+			if (password.trim().isEmpty()) {
+				notifierService.notify(NotificationType.ERROR , "Erreur" , "Mot de passe exigé");
+				return;
+			}
+			JSONObject data = new JSONObject()
+				.put("password" , password);
+			JSONObject response = new JSONObject(api.postTypeRequest(baseUrl + "users/update_password/" + auth.getUserId() , data).toString());
+			if (response.getInt("status_code") == 200) {
+				notifierService.notify(NotificationType.SUCCESS , "Success" , "Mot de passe modifier");
+			}
+	}
+
 }

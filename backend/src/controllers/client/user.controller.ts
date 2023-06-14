@@ -1,9 +1,11 @@
-import { Request, Response } from 'express';
+import e, { Request, Response } from 'express';
 import { argon2id, hash, verify } from 'argon2';
 
 import { Model } from '../../enum/model.enum';
 import { createOne, getMany, getOneBy, removeOneBy, updateOneBy } from '../../utils/crud';
 import { User } from '../../models/client/user.model';
+
+const nodemailer = require('nodemailer');
 
 const clientPool: any = require('../../db/clientPool');
 
@@ -46,7 +48,7 @@ const getAllUsers = (req: Request, res: Response): void => {
 };
 
 const createUser = (req: Request, res: Response): void => {
-	const { email, first_name, last_name, password } = req.body;
+	const { email, first_name, last_name, password, role } = req.body;
 	type UserWithoutIdKey = Omit<User, 'id'>;
 
 	const isOnePropertyInvalid = !email.trim() || !first_name.trim() || !last_name.trim() || !password.trim();
@@ -78,6 +80,7 @@ const createUser = (req: Request, res: Response): void => {
 			first_name,
 			last_name,
 			password: hashedPassword,
+			role,
 			created_at: new Date(),
 			updated_at: null,
 		};
@@ -97,7 +100,7 @@ const createUser = (req: Request, res: Response): void => {
 
 const updateUser = (req: Request, res: Response): void => {
 	const { email: emailParam } = req.params;
-	const { email, first_name, last_name, password } = req.body;
+	const { email, first_name, last_name, password, role } = req.body;
 	type UserWithoutIdKey = Omit<User, 'id'>;
 
 	const isOnePropertyInvalid = !email.trim() || !first_name.trim() || !last_name.trim() || password == null;
@@ -151,6 +154,7 @@ const updateUser = (req: Request, res: Response): void => {
 			first_name,
 			last_name,
 			password: !password ? foundUser.password : hashedPassword,
+			role,
 			created_at: foundUser.created_at,
 			updated_at: new Date(),
 		};
@@ -198,10 +202,42 @@ const deleteUser = (req: Request, res: Response): void => {
 	});
 };
 
+const updatePassword = async (req: Request, res: Response): Promise<void> => {
+	const userId = req.params.user_id;
+	const password = req.body.password;
+
+	console.log(userId);
+	console.log(password);
+
+	let hashedPassword: string;
+	try {
+		hashedPassword = await hash(password, { type: argon2id });
+	} catch (e: any) {
+		res.status(500).send('Erreur serveur interne.');
+		return;
+	}
+
+	clientPool.query(
+		'UPDATE client_user SET password = $1 WHERE id = $2;',
+		[hashedPassword, userId],
+		(error: Error, results: any) => {
+			if (error) {
+				res.status(500).json({
+					error: 'Erreur serveur interne.',
+					details: error,
+				});
+				return;
+			}
+			return res.status(200).json({ status_code: 200, message: 'password updated' });
+		},
+	);
+};
+
 export const userController = {
 	getOneUserById: getUserById,
 	getAllUsers,
 	createUser,
 	deleteUser,
 	updateUser,
+	updatePassword,
 };

@@ -7,10 +7,15 @@ module com.example.clm {
     requires org.kordamp.bootstrapfx.core;
     requires json;
     requires TrayNotification;
+    requires org.yaml.snakeyaml;
+	requires java.desktop;
 
-    opens com.example.clm to javafx.fxml;
-	opens com.example.clm.models to javafx.base;
+	opens com.example.clm to javafx.fxml;
+	opens com.example.clm.models;
+
 	exports com.example.clm;
     exports com.example.clm.controllers;
     opens com.example.clm.controllers to javafx.fxml;
+	exports com.example.clm.utils;
+	opens com.example.clm.utils to javafx.fxml;
 }

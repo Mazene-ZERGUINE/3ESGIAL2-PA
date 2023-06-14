@@ -38,7 +38,7 @@ const signIn = (req: Request, res: Response) => {
 					return;
 				}
 
-				res.status(204).end();
+				res.status(200).send(results.rows[0]).end();
 				return;
 			} catch (e) {
 				res.status(500).send('Erreur serveur interne.');

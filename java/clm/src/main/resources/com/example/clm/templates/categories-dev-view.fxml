@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="650.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.clm.controllers.CategoriesController">
+	<children>
+		<AnchorPane fx:id="mainPane" prefHeight="650.0" prefWidth="1100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+			<children>
+				<BorderPane prefHeight="57.0" prefWidth="1100.0" style="-fx-background-color: #000958;">
+					<right>
+						<AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="57.0" prefWidth="1114.0" BorderPane.alignment="CENTER">
+							<children>
+								<Text fill="RED" layoutX="447.0" layoutY="36.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Projets" textAlignment="CENTER" AnchorPane.leftAnchor="447.0" AnchorPane.rightAnchor="613.01953125" AnchorPane.topAnchor="16.6640625">
+									<font>
+										<Font size="20.0" />
+									</font>
+								</Text>
+								<Text fill="WHITE" layoutX="526.0" layoutY="36.0" onMouseClicked="#switchToTicketPage" strokeType="OUTSIDE" strokeWidth="0.0" text="Ticket" AnchorPane.topAnchor="16.6640625">
+									<font>
+										<Font size="20.0" />
+									</font>
+								</Text>
+								<Text fill="WHITE" layoutX="596.0" layoutY="36.0" onMouseClicked="#switchToPlanificationPage" strokeType="OUTSIDE" strokeWidth="0.0" text="Planification" AnchorPane.topAnchor="16.6640625">
+									<font>
+										<Font size="20.0" />
+									</font>
+								</Text>
+								<Text fx:id="logOutBtn" fill="WHITE" layoutX="964.0" layoutY="36.0" onMouseClicked="#onLogOutBtnClick" strokeType="OUTSIDE" strokeWidth="0.0" text="Se déconnecter" AnchorPane.topAnchor="16.6640625">
+									<font>
+										<Font size="20.0" />
+									</font>
+								</Text>
+								<Text fill="WHITE" layoutX="351.0" layoutY="37.0" onMouseClicked="#switchToMembersPage" strokeType="OUTSIDE" strokeWidth="0.0" text="Membres" AnchorPane.topAnchor="17.0">
+									<font>
+										<Font size="20.0" />
+									</font>
+								</Text>
+							</children>
+						</AnchorPane>
+					</right>
+				</BorderPane>
+				<ListView fx:id="devProjects" layoutX="39.0" layoutY="161.0" onMouseClicked="#onCategorieListSelected" prefHeight="437.0" prefWidth="1028.0" style="-fx-border-radius: 15; -fx-padding: 5;" />
+            <Label layoutX="481.0" layoutY="95.0" text="Vos Projets" textFill="#eb7777">
+               <font>
+                  <Font size="33.0" />
+               </font>
+            </Label>
+			</children>
+		</AnchorPane>
+	</children>
+</AnchorPane>

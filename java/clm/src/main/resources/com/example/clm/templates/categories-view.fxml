@@ -11,7 +11,7 @@
 
 <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="650.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.clm.controllers.CategoriesController">
    <children>
-      <AnchorPane prefHeight="650.0" prefWidth="1100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <AnchorPane fx:id="mainPane" prefHeight="650.0" prefWidth="1100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <BorderPane prefHeight="57.0" prefWidth="1100.0" style="-fx-background-color: #000958;">
                <right>
@@ -22,7 +22,7 @@
                               <Font size="20.0" />
                            </font>
                         </Text>
-                        <Text fill="WHITE" layoutX="526.0" layoutY="36.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Ticket" AnchorPane.topAnchor="16.6640625">
+                        <Text fx:id="ticketBtn" fill="WHITE" layoutX="526.0" layoutY="36.0" onMouseClicked="#switchToTicketPage" strokeType="OUTSIDE" strokeWidth="0.0" text="Ticket" AnchorPane.topAnchor="16.6640625">
                            <font>
                               <Font size="20.0" />
                            </font>
@@ -53,9 +53,10 @@
                   <Button fx:id="deleteBtn" layoutX="172.0" layoutY="52.0" mnemonicParsing="false" onAction="#onDeleteBtnClick" prefHeight="40.0" prefWidth="127.0" style="-fx-background-color: #a83234;" text="Effacer" textFill="WHITE" />
                   <Button fx:id="updateBtn" layoutX="320.0" layoutY="52.0" mnemonicParsing="false" onAction="#onUpdateBtnClick" prefHeight="40.0" prefWidth="127.0" style="-fx-background-color: #2e96ff;" text="Modifier" textFill="WHITE" />
                   <TextField fx:id="categorieTitle" layoutX="32.0" layoutY="155.0" prefHeight="26.0" prefWidth="384.0" />
-                  <TextArea fx:id="categorieDescription" layoutX="31.0" layoutY="233.0" prefHeight="147.0" prefWidth="388.0" />
+                  <TextArea fx:id="categorieDescription" layoutX="31.0" layoutY="233.0" prefHeight="101.0" prefWidth="388.0" />
                   <Text layoutX="26.0" layoutY="143.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Projet" wrappingWidth="77.04687118530273" />
                   <Text layoutX="27.0" layoutY="218.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Description" wrappingWidth="77.04687118530273" />
+                  <ListView fx:id="membersList" layoutX="29.0" layoutY="351.0" prefHeight="188.0" prefWidth="394.0" />
                </children>
             </AnchorPane>
          </children>

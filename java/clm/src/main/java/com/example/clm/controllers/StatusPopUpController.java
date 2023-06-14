@@ -113,15 +113,16 @@ public class StatusPopUpController  implements Initializable {
 		for (int i = 0 ; i < dataArray.length() ; i++) {
 			Users user = new Users(
 				dataArray.getJSONObject(i).getInt("id"),
-				dataArray.getJSONObject(i).getString("firstname"),
-				dataArray.getJSONObject(i).getString("lastname"),
+				dataArray.getJSONObject(i).getString("first_name"),
+				dataArray.getJSONObject(i).getString("last_name"),
 				dataArray.getJSONObject(i).getString("email"),
-				dataArray.getJSONObject(i).getString("email"),
-				dataArray.getJSONObject(i).getString("created_at")
+				dataArray.getJSONObject(i).getString("password"),
+				dataArray.getJSONObject(i).getString("created_at"),
+				dataArray.getJSONObject(i).getString("role")
 				//dataArray.getJSONObject(i).getString("updated_at")
 			);
 			users.add(user) ;
-			usersList.getItems().add( dataArray.getJSONObject(i).getString("firstname")) ;
+			usersList.getItems().add( dataArray.getJSONObject(i).getString("first_name")) ;
 		}
 		usersList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE); ;
 	}

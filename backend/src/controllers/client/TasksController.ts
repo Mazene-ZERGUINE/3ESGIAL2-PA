@@ -17,7 +17,6 @@ const addNewTask = (req: Request, res: Response) => {
 					error: 'Erreur serveur interne.',
 					details: error,
 				});
-				throw error;
 			}
 			return res.status(200).send({ status_code: 200, message: 'Tâche créée avec succès.' });
 		},

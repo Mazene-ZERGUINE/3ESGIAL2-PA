@@ -1,10 +1,14 @@
 package com.example.clm.utils;
 
+import javafx.scene.control.Alert;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
+import org.controlsfx.control.Notifications;
 import tray.animations.AnimationType;
 import tray.notification.NotificationType;
 import tray.notification.TrayNotification;
+
+
 
 public class NotifierService {
 
@@ -16,5 +20,6 @@ public class NotifierService {
 		tray.setRectangleFill(Color.valueOf("#2A9A84"));
 		tray.showAndDismiss(Duration.seconds(4));
 	}
+
 
 }
