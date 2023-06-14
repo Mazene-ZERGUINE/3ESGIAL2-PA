@@ -201,6 +201,7 @@ public class TasksController implements Initializable {
 					try {
 						String fileName = StorageService.getInstance().getExportFileName();
 						String filePath = "../exports/" + fileName + "." + selectedExportFormat;
+
 						URLClassLoader classLoader = new URLClassLoader(new URL[]{new URL("file:" + jarFilePath)});
 						String className = selectedExportFormat.substring(0, 1).toUpperCase() + selectedExportFormat.substring(1) + "Exporter" ;
 
