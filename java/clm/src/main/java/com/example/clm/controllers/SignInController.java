@@ -8,10 +8,13 @@ import com.github.tsohr.JSONException;
 import com.github.tsohr.JSONObject;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import tray.notification.NotificationType;
 
 import java.io.*;
@@ -34,6 +37,16 @@ public class SignInController {
 
 	@FXML
 	Button loginBtn;
+
+	@FXML
+	private TextField recoverEmail;
+
+	@FXML
+	private TextField recoverLastName;
+
+	@FXML
+	private TextField recovreName;
+
 
 	@FXML
 	public void onEnter(ActionEvent __){
@@ -117,6 +130,50 @@ public class SignInController {
 		}
 	}
 
+@FXML
+private void recoverPassword(MouseEvent event) throws IOException {
+	Stage stage = new Stage();
+
+	stage.setResizable(false);
+	stage.centerOnScreen();
+	sceneService.switchToNewWindow("password-recover-scene.fxml", null, stage);
+
+}
+
+	@FXML
+	void onRecoverBtnClick(ActionEvent event) throws IOException {
+
+			String email = recoverEmail.getText();
+
+			if ( email.trim().isEmpty() ) {
+				notifierService.notify(NotificationType.ERROR , "Erreur" , "Email est obligatoir");
+				return;
+			}
+
+			JSONObject data = new JSONObject()
+				.put("email" , email);
 
 
+		try {
+			StringBuilder response = new StringBuilder() ;
+			response = api.postTypeRequest(baseUrl + "client/recover_password" , data ) ;
+			JSONObject json = new JSONObject(response.toString());
+			System.out.println(json);
+			if (json.getInt("status_code") == 200) {
+				notifierService.notify(NotificationType.SUCCESS , "Email evoyée" , "un email contenat votre nouveau mot de passe est envoyée à \n " + email);
+
+				Stage stage = (Stage) this.recoverEmail.getScene().getWindow();
+				stage.close();
+			} else if(json.getInt("status_code") == 400 ) {
+				notifierService.notify(NotificationType.ERROR , "Email non trouvé" , "compte n'existe pas");
+
+			} else {
+				notifierService.notify(NotificationType.ERROR , "Email non trouvé" , "Une erreur est survenu");
+
+			}
+		} catch (IOException e) {
+			notifierService.notify(NotificationType.ERROR , "Email non trouvé" , "compte n'existe pas");
+		}
+
+	}
 }

@@ -60,8 +60,24 @@ public class MembersController  implements Initializable {
 	private TextField emailField;
 	@FXML
 	private TextField passwordField;
+
 	@FXML
-	private TextField confirmPasswordField;
+	private PasswordField updatePassword;
+
+	@FXML
+	private Button updatePasswordBtn;
+
+	@FXML
+	private Label userEmail;
+
+	@FXML
+	private Label userLastName;
+
+	@FXML
+	private Label userName;
+
+	@FXML
+	private Label userRole;
 
 	@FXML
 	private Button addBtn;
@@ -74,6 +90,17 @@ public class MembersController  implements Initializable {
 		if (auth.checkUserRole()) {
 			roleCombo.getItems().add("ADMIN");
 			roleCombo.getItems().add("DEV");
+		}
+
+		if (!auth.checkUserRole()) {
+			System.out.println("ok");
+			JSONObject userData = auth.getUserData();
+			System.out.println(userData.toString());
+			this.userRole.setText(userData.getString("role"));
+			this.userEmail.setText(userData.getString("email"));
+			this.userName.setText(userData.getString("first_name"));
+			this.userLastName.setText(userData.getString("last_name"));
+
 		}
 
 		setColumns();
@@ -278,4 +305,19 @@ public class MembersController  implements Initializable {
 		firstNameColumn.setCellValueFactory(new PropertyValueFactory<>("firstName"));
 		emailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
 	}
+	@FXML
+	void onUpdatePasswordBtnClick(ActionEvent event) throws IOException {
+			String password = this.updatePassword.getText();
+			if (password.trim().isEmpty()) {
+				notifierService.notify(NotificationType.ERROR , "Erreur" , "Mot de passe exigé");
+				return;
+			}
+			JSONObject data = new JSONObject()
+				.put("password" , password);
+			JSONObject response = new JSONObject(api.postTypeRequest(baseUrl + "users/update_password/" + auth.getUserId() , data).toString());
+			if (response.getInt("status_code") == 200) {
+				notifierService.notify(NotificationType.SUCCESS , "Success" , "Mot de passe modifier");
+			}
+	}
+
 }
