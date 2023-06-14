@@ -64,6 +64,20 @@ public class AuthService {
 		return  data.getString("first_name");
 	}
 
-
+	public JSONObject getUserData() {
+		File userInfo = new File("../configs/userInfo.txt");
+		userInfo.setReadable(true , true) ;
+		JSONObject data = new JSONObject() ;
+		try (BufferedReader reader = new BufferedReader(new FileReader("../configs/userInfo.txt"))) {
+			String line;
+			while ((line = reader.readLine()) != null) {
+				data = new JSONObject(line);
+			}
+		} catch (IOException e) {
+			System.out.println("Error reading from the file: " + e.getMessage());
+		}
+		userInfo.setReadable(false , false) ;
+		return  data;
+	}
 
 }
