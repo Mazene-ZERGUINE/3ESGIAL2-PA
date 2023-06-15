@@ -1,6 +1,11 @@
 <div class="col">
   <h1 class="my-3">Connexion</h1>
-  <form class="border border-secondary rounded p-3 bg-white" *ngIf="form" [formGroup]="form" (ngSubmit)="onSubmit()">
+  <form
+    class="border border-secondary border-opacity-50 rounded p-3 bg-white"
+    *ngIf="form"
+    [formGroup]="form"
+    (ngSubmit)="onSubmit()"
+  >
     <div class="mb-3">
       <label class="form-label required" for="email">Email</label>
       <input class="form-control" type="email" id="email" name="email" formControlName="email" required autofocus />
@@ -15,7 +20,7 @@
       <label class="form-label required" for="password">Mot de passe</label>
       <input class="form-control" type="password" id="password" name="password" formControlName="password" required />
     </div>
-    <button class="btn btn-success" [disabled]="form.invalid">Se connecter</button>
+    <button class="btn btn-outline-success" [disabled]="form.invalid">Se connecter</button>
     <a class="my-auto m-4 p-2" routerLink="/signup">S'inscrire</a>
   </form>
 </div>

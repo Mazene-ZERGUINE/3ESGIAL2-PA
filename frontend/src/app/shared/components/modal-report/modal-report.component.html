@@ -1,0 +1,20 @@
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-title">Signalement</h4>
+  <button type="button" class="btn-close" aria-describedby="modal-title" (click)="modal.dismiss('')"></button>
+</div>
+<div class="modal-body">
+  <label class="form-label required" for="description">Ajouter une description</label>
+  <textarea
+    class="form-control"
+    id="description"
+    rows="3"
+    name="description"
+    placeholder="Votre description..."
+    required
+    [(ngModel)]="description"
+  ></textarea>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss('')">Annuler</button>
+  <button type="button" class="btn btn-info" [disabled]="!description" (click)="onReport(description)">Signaler</button>
+</div>

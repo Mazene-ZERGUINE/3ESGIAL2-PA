@@ -1,1 +1,18 @@
-<p>user-profile-details works!</p>
+<div class="row">
+  <div class="col my-3">
+    <div class="d-flex justify-content-between">
+      <h1 class="my-3">user.pseudonyme</h1>
+      <div>
+        <button class="btn btn-outline-info" (click)="onReport()">
+          <i class="bi bi-exclamation-triangle-fill"></i>
+        </button>
+      </div>
+    </div>
+    <!-- TODO -->
+    <p>Statut : user.status</p>
+    <p>Nom : user.nom</p>
+    <p>Prénom : user.prenom</p>
+    <p>Département : user.departement</p>
+    <p>Ville : user.ville</p>
+  </div>
+</div>

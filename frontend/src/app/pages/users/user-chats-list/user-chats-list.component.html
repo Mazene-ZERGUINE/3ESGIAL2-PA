@@ -1,0 +1,19 @@
+<div class="d-flex flex-column align-items-stretch flex-shrink-0 bg-white">
+  <span class="fs-5 fw-semibold">Liste de conversations</span>
+
+  <div class="list-group list-group-flush border-bottom scrollarea">
+    <ng-container *ngFor="let chat of chats">
+      <a
+        class="list-group-item list-group-item-action py-3 lh-tight"
+        aria-current="true"
+        [routerLink]="'/' + usersPath + '/chats/TODO'"
+      >
+        <div class="d-flex w-100 align-items-center justify-content-between">
+          <span class="mb-1">destinataire nom destinataire prenom</span>
+          <small>date dernier message</small>
+        </div>
+        <!--      <div class="col-10 mb-1 small">Some placeholder content in a paragraph below the heading and date.</div>-->
+      </a>
+    </ng-container>
+  </div>
+</div>

@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./header.component.scss'],
 })
 export class HeaderComponent implements OnInit {
-  isAuthenticated = !false;
+  isAuthenticated = true;
 
   backOfficeRoutes: ReadonlyArray<{ path: string; label: string }> = [
     { path: '/administration/categories', label: 'Catégories' },
@@ -20,12 +20,8 @@ export class HeaderComponent implements OnInit {
     { path: '/administration/users/add', label: 'Utilisateurs (ajout)' },
   ];
 
-  initialRoutes: ReadonlyArray<{ path: string; label: string }> = [
-    { path: '/posts/add', label: 'Publier' },
-  ];
-
   userRoutes: ReadonlyArray<{ path: string; label: string }> = [
-    { path: '/chat', label: 'Messagerie' },
+    { path: '/users/chats', label: 'Messagerie' },
     { path: '/users/profile/me', label: 'Profil' },
     { path: '/users/posts', label: 'Publications' },
   ];
@@ -53,6 +49,7 @@ export class HeaderComponent implements OnInit {
    * TODO
    */
   onLogoutClick(): void {
+    this.isAuthenticated = false;
     // this.authService.logout();
   }
 

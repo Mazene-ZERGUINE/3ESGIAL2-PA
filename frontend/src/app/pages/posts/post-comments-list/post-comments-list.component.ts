@@ -2,6 +2,7 @@ import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular
 import { PostComment } from '../shared/models/post-comment.interface';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ModalFocusConfirmComponent } from '../../../shared/components/modal-focus-confirm/modal-focus-confirm.component';
+import { Path } from '../../../shared/enum/path.enum';
 
 @Component({
   selector: 'app-post-comments-list',
@@ -14,6 +15,7 @@ export class PostCommentsListComponent implements OnInit {
 
   isLoading = false;
   page = 1;
+  usersPath = Path.users;
 
   constructor(private readonly modalService: NgbModal) {}
 

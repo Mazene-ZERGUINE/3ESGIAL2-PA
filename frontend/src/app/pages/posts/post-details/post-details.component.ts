@@ -4,6 +4,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { Post } from '../shared/models/post.interface';
 import { ModalFocusConfirmComponent } from '../../../shared/components/modal-focus-confirm/modal-focus-confirm.component';
+import { ModalReportComponent } from '../../../shared/components/modal-report/modal-report.component';
 
 @Component({
   selector: 'app-post-details',
@@ -39,6 +40,14 @@ export class PostDetailsComponent implements OnInit {
 
   async onEdit(id: number): Promise<void> {
     await this.router.navigateByUrl(`posts/${id}/edit`);
+  }
+
+  async onReport(): Promise<void> {
+    try {
+      const description = await this.modalService.open(ModalReportComponent).result;
+      console.log(description);
+      // TODO
+    } catch (_) {}
   }
 
   onStar(): void {

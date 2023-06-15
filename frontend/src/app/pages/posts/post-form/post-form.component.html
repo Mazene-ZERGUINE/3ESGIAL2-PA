@@ -1,6 +1,12 @@
 <div class="col">
   <h1 class="my-3">{{ canEdit ? 'Edition de publication' : 'Ajout de publication' }}</h1>
-  <form class="border border-secondary rounded p-3" *ngIf="form" [formGroup]="form" (ngSubmit)="onSubmit()">
+  <form
+    enctype="multipart/form-data"
+    class="border border-secondary border-opacity-50 rounded p-3"
+    [formGroup]="form"
+    (ngSubmit)="onSubmit()"
+    *ngIf="form"
+  >
     <div class="mb-3">
       <label class="form-label required" for="titre">Titre</label>
       <input class="form-control" type="text" id="titre" name="titre" formControlName="titre" required autofocus />
@@ -8,24 +14,35 @@
         class="text-danger my-2"
         *ngIf="form.get('titre')?.touched && form.get('titre')?.dirty && form.get('titre')?.getError('titre')"
       >
-        Le champs doit contenir un courriel.
+        Le champs doit contenir un titre.
       </div>
     </div>
     <div class="mb-3">
-      <label class="form-label required" for="description">Description</label>
+      <label class="form-label" for="description">Description</label>
       <input class="form-control" type="text" id="description" name="description" formControlName="description" />
-      <div
-        class="text-danger my-2"
-        *ngIf="
-          form.get('description')?.touched &&
-          form.get('description')?.dirty &&
-          form.get('description')?.getError('description')
-        "
-      >
-        Le champs doit contenir un courriel.
+    </div>
+    <div class="mb-3">
+      <label class="form-label" for="images">Ajouter une image</label>
+      <div>
+        <input
+          class="form-control"
+          type="file"
+          name="images"
+          id="images"
+          [accept]="acceptedTypes"
+          (change)="onFileInputChange($event)"
+        />
       </div>
     </div>
-    <button [ngClass]="canEdit ? 'btn btn-warning' : 'btn btn-success'" [disabled]="form.invalid">
+    <ul class="list-group mb-3">
+      <li class="list-group-item d-flex justify-content-between" *ngFor="let image of $any(images)">
+        {{ image.name }}
+        <button class="btn btn-outline-danger" (click)="onDelete(image)">
+          <i class="bi bi-trash-fill"></i>
+        </button>
+      </li>
+    </ul>
+    <button [ngClass]="canEdit ? 'btn btn-outline-warning' : 'btn btn-outline-success'" [disabled]="form.invalid">
       {{ canEdit ? 'Editer' : 'Ajouter' }}
     </button>
   </form>
