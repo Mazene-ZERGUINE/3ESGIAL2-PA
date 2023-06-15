@@ -115,7 +115,7 @@
         Le champ est incorrect.
       </small>
     </div>
-    <button [ngClass]="canEdit ? 'btn btn-warning' : 'btn btn-success'" [disabled]="form.invalid">
+    <button [ngClass]="canEdit ? 'btn btn-outline-warning' : 'btn btn-outline-success'" [disabled]="form.invalid">
       {{ canEdit ? 'Editer' : 'Ajouter' }}
     </button>
   </form>
