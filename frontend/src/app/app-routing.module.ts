@@ -33,9 +33,9 @@ const routes: Routes = [
     title: `Inscription ${combinedTitle}`,
   },
   {
-    path: 'user',
-    loadChildren: () => import('./pages/user/user.module').then((m) => m.UserModule),
-    title: `Mon profil ${combinedTitle}`,
+    path: 'users',
+    loadChildren: () => import('./pages/users/users.module').then((m) => m.UsersModule),
+    title: `Utilisateurs ${combinedTitle}`,
   },
   {
     path: '**',

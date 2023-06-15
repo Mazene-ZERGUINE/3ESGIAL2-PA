@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./header.component.scss'],
 })
 export class HeaderComponent implements OnInit {
-  isAuthenticated = !false;
+  isAuthenticated = true;
 
   backOfficeRoutes: ReadonlyArray<{ path: string; label: string }> = [
     { path: '/administration/categories', label: 'Catégories' },
@@ -20,10 +20,10 @@ export class HeaderComponent implements OnInit {
     { path: '/administration/users/add', label: 'Utilisateurs (ajout)' },
   ];
 
-  initialRoutes: ReadonlyArray<{ path: string; label: string }> = [
-    { path: '/posts/add', label: 'Publier' },
-    { path: '/chat', label: 'Messagerie' },
-    { path: '/users', label: 'Profil' },
+  userRoutes: ReadonlyArray<{ path: string; label: string }> = [
+    { path: '/users/chats', label: 'Messagerie' },
+    { path: '/users/profile/me', label: 'Profil' },
+    { path: '/users/posts', label: 'Publications' },
   ];
 
   visitorRoutes: ReadonlyArray<{ path: string; label: string }> = [
@@ -37,18 +37,19 @@ export class HeaderComponent implements OnInit {
     this.checkAuthentication();
   }
 
-  onSignupClick(): void {
-    this._router.navigate(['signup']);
+  async onSignupClick(): Promise<void> {
+    await this._router.navigate(['signup']);
   }
 
-  onLoginClick(): void {
-    this._router.navigate(['login']);
+  async onLoginClick(): Promise<void> {
+    await this._router.navigate(['login']);
   }
 
   /**
    * TODO
    */
   onLogoutClick(): void {
+    this.isAuthenticated = false;
     // this.authService.logout();
   }
 

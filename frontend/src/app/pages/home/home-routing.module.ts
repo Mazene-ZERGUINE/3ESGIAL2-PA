@@ -15,11 +15,6 @@ const routes: Routes = [
         loadChildren: () => import('./../posts/posts.module').then((m) => m.PostsModule),
         title: `Accueil ${combinedTitle}`,
       },
-      {
-        path: 'chat',
-        loadChildren: () => import('./../chat/chat.module').then((m) => m.ChatModule),
-        title: `Messagerie ${combinedTitle}`,
-      },
     ],
   },
 ];

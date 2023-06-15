@@ -12,6 +12,8 @@ import { PostCommentsComponent } from './post-comments/post-comments.component';
 import { NgbPagination } from '@ng-bootstrap/ng-bootstrap';
 import { PostCommentFormComponent } from './post-comment-form/post-comment-form.component';
 import { PostCommentsListComponent } from './post-comments-list/post-comments-list.component';
+import { ComponentsModule } from '../../shared/components/components.module';
+import { ThousandSuffixPipe } from './shared/pipes/thousand-suffix/thousand-suffix.pipe';
 
 @NgModule({
   declarations: [
@@ -22,7 +24,15 @@ import { PostCommentsListComponent } from './post-comments-list/post-comments-li
     PostCommentsComponent,
     PostCommentFormComponent,
     PostCommentsListComponent,
+    ThousandSuffixPipe,
   ],
-  imports: [CommonModule, PostsRoutingModule, ReactiveFormsModule, CarouselBasicComponent, NgbPagination],
+  imports: [
+    CommonModule,
+    PostsRoutingModule,
+    ReactiveFormsModule,
+    CarouselBasicComponent,
+    NgbPagination,
+    ComponentsModule,
+  ],
 })
 export class PostsModule {}

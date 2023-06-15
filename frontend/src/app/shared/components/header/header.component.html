@@ -18,7 +18,7 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
           <!--          <div class="navbar-nav justify-content-center">-->
-          <li class="nav-item dropdown">
+          <li class="nav-item dropdown" *ngIf="isAuthenticated">
             <a class="nav-link p-2 m-2 dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               Administration
             </a>
@@ -36,19 +36,41 @@
               </li>
             </ul>
           </li>
-          <li class="navbar-nav justify-content-center">
-            <a
-              *ngFor="let initialRoute of initialRoutes"
-              class="nav-link p-2 m-2"
-              [routerLink]="initialRoute.path"
-              routerLinkActive="active"
-              [routerLinkActiveOptions]="{ exact: true }"
-            >
-              {{ initialRoute.label }}
-            </a>
+          <li class="navbar-nav justify-content-center" *ngIf="!isAuthenticated; else elsePublierBlock">
+            <a class="nav-link p-2 m-2" [routerLink]="'/login'"> Publier </a>
           </li>
-          <li class="navbar-nav justify-content-center">
-            <a *ngIf="isAuthenticated" class="nav-link p-2 m-2" (click)="onLogoutClick()"> Déconnexion </a>
+          <ng-template #elsePublierBlock>
+            <li class="navbar-nav justify-content-center">
+              <a
+                class="nav-link p-2 m-2"
+                [routerLink]="'/posts/add'"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }"
+              >
+                Publier
+              </a>
+            </li>
+          </ng-template>
+          <li class="nav-item dropdown" *ngIf="isAuthenticated">
+            <a class="nav-link p-2 m-2 dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Mon espace
+            </a>
+            <ul class="dropdown-menu">
+              <li>
+                <a
+                  *ngFor="let userRoute of userRoutes"
+                  class="dropdown-item"
+                  [routerLink]="userRoute.path"
+                  routerLinkActive="active"
+                  [routerLinkActiveOptions]="{ exact: true }"
+                >
+                  {{ userRoute.label }}
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item dropdown" *ngIf="isAuthenticated">
+            <a class="nav-link p-2 m-2" (click)="onLogoutClick()">Déconnexion</a>
           </li>
           <ng-container *ngIf="!isAuthenticated">
             <li class="navbar-nav justify-content-center">

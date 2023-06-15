@@ -2,9 +2,12 @@
   <app-posts-list [posts]="posts$ | async" (selected)="selectPost($event)"></app-posts-list>
   <div class="d-flex justify-content-center mt-5" *ngIf="posts$">
     <ngb-pagination
+      aria-label="Pagination des publications"
       [collectionSize]="(posts$ | async)?.length ?? 0"
       [(page)]="page"
-      aria-label="Posts pagination"
+      (pageChange)="onPageChange($event)"
+      *ngIf="$any(posts$ | async)?.length >= 1"
     ></ngb-pagination>
   </div>
+  <app-back-to-top></app-back-to-top>
 </div>
