@@ -3,10 +3,7 @@ package com.example.clm.controllers;
 import com.example.clm.Main;
 import com.example.clm.models.Categorie;
 import com.example.clm.models.Tasks;
-import com.example.clm.utils.ApiService;
-import com.example.clm.utils.AuthService;
-import com.example.clm.utils.NotifierService;
-import com.example.clm.utils.SceneService;
+import com.example.clm.utils.*;
 import com.github.tsohr.JSONArray;
 import com.github.tsohr.JSONObject;
 import javafx.event.ActionEvent;
@@ -15,11 +12,13 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 import tray.notification.NotificationType;
 
 import java.io.IOException;
@@ -185,6 +184,18 @@ public class TicketsController implements Initializable {
 	}
 
 	@FXML
+	void onThemeBtnClicked(MouseEvent event) throws IOException {
+		Stage stage = new Stage();
+		sceneService.switchToNewWindow("themes-view.fxml" , null , stage);
+
+		stage.setOnHidden(e -> {
+
+			Scene scene = addBtn.getScene();
+			StorageService.getInstance().setSelectedTheme(scene);
+		});
+	}
+
+	@FXML
 	void onDeleteBtnClick(ActionEvent event) {
 
 	}
@@ -214,6 +225,18 @@ public class TicketsController implements Initializable {
 	}
 	}
 
+	private void setTheme() throws IOException {
+		if (StorageService.getInstance().getThemeName() == null) {
+			StorageService.getInstance().setThemeName("mainTheme");
+		}
+		this.vbox.sceneProperty().addListener((observable, oldValue, newValue) -> {
+			if (newValue != null) {
+				Scene scene = vbox.getScene();
+
+				StorageService.getInstance().setSelectedTheme(scene);
+			}
+		});
+	}
 	@Override
 	public void initialize(URL url, ResourceBundle resourceBundle) {
 		this.ticketType.getItems().add("BUG");
@@ -221,11 +244,16 @@ public class TicketsController implements Initializable {
 		this.ticketType.getItems().add("Documentation");
 		this.ticketType.getItems().add("Aide");
 		this.ticketType.getItems().add("Tests");
-
+		try {
+			setTheme();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 		try {
 			if (auth.checkUserRole()) {
 				this.getAllCategories();
 			} else {
+
 				this.devProjects();
 			}
 		} catch (Exception exception) {
@@ -234,21 +262,3 @@ public class TicketsController implements Initializable {
 	}
 }
 
-
-/**
- *
- *
- try {
- FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("templates/ticket-line.fxml"));
- Parent ticketLine = fxmlLoader.load();
-
- // Retrieve the controller associated with the ticket-line.fxml
- TicketsLineController controller = fxmlLoader.getController();
-
- controller.setData("ticket1"  , "BUG" , "DEV1" , "12/12/2012");
- vbox.getChildren().add(ticketLine);
-
- } catch (IOException e) {
- System.out.println(e.getCause());
-
- */

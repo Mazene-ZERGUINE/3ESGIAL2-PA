@@ -10,15 +10,15 @@
 
 <AnchorPane prefHeight="344.0" prefWidth="532.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.clm.controllers.StatusPopUpController">
    <children>
-      <AnchorPane prefHeight="365.0" prefWidth="532.0">
+      <AnchorPane prefHeight="365.0" prefWidth="532.0" styleClass="mainPane">
          <children>
-            <TextArea fx:id="description" layoutX="32.0" layoutY="146.0" prefHeight="143.0" prefWidth="220.0" />
-            <TextField fx:id="title" layoutX="33.0" layoutY="45.0" prefHeight="26.0" prefWidth="220.0" />
-            <DatePicker fx:id="deadline" layoutX="289.0" layoutY="45.0" prefHeight="26.0" prefWidth="220.0" />
-            <ComboBox fx:id="status" layoutX="32.0" layoutY="95.0" prefHeight="26.0" prefWidth="478.0" />
-            <Button fx:id="updateBtn" layoutX="33.0" layoutY="311.0" mnemonicParsing="false" onAction="#onUpdateBtnClick" prefHeight="26.0" prefWidth="220.0" style="-fx-background-color: green;" text="Modifier" textFill="WHITE" />
-            <Button fx:id="closeBtn" layoutX="289.0" layoutY="311.0" mnemonicParsing="false" onAction="#onCloseBtnClick" prefHeight="26.0" prefWidth="220.0" style="-fx-background-color: red;" text="Anuuler" textFill="WHITE" />
-            <ListView fx:id="usersList" layoutX="289.0" layoutY="146.0" prefHeight="143.0" prefWidth="220.0" />
+            <TextArea fx:id="description" layoutX="32.0" layoutY="146.0" prefHeight="143.0" prefWidth="220.0" styleClass="inputs" />
+            <TextField fx:id="title" layoutX="33.0" layoutY="45.0" prefHeight="26.0" prefWidth="220.0" styleClass="inputs" />
+            <DatePicker fx:id="deadline" layoutX="289.0" layoutY="45.0" prefHeight="26.0" prefWidth="220.0" styleClass="inputs" />
+            <ComboBox fx:id="status" layoutX="32.0" layoutY="95.0" prefHeight="26.0" prefWidth="478.0" styleClass="inputs" />
+            <Button fx:id="updateBtn" layoutX="33.0" layoutY="311.0" mnemonicParsing="false" onAction="#onUpdateBtnClick" prefHeight="26.0" prefWidth="220.0" styleClass="update-button" text="Modifier" textFill="WHITE" />
+            <Button fx:id="closeBtn" layoutX="289.0" layoutY="311.0" mnemonicParsing="false" onAction="#onCloseBtnClick" prefHeight="26.0" prefWidth="220.0" styleClass="delete-button" text="Anuuler" textFill="WHITE" />
+            <ListView fx:id="usersList" layoutX="289.0" layoutY="146.0" prefHeight="143.0" prefWidth="220.0" styleClass="users-list" />
          </children>
       </AnchorPane>
    </children>

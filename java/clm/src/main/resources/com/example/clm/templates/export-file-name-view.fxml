@@ -4,9 +4,9 @@
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="123.0" prefWidth="503.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.clm.controllers.ExportFileNameController">
+<AnchorPane prefHeight="123.0" prefWidth="503.0" styleClass="mainPane" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.clm.controllers.ExportFileNameController">
    <children>
-      <TextArea fx:id="fileNameTextArea" layoutX="19.0" layoutY="23.0" prefHeight="26.0" prefWidth="466.0" promptText="Nom du fichier" />
-      <Button fx:id="saveBtn" layoutX="20.0" layoutY="83.0" mnemonicParsing="false" onAction="#onSaveBtnClick" prefHeight="26.0" prefWidth="466.0" style="-fx-background-color: #2e96ff;" text="Sauvgarder" textFill="WHITE" />
+      <TextArea fx:id="fileNameTextArea" layoutX="19.0" layoutY="23.0" prefHeight="26.0" prefWidth="466.0" promptText="Nom du fichier" styleClass="inputs" />
+      <Button fx:id="saveBtn" layoutX="20.0" layoutY="83.0" mnemonicParsing="false" onAction="#onSaveBtnClick" prefHeight="26.0" prefWidth="466.0" styleClass="update-button" text="Sauvgarder" textFill="WHITE" />
    </children>
 </AnchorPane>

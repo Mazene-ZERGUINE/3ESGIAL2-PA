@@ -3,12 +3,10 @@ package com.example.clm.controllers;
 import com.example.clm.Main;
 import com.example.clm.models.Categorie;
 import com.example.clm.models.Users;
-import com.example.clm.utils.ApiService;
-import com.example.clm.utils.AuthService;
-import com.example.clm.utils.NotifierService;
-import com.example.clm.utils.SceneService;
+import com.example.clm.utils.*;
 import com.github.tsohr.JSONArray;
 import com.github.tsohr.JSONObject;
+import javafx.animation.PauseTransition;
 import javafx.application.Application;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -22,11 +20,14 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import javafx.util.Duration;
 import tray.notification.NotificationType;
 
 
@@ -66,7 +67,6 @@ public class CategoriesController extends Application implements Initializable {
 	private TextField categorieTitle;
 	private Parent root ;
 
-  // starting stage a modifier plus tard aprés la redirection de la page de connexion //
 	@Override
 	public void start(Stage stage) throws IOException {
 		FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("templates/categories-view.fxml"));
@@ -98,6 +98,24 @@ public class CategoriesController extends Application implements Initializable {
 				throw new RuntimeException(e);
 			}
 		}
+		try {
+			this.setTheme();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private void setTheme() throws IOException {
+			if (StorageService.getInstance().getThemeName() == null) {
+				StorageService.getInstance().setThemeName("mainTheme");
+			}
+		mainPane.sceneProperty().addListener((observable, oldValue, newValue) -> {
+			if (newValue != null) {
+				Scene scene = mainPane.getScene();
+
+				StorageService.getInstance().setSelectedTheme(scene);
+			}
+		});
 	}
 
 	private void getAllCategories() {
@@ -347,6 +365,18 @@ public class CategoriesController extends Application implements Initializable {
 			projects.add(categorie) ;
 			devProjects.getItems().add(dataArray.getJSONObject(i).getString("title"));
 		}
+	}
+
+	@FXML
+	void onThemeBtnClicked(MouseEvent event) throws IOException {
+			Stage stage = new Stage();
+			sceneService.switchToNewWindow("themes-view.fxml" , null , stage);
+
+			stage.setOnHidden(e -> {
+
+					Scene scene = addBtn.getScene();
+					StorageService.getInstance().setSelectedTheme(scene);
+			});
 	}
 
 }

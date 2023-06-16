@@ -13,11 +13,11 @@
 
 <AnchorPane prefHeight="650.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.clm.controllers.TasksController">
 	<children>
-		<AnchorPane prefHeight="650.0" prefWidth="1100.0">
+		<AnchorPane prefHeight="650.0" prefWidth="1100.0" styleClass="mainPane">
 			<children>
 				<BorderPane prefHeight="57.0" prefWidth="1100.0" style="-fx-background-color: #000958;">
 					<top>
-						<AnchorPane prefHeight="57.0" prefWidth="1110.0" BorderPane.alignment="CENTER">
+						<AnchorPane prefHeight="57.0" prefWidth="1110.0" styleClass="nav-bar" BorderPane.alignment="CENTER">
 							<children>
 								<Text fill="RED" layoutX="447.0" layoutY="36.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Tâches" textAlignment="CENTER" AnchorPane.leftAnchor="447.0" AnchorPane.rightAnchor="613.01953125" AnchorPane.topAnchor="16.6640625">
 									<font>
@@ -44,6 +44,11 @@
 										<Font size="20.0" />
 									</font>
 								</Text>
+								<ImageView fitHeight="48.0" fitWidth="69.0" layoutX="10.0" layoutY="4.0" onMouseClicked="#onThemeBtnClicked" pickOnBounds="true" preserveRatio="true">
+									<image>
+										<Image url="@../images/theme_21581.png" />
+									</image>
+								</ImageView>
 							</children>
 						</AnchorPane>
 					</top>
@@ -53,8 +58,8 @@
                   <Image url="@../images/back_arrow_14447.png" />
                </image>
             </ImageView>
-            <Button fx:id="addBtn" layoutX="700.0" layoutY="93.0" mnemonicParsing="false" onAction="#onAddBtnClick" prefHeight="42.0" prefWidth="172.0" style="-fx-background-color: #32a834;" text="Ajouter" textFill="WHITE" />
-            <Button fx:id="deleteBtn" layoutX="892.0" layoutY="93.0" mnemonicParsing="false" onAction="#onDeleteBtnClick" prefHeight="42.0" prefWidth="172.0" style="-fx-background-color: #a83234;" text="Effacer" textFill="WHITE" />
+            <Button fx:id="addBtn" layoutX="700.0" layoutY="93.0" mnemonicParsing="false" onAction="#onAddBtnClick" prefHeight="42.0" prefWidth="172.0" styleClass="add-button" text="Ajouter" textFill="WHITE" />
+            <Button fx:id="deleteBtn" layoutX="892.0" layoutY="93.0" mnemonicParsing="false" onAction="#onDeleteBtnClick" prefHeight="42.0" prefWidth="172.0" styleClass="delete-button" text="Effacer" textFill="WHITE" />
             <TableView fx:id="tasksTable" layoutX="22.0" layoutY="169.0" onMouseClicked="#onTaskSelect" prefHeight="450.0" prefWidth="1066.0">
               <columns>
                 <TableColumn fx:id="taskCol" prefWidth="128.0" text="Tâche" />

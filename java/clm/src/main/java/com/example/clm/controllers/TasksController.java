@@ -136,6 +136,30 @@ public class TasksController implements Initializable {
 		}
 	}
 
+	private void setTheme() throws IOException {
+		if (StorageService.getInstance().getThemeName() == null) {
+			StorageService.getInstance().setThemeName("mainTheme");
+		}
+		addBtn.sceneProperty().addListener((observable, oldValue, newValue) -> {
+			if (newValue != null) {
+				Scene scene = addBtn.getScene();
+
+				StorageService.getInstance().setSelectedTheme(scene);
+			}
+		});
+	}
+	@FXML
+	void onThemeBtnClicked(MouseEvent event) throws IOException {
+		Stage stage = new Stage();
+		sceneService.switchToNewWindow("themes-view.fxml" , null , stage);
+
+		stage.setOnHidden(e -> {
+
+			Scene scene = addBtn.getScene();
+			StorageService.getInstance().setSelectedTheme(scene);
+		});
+	}
+
 	@FXML
 	void onBackBtnClick(MouseEvent event) throws IOException {
 		Stage stage = (Stage) deleteBtn.getScene().getWindow();
@@ -358,5 +382,10 @@ public class TasksController implements Initializable {
 		}
 	@Override
 	public void initialize(URL url, ResourceBundle resourceBundle) {
+		try {
+			setTheme();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 }
