@@ -4,11 +4,13 @@ import com.example.clm.models.Tasks;
 import com.example.clm.utils.ApiService;
 import com.example.clm.utils.AuthService;
 import com.example.clm.utils.SceneService;
+import com.example.clm.utils.StorageService;
 import com.github.tsohr.JSONArray;
 import com.github.tsohr.JSONObject;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.chart.*;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
@@ -208,7 +210,17 @@ public class GanttController implements Initializable {
 			sceneService.switchScene(stage, "categories-dev-view.fxml", null);
 		}
 	}
+	@FXML
+	void onThemeBtnClicked(MouseEvent event) throws IOException {
+		Stage stage = new Stage();
+		sceneService.switchToNewWindow("themes-view.fxml" , null , stage);
 
+		stage.setOnHidden(e -> {
+
+			Scene scene = projectsList.getScene();
+			StorageService.getInstance().setSelectedTheme(scene);
+		});
+	}
 	@FXML
 	void onLogoutBtnClick(MouseEvent event) throws IOException  {
 		Stage stage = (Stage) projectsList.getScene().getWindow();
@@ -238,6 +250,11 @@ public class GanttController implements Initializable {
 		tasksAxis.setLabel("Tâches");
 		daysAxis.setLabel("Jours");
 
+		try {
+			setTheme();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	@FXML
@@ -250,5 +267,18 @@ public class GanttController implements Initializable {
 			sceneService.switchScene(stage, "dev-members-view.fxml", null);
 		}
 
+	}
+
+	private void setTheme() throws IOException {
+		if (StorageService.getInstance().getThemeName() == null) {
+			StorageService.getInstance().setThemeName("mainTheme");
+		}
+		this.projectsList.sceneProperty().addListener((observable, oldValue, newValue) -> {
+			if (newValue != null) {
+				Scene scene = projectsList.getScene();
+
+				StorageService.getInstance().setSelectedTheme(scene);
+			}
+		});
 	}
 }

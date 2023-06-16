@@ -3,12 +3,14 @@ package com.example.clm.controllers;
 import com.example.clm.models.Users;
 import com.example.clm.utils.ApiService;
 import com.example.clm.utils.NotifierService;
+import com.example.clm.utils.StorageService;
 import com.github.tsohr.JSONArray;
 import com.github.tsohr.JSONObject;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import tray.notification.NotificationType;
@@ -93,6 +95,18 @@ public class StatusPopUpController  implements Initializable {
 
 	}
 
+	private void setTheme() throws IOException {
+		if (StorageService.getInstance().getThemeName() == null) {
+			StorageService.getInstance().setThemeName("mainTheme");
+		}
+		this.status.sceneProperty().addListener((observable, oldValue, newValue) -> {
+			if (newValue != null) {
+				Scene scene = this.status.getScene();
+
+				StorageService.getInstance().setSelectedTheme(scene);
+			}
+		});
+	}
 
 	private void updateStatus(String status , Stage stage) throws IOException {
 		JSONObject data = new JSONObject().put("status" , status);
@@ -152,6 +166,7 @@ public class StatusPopUpController  implements Initializable {
 	@Override
 	public void initialize(URL url, ResourceBundle resourceBundle) {
 		try {
+			setTheme();
 			getAllUsers();
 		} catch (IOException e) {
 			throw new RuntimeException(e);

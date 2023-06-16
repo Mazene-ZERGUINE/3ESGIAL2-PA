@@ -2,10 +2,7 @@ package com.example.clm.controllers;
 
 import com.example.clm.Main;
 import com.example.clm.models.Users;
-import com.example.clm.utils.ApiService;
-import com.example.clm.utils.AuthService;
-import com.example.clm.utils.NotifierService;
-import com.example.clm.utils.SceneService;
+import com.example.clm.utils.*;
 import com.github.tsohr.JSONObject;
 import javafx.application.Application;
 import javafx.collections.ObservableList;
@@ -104,7 +101,39 @@ public class MembersController  implements Initializable {
 		}
 
 		setColumns();
+		try {
+			setTheme();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 		getAllMembers();
+	}
+
+	private void setTheme() throws IOException {
+
+
+		if (StorageService.getInstance().getThemeName() == null) {
+			StorageService.getInstance().setThemeName("mainTheme");
+		}
+		this.tableView.sceneProperty().addListener((observable, oldValue, newValue) -> {
+			if (newValue != null) {
+				Scene scene = tableView.getScene();
+
+				StorageService.getInstance().setSelectedTheme(scene);
+			}
+		});
+	}
+
+	@FXML
+	void onThemeBtnClicked(MouseEvent event) throws IOException {
+		Stage stage = new Stage();
+		sceneService.switchToNewWindow("themes-view.fxml" , null , stage);
+
+		stage.setOnHidden(e -> {
+
+			Scene scene = addBtn.getScene();
+			StorageService.getInstance().setSelectedTheme(scene);
+		});
 	}
 
 	@FXML

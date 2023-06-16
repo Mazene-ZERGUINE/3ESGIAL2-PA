@@ -8,6 +8,7 @@ import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
@@ -46,6 +47,11 @@ private static NotifierService notifier = new NotifierService();
 				notifier.notify(NotificationType.WARNING , "Avertisement" , "Auccune format d'éxport n'est enregistrer pour le moment");
 				return;
 		}
+		try {
+			setTheme();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 
@@ -78,6 +84,19 @@ private static NotifierService notifier = new NotifierService();
 				} else {
 			System.out.println("filde do not exist");
 		}
+	}
+
+	private void setTheme() throws IOException {
+		if (StorageService.getInstance().getThemeName() == null) {
+			StorageService.getInstance().setThemeName("mainTheme");
+		}
+		this.formatBox.sceneProperty().addListener((observable, oldValue, newValue) -> {
+			if (newValue != null) {
+				Scene scene = formatBox.getScene();
+
+				StorageService.getInstance().setSelectedTheme(scene);
+			}
+		});
 	}
 
 }
