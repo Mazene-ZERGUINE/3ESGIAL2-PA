@@ -1,0 +1,436 @@
+{
+	"info": {
+		"_postman_id": "e21a4144-0d17-429b-a06a-4220d92955f9",
+		"name": "3AL2 PA",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "13008435"
+	},
+	"item": [
+		{
+			"name": "clm",
+			"item": [
+				{
+					"name": "utilisateurs",
+					"item": [
+						{
+							"name": "get all",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{HOST}}/clm/users?page=1",
+									"host": ["{{HOST}}"],
+									"path": ["clm", "users"],
+									"query": [
+										{
+											"key": "page",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get by pseudonyme",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{HOST}}/clm/users/a",
+									"host": ["{{HOST}}"],
+									"path": ["clm", "users", "a"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "create",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\": \"a@email.fr\",\n    \"mot_de_passe\": \"a\",\n    \"pseudonyme\": \"a\",\n    \"nom\": \"noma\",\n    \"prenom\": \"prenom\",\n    \"departement\": \"75\",\n    \"ville\": \"paris\",\n    \"role\": \"administrateur\",\n    \"statut\": \"actif\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{HOST}}/clm/users",
+									"host": ["{{HOST}}"],
+									"path": ["clm", "users"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update by pseudonyme",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\": \"a@email.fr\",\n    \"mot_de_passe\": \"$argon2id$v=19$m=65536,t=3,p=4$iKwAQzwwpAIkIWamJJS20w$b0q/mug2NNW32HpBbrDbZjnvMSfimiWE78TOoufIIEM\",\n    \"pseudonyme\": \"a\",\n    \"nom\": \"nom a\",\n    \"prenom\": \"prenom\",\n    \"departement\": \"75\",\n    \"ville\": \"paris\",\n    \"role\": \"utilisateur\",\n    \"statut\": \"actif\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{HOST}}/clm/users/a",
+									"host": ["{{HOST}}"],
+									"path": ["clm", "users", "a"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete by id",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{HOST}}/clm/users/1",
+									"host": ["{{HOST}}"],
+									"path": ["clm", "users", "1"]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "authentification",
+					"item": [
+						{
+							"name": "log in",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\": \"a@email.fr\",\n    \"mot_de_passe\": \"a\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{HOST}}/clm/auth/log-in",
+									"host": ["{{HOST}}"],
+									"path": ["clm", "auth", "log-in"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "log out",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwc2V1ZG9ueW1lIjoiYSIsImlhdCI6MTY4Njk4OTU0M30.cyZk5oZZCS1BBK-F_bISjg77urYyikKWekm7EUStYQE",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{HOST}}/clm/auth/log-out",
+									"host": ["{{HOST}}"],
+									"path": ["clm", "auth", "log-out"]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "session",
+					"item": [
+						{
+							"name": "get all",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{HOST}}/clm/sessions",
+									"host": ["{{HOST}}"],
+									"path": ["clm", "sessions"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get by id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{HOST}}/clm/sessions/1",
+									"host": ["{{HOST}}"],
+									"path": ["clm", "sessions", "1"]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "client",
+			"item": [
+				{
+					"name": "categories",
+					"item": [
+						{
+							"name": "get all",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/api/categories/",
+									"protocol": "http",
+									"host": ["localhost"],
+									"port": "3000",
+									"path": ["api", "categories", ""]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete by id",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/api/categories/5",
+									"protocol": "http",
+									"host": ["localhost"],
+									"port": "3000",
+									"path": ["api", "categories", "5"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update by id",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"title\": \"java\",\n    \"desciption\": \"javafx is good\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/categories/4",
+									"protocol": "http",
+									"host": ["localhost"],
+									"port": "3000",
+									"path": ["api", "categories", "4"]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "users",
+					"item": [
+						{
+							"name": "get all",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/api/client/users",
+									"protocol": "http",
+									"host": ["localhost"],
+									"port": "3000",
+									"path": ["api", "client", "users"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get by id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{HOST}}/client/users/2",
+									"host": ["{{HOST}}"],
+									"path": ["client", "users", "2"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "create on",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\": \"q@email.fr\",\n    \"first_name\": \"p\",\n    \"last_name\": \"n\",\n    \"password\": \"q\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{HOST}}/client/users",
+									"host": ["{{HOST}}"],
+									"path": ["client", "users"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update user",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "        {\n            \"email\": \"np@email.fr\",\n            \"password\": \"\",\n            \"first_name\": \"fnn\",\n            \"last_name\": \"ln\"\n        }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{HOST}}/client/users/np@email.fr",
+									"host": ["{{HOST}}"],
+									"path": ["client", "users", "np@email.fr"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete user",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{HOST}}/client/users/q@email.fr",
+									"host": ["{{HOST}}"],
+									"path": ["client", "users", "q@email.fr"]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "sign in",
+					"item": [
+						{
+							"name": "sign in",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\": \"q3@email.fr\",\n    \"password\": \"req.body.password\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/trello/signin",
+									"protocol": "http",
+									"host": ["localhost"],
+									"port": "3000",
+									"path": ["api", "trello", "signin"]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "categories",
+					"item": [
+						{
+							"name": "get all",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{HOST}}/client/categories/",
+									"host": ["{{HOST}}"],
+									"path": ["client", "categories", ""]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"title\": \"node\",\n    \"desciption\": \"nodejs\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{HOST}}/client/categories/3",
+									"host": ["{{HOST}}"],
+									"path": ["client", "categories", "3"]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [""]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [""]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "HOST",
+			"value": "http://localhost:3000/api",
+			"type": "string"
+		}
+	]
+}
