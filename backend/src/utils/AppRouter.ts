@@ -3,6 +3,9 @@ import express, { Express } from 'express';
 import userRouter from '../routes/client/user.router';
 import signInRouter from '../routes/client/sign-in.router';
 import { recoverPassword } from './security';
+import utilisateurRouter from '../routes/clm/utilisateur.router';
+import authRouter from '../routes/clm/auth.router';
+import sessionRouter from '../routes/clm/session.router';
 
 export default class AppRouter {
 	constructor() {}
@@ -19,5 +22,11 @@ export default class AppRouter {
 		app.use('/api/trello/signin', signInRouter);
 		app.use('/api/client/tickets', this.ticketsRouts);
 		app.post('/api/client/recover_password', recoverPassword);
+		//#region			clm
+		app
+			.use('/api/clm/users', utilisateurRouter)
+			.use('/api/clm/auth', authRouter)
+			.use('/api/clm/sessions', sessionRouter);
+		//#endregion	clm
 	};
 }
