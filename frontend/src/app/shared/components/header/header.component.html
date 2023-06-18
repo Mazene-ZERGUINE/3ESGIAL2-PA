@@ -18,7 +18,7 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
           <!--          <div class="navbar-nav justify-content-center">-->
-          <li class="nav-item dropdown" *ngIf="isAuthenticated">
+          <li class="nav-item dropdown" *ngIf="isAuthenticated | async">
             <a class="nav-link p-2 m-2 dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               Administration
             </a>
@@ -36,7 +36,7 @@
               </li>
             </ul>
           </li>
-          <li class="navbar-nav justify-content-center" *ngIf="!isAuthenticated; else elsePublierBlock">
+          <li class="navbar-nav justify-content-center" *ngIf="!(isAuthenticated | async); else elsePublierBlock">
             <a class="nav-link p-2 m-2" [routerLink]="'/login'"> Publier </a>
           </li>
           <ng-template #elsePublierBlock>
@@ -51,7 +51,7 @@
               </a>
             </li>
           </ng-template>
-          <li class="nav-item dropdown" *ngIf="isAuthenticated">
+          <li class="nav-item dropdown" *ngIf="isAuthenticated | async">
             <a class="nav-link p-2 m-2 dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               Mon espace
             </a>
@@ -69,10 +69,10 @@
               </li>
             </ul>
           </li>
-          <li class="nav-item dropdown" *ngIf="isAuthenticated">
+          <li class="nav-item dropdown" *ngIf="isAuthenticated | async">
             <a class="nav-link p-2 m-2" (click)="onLogoutClick()">Déconnexion</a>
           </li>
-          <ng-container *ngIf="!isAuthenticated">
+          <ng-container *ngIf="!(isAuthenticated | async)">
             <li class="navbar-nav justify-content-center">
               <a
                 *ngFor="let visitorRoute of visitorRoutes"

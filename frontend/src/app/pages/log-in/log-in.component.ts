@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
-import { AuthService } from '../../shared/services/core/auth/auth.service';
+import { AuthService } from '../../shared/core/services/auth/auth.service';
 
 @UntilDestroy()
 @Component({
@@ -13,7 +14,11 @@ import { AuthService } from '../../shared/services/core/auth/auth.service';
 export class LogInComponent {
   form?: FormGroup;
 
-  constructor(private readonly authService: AuthService, private readonly fb: FormBuilder) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly fb: FormBuilder,
+    private readonly router: Router,
+  ) {}
 
   ngOnInit(): void {
     this.initForm();
@@ -22,19 +27,25 @@ export class LogInComponent {
   initForm(): void {
     this.form = this.fb.group({
       email: this.fb.control('', [Validators.required, Validators.email]),
-      password: this.fb.control('', Validators.required),
+      mot_de_passe: this.fb.control('', Validators.required),
     });
   }
 
   onSubmit(): void {
-    if (this.form?.invalid) {
+    if (!this.form || this.form?.invalid) {
       return;
     }
 
-    this.logIn();
+    this.logIn(this.form);
   }
 
-  logIn(): void {
-    // TODO
+  logIn(form: FormGroup): void {
+    this.authService
+      .logIn(form.value)
+      .pipe(untilDestroyed(this))
+      .subscribe((res) => {
+        this.authService.setToken(res.access_token);
+        this.router.navigateByUrl('');
+      });
   }
 }

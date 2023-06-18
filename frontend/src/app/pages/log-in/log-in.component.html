@@ -17,8 +17,15 @@
       </div>
     </div>
     <div class="mb-3">
-      <label class="form-label required" for="password">Mot de passe</label>
-      <input class="form-control" type="password" id="password" name="password" formControlName="password" required />
+      <label class="form-label required" for="mot_de_passe">Mot de passe</label>
+      <input
+        class="form-control"
+        type="password"
+        id="mot_de_passe"
+        name="mot_de_passe"
+        formControlName="mot_de_passe"
+        required
+      />
     </div>
     <button class="btn btn-outline-success" [disabled]="form.invalid">Se connecter</button>
     <a class="my-auto m-4 p-2" routerLink="/signup">S'inscrire</a>

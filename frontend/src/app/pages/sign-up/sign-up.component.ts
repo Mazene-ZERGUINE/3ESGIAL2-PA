@@ -4,6 +4,15 @@ import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { SignUpService } from './shared/sign-up.service';
 import { frenchDepartments } from './shared/data/french-departments';
+import {
+  onlyLettersRegex,
+  startsWithLetterWhichContainsLetterAndNumbersRegex,
+  startsWithNumberWhichContainsLetterOrNumberRegex,
+} from '../../shared/utils/regex.utils';
+import { Role } from './shared/enums/role.enum';
+import { Status } from './shared/enums/status.enum';
+import { UserDTO } from '../../shared/core/models/interfaces/user.interface';
+import { ToastService } from '../../shared/components/toast/shared/toast.service';
 
 @UntilDestroy()
 @Component({
@@ -20,6 +29,7 @@ export class SignUpComponent implements OnInit {
     private readonly fb: FormBuilder,
     private readonly router: Router,
     private readonly signUpService: SignUpService,
+    private readonly toastService: ToastService,
   ) {}
 
   ngOnInit(): void {
@@ -27,23 +37,19 @@ export class SignUpComponent implements OnInit {
   }
 
   initForm(): void {
-    const onlyLettersRegex = /^[a-zA-Z]+$/;
-    const startsWithLetterWhichContainsLetterAndNumbers = /^[a-zA-Z][a-zA-Z0-9]*$/;
-    const startsWithNumberWhichContainsLetterOrNumber = /^[0-9][A-Z0-9]+$/;
-
     this.form = this.fb.group({
       nom: this.fb.control('', [Validators.required, Validators.pattern(onlyLettersRegex)]),
       prenom: this.fb.control('', [Validators.required, Validators.pattern(onlyLettersRegex)]),
       email: this.fb.control('', [Validators.required, Validators.email]),
-      password: this.fb.control('', [Validators.required, Validators.minLength(this.passwordMinLength)]),
+      mot_de_passe: this.fb.control('', [Validators.required, Validators.minLength(this.passwordMinLength)]),
       pseudonyme: this.fb.control('', [
         Validators.required,
-        Validators.pattern(startsWithLetterWhichContainsLetterAndNumbers),
+        Validators.pattern(startsWithLetterWhichContainsLetterAndNumbersRegex),
       ]),
       ville: this.fb.control('', [Validators.required, Validators.pattern(onlyLettersRegex)]),
       departement: this.fb.control('', [
         Validators.required,
-        Validators.pattern(startsWithNumberWhichContainsLetterOrNumber),
+        Validators.pattern(startsWithNumberWhichContainsLetterOrNumberRegex),
       ]),
     });
   }
@@ -56,12 +62,27 @@ export class SignUpComponent implements OnInit {
       return;
     }
 
-    let formattedVille: string;
+    let formattedVille = '';
     const ville = this.form.get('ville')?.value.trim();
     if (ville) {
       formattedVille = ville.charAt(0).toUpperCase() + ville.slice(1).toLowerCase();
     }
 
-    // TODO
+    const role = Role.utilisateur;
+    const statut = Status.active;
+    const payload: UserDTO = {
+      ...this.form.value,
+      ville: formattedVille,
+      role,
+      statut,
+    };
+
+    this.signUpService
+      .create('utilisateurs', payload)
+      .pipe(untilDestroyed(this))
+      .subscribe((_) => {
+        this.router.navigateByUrl('/login');
+        this.toastService.showSuccess('Inscription réussie !');
+      });
   }
 }

@@ -1,6 +1,10 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs';
+import { JwtHelperService } from '@auth0/angular-jwt';
+
+import { AuthService } from './shared/core/services/auth/auth.service';
+import { ToastService } from './shared/components/toast/shared/toast.service';
 
 @Component({
   selector: 'app-root',
@@ -11,10 +15,36 @@ export class AppComponent {
   hideHeader = false;
   hideFooter = false;
 
-  constructor(private router: Router, private activatedRoute: ActivatedRoute) {}
+  constructor(
+    private readonly activatedRoute: ActivatedRoute,
+    private readonly authService: AuthService,
+    private readonly jwtHelper: JwtHelperService,
+    private readonly router: Router,
+    private readonly toastService: ToastService,
+  ) {}
 
-  ngOnInit() {
-    this.subscribeToRouterEvents();
+  async ngOnInit() {
+    // this.subscribeToRouterEvents();
+    await this.setAuthentication();
+  }
+
+  private async setAuthentication() {
+    let token: null | string | Promise<string>;
+
+    try {
+      token = await this.jwtHelper.tokenGetter();
+      if (!token) {
+        return;
+      }
+      if (await this.jwtHelper.isTokenExpired()) {
+        this.authService.deleteToken();
+        return;
+      }
+
+      this.authService.setToken(token);
+    } catch (e) {
+      this.toastService.showDanger('Une erreur est survenue. Veuillez rafraichir la page.');
+    }
   }
 
   private subscribeToRouterEvents(): void {
