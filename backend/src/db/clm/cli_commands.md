@@ -1,7 +1,7 @@
 # categorie
 
 ```
-sequelize-cli model:generate --name categorie --attributes
+sequelize-cli model:generate --name categorie --attributes categorie_id:integer,libelle:string
 ```
 
 # commentaire
@@ -31,7 +31,7 @@ sequelize-cli model:generate --name personne_signalement --attributes
 # publication
 
 ```
-sequelize-cli model:generate --name publication --attributes
+sequelize-cli model:generate --name publication --attributes publication_id:integer,titre:string,description:text,statut:enum:'{actif,inactif}',utilisateur_id:integer,categorie_id:integer
 ```
 
 # publication_signalement

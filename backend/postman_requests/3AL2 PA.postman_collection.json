@@ -10,100 +10,6 @@
 			"name": "clm",
 			"item": [
 				{
-					"name": "utilisateurs",
-					"item": [
-						{
-							"name": "get all",
-							"request": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{HOST}}/clm/users?page=1",
-									"host": ["{{HOST}}"],
-									"path": ["clm", "users"],
-									"query": [
-										{
-											"key": "page",
-											"value": "1"
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "get by pseudonyme",
-							"request": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{HOST}}/clm/users/a",
-									"host": ["{{HOST}}"],
-									"path": ["clm", "users", "a"]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "create",
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"email\": \"a@email.fr\",\n    \"mot_de_passe\": \"a\",\n    \"pseudonyme\": \"a\",\n    \"nom\": \"noma\",\n    \"prenom\": \"prenom\",\n    \"departement\": \"75\",\n    \"ville\": \"paris\",\n    \"role\": \"administrateur\",\n    \"statut\": \"actif\"\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{HOST}}/clm/users",
-									"host": ["{{HOST}}"],
-									"path": ["clm", "users"]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "update by pseudonyme",
-							"request": {
-								"method": "PUT",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"email\": \"a@email.fr\",\n    \"mot_de_passe\": \"$argon2id$v=19$m=65536,t=3,p=4$iKwAQzwwpAIkIWamJJS20w$b0q/mug2NNW32HpBbrDbZjnvMSfimiWE78TOoufIIEM\",\n    \"pseudonyme\": \"a\",\n    \"nom\": \"nom a\",\n    \"prenom\": \"prenom\",\n    \"departement\": \"75\",\n    \"ville\": \"paris\",\n    \"role\": \"utilisateur\",\n    \"statut\": \"actif\"\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{HOST}}/clm/users/a",
-									"host": ["{{HOST}}"],
-									"path": ["clm", "users", "a"]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "delete by id",
-							"request": {
-								"method": "DELETE",
-								"header": [],
-								"url": {
-									"raw": "{{HOST}}/clm/users/1",
-									"host": ["{{HOST}}"],
-									"path": ["clm", "users", "1"]
-								}
-							},
-							"response": []
-						}
-					]
-				},
-				{
 					"name": "authentification",
 					"item": [
 						{
@@ -154,6 +60,182 @@
 					]
 				},
 				{
+					"name": "categorie",
+					"item": [
+						{
+							"name": "get all",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{HOST}}/clm/categories",
+									"host": ["{{HOST}}"],
+									"path": ["clm", "categories"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get by id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{HOST}}/clm/categories/1",
+									"host": ["{{HOST}}"],
+									"path": ["clm", "categories", "1"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "create",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"libelle\": \"High-tech\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{HOST}}/clm/categories/",
+									"host": ["{{HOST}}"],
+									"path": ["clm", "categories", ""]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "edit by id",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"libelle\": \"Technologie\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{HOST}}/clm/categories/1",
+									"host": ["{{HOST}}"],
+									"path": ["clm", "categories", "1"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete by id",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{HOST}}/clm/categories/1",
+									"host": ["{{HOST}}"],
+									"path": ["clm", "categories", "1"]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "publication",
+					"item": [
+						{
+							"name": "get all",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{HOST}}/clm/publications",
+									"host": ["{{HOST}}"],
+									"path": ["clm", "publications"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get by id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{HOST}}/clm/publications/1",
+									"host": ["{{HOST}}"],
+									"path": ["clm", "publications", "1"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "create",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"titre\": \"titre 1\",\n    \"description\": \"description 1\",\n    \"statut\": \"actif\",\n    \"utilisateur_id\": 1,\n    \"categorie_id\": 1,\n    \"created_at\": \"2023-06-15 10:30:00\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{HOST}}/clm/publications/",
+									"host": ["{{HOST}}"],
+									"path": ["clm", "publications", ""]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "edit by id",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"titre\": \"titre 11\",\n    \"description\": \"description 11\",\n    \"statut\": \"actif\",\n    \"utilisateur_id\": 1,\n    \"categorie_id\": 1,\n    \"created_at\": \"2023-06-15 10:30:00\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{HOST}}/clm/publications/1",
+									"host": ["{{HOST}}"],
+									"path": ["clm", "publications", "1"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete by id",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{HOST}}/clm/publications/1",
+									"host": ["{{HOST}}"],
+									"path": ["clm", "publications", "1"]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
 					"name": "session",
 					"item": [
 						{
@@ -178,6 +260,100 @@
 									"raw": "{{HOST}}/clm/sessions/1",
 									"host": ["{{HOST}}"],
 									"path": ["clm", "sessions", "1"]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "utilisateurs",
+					"item": [
+						{
+							"name": "get all",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{HOST}}/clm/utilisateurs?page=1",
+									"host": ["{{HOST}}"],
+									"path": ["clm", "utilisateurs"],
+									"query": [
+										{
+											"key": "page",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get by pseudonyme",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{HOST}}/clm/utilisateurs/a",
+									"host": ["{{HOST}}"],
+									"path": ["clm", "utilisateurs", "a"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "create",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\": \"a@email.fr\",\n    \"mot_de_passe\": \"a\",\n    \"pseudonyme\": \"a\",\n    \"nom\": \"noma\",\n    \"prenom\": \"prenom\",\n    \"departement\": \"75\",\n    \"ville\": \"paris\",\n    \"role\": \"administrateur\",\n    \"statut\": \"actif\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{HOST}}/clm/utilisateurs",
+									"host": ["{{HOST}}"],
+									"path": ["clm", "utilisateurs"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update by pseudonyme",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\": \"a@email.fr\",\n    \"mot_de_passe\": \"$argon2id$v=19$m=65536,t=3,p=4$iKwAQzwwpAIkIWamJJS20w$b0q/mug2NNW32HpBbrDbZjnvMSfimiWE78TOoufIIEM\",\n    \"pseudonyme\": \"a\",\n    \"nom\": \"nom a\",\n    \"prenom\": \"prenom\",\n    \"departement\": \"75\",\n    \"ville\": \"paris\",\n    \"role\": \"utilisateur\",\n    \"statut\": \"actif\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{HOST}}/clm/utilisateurs/a",
+									"host": ["{{HOST}}"],
+									"path": ["clm", "utilisateurs", "a"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete by id",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{HOST}}/clm/utilisateurs/1",
+									"host": ["{{HOST}}"],
+									"path": ["clm", "utilisateurs", "1"]
 								}
 							},
 							"response": []
