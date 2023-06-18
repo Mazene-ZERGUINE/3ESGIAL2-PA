@@ -6,28 +6,28 @@ import { Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root',
 })
-export class CrudService<T> {
+export abstract class CrudService {
   private readonly _apiUrl: string;
 
-  constructor(private readonly httpClient: HttpClient) {
+  protected constructor(private readonly httpClient: HttpClient) {
     this._apiUrl = environment.apiUrl;
   }
 
-  create(path: string, payload: T): void {
-    this.httpClient.post<void>(this.getPath(path), payload);
+  create(path: string, payload: any): Observable<void> {
+    return this.httpClient.post<void>(this.getPath(path), payload);
   }
 
   //#region GET methods
-  getAll(path: string): Observable<T[]> {
+  getAll<T>(path: string): Observable<T[]> {
     return this.httpClient.get<T[]>(this.getPath(path));
   }
 
-  getOneById(path: string, id: number): Observable<T> {
+  getOneById<T>(path: string, id: number): Observable<T> {
     return this.httpClient.get<T>(this.getPath(path, id));
   }
   //#endregion
 
-  updateById(path: string, id: number, payload: T): Observable<void> {
+  updateById(path: string, id: number, payload: any): Observable<void> {
     return this.httpClient.put<void>(this.getPath(path, id), payload);
   }
 

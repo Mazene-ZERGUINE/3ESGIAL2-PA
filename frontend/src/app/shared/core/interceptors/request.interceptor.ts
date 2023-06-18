@@ -22,32 +22,38 @@ export class RequestInterceptor implements HttpInterceptor {
     const isServerError =
       err.status === HttpError['500InternalServerError'] || err.status === HttpError['501NotImplemented'];
     if (isServerError) {
-      this.toastService.showDanger(defaultErrorMessage);
-      return throwError(() => err);
+      return this.handleSpecificHttpError(err, err.error?.message || defaultErrorMessage);
     }
 
     if (err.status === HttpError['400BadRequest']) {
-      this.toastService.showDanger(defaultErrorMessage);
-      return throwError(() => err);
+      return this.handleSpecificHttpError(err, err.error?.message || defaultErrorMessage);
     }
 
-    const isRightsError = err.status === HttpError['401Unauthorized'] || err.status === HttpError['403Forbidden'];
-    if (isRightsError) {
-      this.toastService.showDanger("Vous n'avez pas les droits suffisants.");
-      return throwError(() => err);
+    if (err.status === HttpError['401Unauthorized']) {
+      return this.handleSpecificHttpError(err, err.error?.message || 'Vos identifiants sont incorrects.');
+    }
+
+    if (err.status === HttpError['403Forbidden']) {
+      return this.handleSpecificHttpError(err, err.error?.message || "Vous n'avez pas les droits.");
     }
 
     if (err.status === HttpError['404NotFound']) {
-      this.toastService.showDanger("La ressource demandée n'existe pas.");
-      return throwError(() => err);
+      return this.handleSpecificHttpError(err, err.error?.message || "La ressource demandée n'existe pas.");
+    }
+
+    if (err.status === HttpError['409Conflict']) {
+      return this.handleSpecificHttpError(err, err.error?.message || 'La ressource existe déjà.');
     }
 
     if (err.status === HttpError['415UnsupportedMediaType']) {
-      this.toastService.showDanger("Le format de fichier n'est pas supporté.");
-      return throwError(() => err);
+      return this.handleSpecificHttpError(err, err.error?.message || "Le format de fichier n'est pas supporté.");
     }
 
-    this.toastService.showDanger(defaultErrorMessage);
+    return this.handleSpecificHttpError(err, err.error?.message || defaultErrorMessage);
+  }
+
+  private handleSpecificHttpError(err: any, message: string) {
+    this.toastService.showDanger(err.error?.message || message);
     return throwError(() => err);
   }
 }

@@ -9,6 +9,7 @@ import { Status } from '../../sign-up/shared/enums/status.enum';
   styleUrls: ['./posts-list.component.scss'],
 })
 export class PostsListComponent {
+  @Input() isAuthenticated: null | boolean = false;
   @Input() posts: null | Post[] = [];
   @Output() selected = new EventEmitter<Post>();
 
@@ -21,12 +22,20 @@ export class PostsListComponent {
     // TODO
   }
 
-  onLike(e: MouseEvent): void {
+  async onLike(e: MouseEvent): Promise<void> {
+    if (!this.isAuthenticated) {
+      await this.router.navigateByUrl('/login');
+    }
+
     this.stopPropagation(e);
     // TODO
   }
 
-  onReport(e: MouseEvent): void {
+  async onReport(e: MouseEvent): Promise<void> {
+    if (!this.isAuthenticated) {
+      await this.router.navigateByUrl('/login');
+    }
+
     this.stopPropagation(e);
     // TODO
   }

@@ -27,12 +27,14 @@
                 <div class="d-flex justify-content-between">
                   <h5 class="card-title">Titre</h5>
                   <!-- TODO -->
-                  <button title="Aimer." class="btn btn-outline-warning" (click)="onUnstar($event)">
-                    <i class="bi bi-star-fill"></i>
-                  </button>
-                  <button title="Aimer." class="btn btn-outline-warning" (click)="onStar($event)">
-                    <i class="bi bi-star"></i>
-                  </button>
+                  <span *ngIf="isAuthenticated">
+                    <button title="Aimer." class="btn btn-outline-warning" (click)="onUnstar($event)">
+                      <i class="bi bi-star-fill"></i>
+                    </button>
+                    <button title="Aimer." class="btn btn-outline-warning" (click)="onStar($event)">
+                      <i class="bi bi-star"></i>
+                    </button>
+                  </span>
                 </div>
                 <p class="card-text">
                   <small class="text-body-secondary">Par : post.utilisateur.utilisateur_id</small>
@@ -43,10 +45,10 @@
               </div>
             </div>
             <div class="card-footer d-flex justify-content-around" (click)="stopPropagation($event)">
-              <button class="btn btn-outline-info mx-2" (click)="onReport($event)">
+              <button title="Signaler la publication." class="btn btn-outline-info mx-2" (click)="onReport($event)">
                 <i class="bi bi-exclamation-triangle-fill"></i>
               </button>
-              <button class="btn btn-info mx-2 pe-none">
+              <button title="Vous avez signalé la publication." class="btn btn-info mx-2 no-pointer">
                 <i class="bi bi-exclamation-triangle-fill"></i>
               </button>
               <!-- TODO -->

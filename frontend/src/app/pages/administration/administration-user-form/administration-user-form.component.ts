@@ -36,7 +36,7 @@ export class AdministrationUserFormComponent {
       nom: this.fb.control('', [Validators.required, Validators.pattern(onlyLettersRegex)]),
       prenom: this.fb.control('', [Validators.required, Validators.pattern(onlyLettersRegex)]),
       email: this.fb.control('', [Validators.required, Validators.email]),
-      password: this.fb.control('', [Validators.required, Validators.minLength(this.passwordMinLength)]),
+      mot_de_passe: this.fb.control('', [Validators.required, Validators.minLength(this.passwordMinLength)]),
       pseudonyme: this.fb.control('', [
         Validators.required,
         Validators.pattern(startsWithLetterWhichContainsLetterAndNumbersRegex),
@@ -56,7 +56,7 @@ export class AdministrationUserFormComponent {
       nom: this.fb.control('', [Validators.required, Validators.pattern(onlyLettersRegex)]),
       prenom: this.fb.control('', [Validators.required, Validators.pattern(onlyLettersRegex)]),
       email: this.fb.control('', [Validators.required, Validators.email]),
-      password: this.fb.control('', [Validators.required, Validators.minLength(this.passwordMinLength)]),
+      mot_de_passe: this.fb.control('', [Validators.required, Validators.minLength(this.passwordMinLength)]),
       pseudonyme: this.fb.control('', [
         Validators.required,
         Validators.pattern(startsWithLetterWhichContainsLetterAndNumbersRegex),

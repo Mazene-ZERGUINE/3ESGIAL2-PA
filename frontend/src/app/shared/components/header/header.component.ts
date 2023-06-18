@@ -1,13 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthService } from '../../core/services/auth/auth.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
 })
-export class HeaderComponent implements OnInit {
-  isAuthenticated = true;
+export class HeaderComponent {
+  readonly isAuthenticated: Observable<boolean>;
 
   backOfficeRoutes: ReadonlyArray<{ path: string; label: string }> = [
     { path: '/administration/categories', label: 'Catégories' },
@@ -31,10 +33,8 @@ export class HeaderComponent implements OnInit {
     { path: '/signup', label: "S'inscrire" },
   ];
 
-  constructor(private readonly _router: Router) {}
-
-  ngOnInit(): void {
-    this.checkAuthentication();
+  constructor(private readonly authService: AuthService, private readonly _router: Router) {
+    this.isAuthenticated = this.authService.isAuthenticated$;
   }
 
   async onSignupClick(): Promise<void> {
@@ -45,21 +45,7 @@ export class HeaderComponent implements OnInit {
     await this._router.navigate(['login']);
   }
 
-  /**
-   * TODO
-   */
-  onLogoutClick(): void {
-    this.isAuthenticated = false;
-    // this.authService.logout();
-  }
-
-  /**
-   * TODO
-   */
-  private checkAuthentication(): void {
-    // this.authService
-    //   .getAuthenticated$()
-    //   .pipe(takeUntil(this.destroy$))
-    //   .subscribe((value) => (this.isAuthenticated = value));
+  async onLogoutClick(): Promise<void> {
+    await this.authService.logOut();
   }
 }

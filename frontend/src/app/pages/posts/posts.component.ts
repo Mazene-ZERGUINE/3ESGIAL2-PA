@@ -3,6 +3,7 @@ import { Post } from './shared/models/post.interface';
 import { Observable, of } from 'rxjs';
 import { Status } from '../sign-up/shared/enums/status.enum';
 import { ViewportScroller } from '@angular/common';
+import { AuthService } from '../../shared/core/services/auth/auth.service';
 
 @Component({
   selector: 'app-posts',
@@ -10,11 +11,15 @@ import { ViewportScroller } from '@angular/common';
   styleUrls: ['./posts.component.scss'],
 })
 export class PostsComponent implements OnInit {
+  readonly isAuthenticated$: Observable<boolean>;
+
   page = 1;
   posts$?: Observable<null | Post[]>;
   selectedPost?: Post;
 
-  constructor(private viewportScroller: ViewportScroller) {}
+  constructor(private readonly authService: AuthService, private viewportScroller: ViewportScroller) {
+    this.isAuthenticated$ = this.authService.isAuthenticated$;
+  }
 
   ngOnInit(): void {
     this.viewportScroller.scrollToPosition([0, 0]);

@@ -2,6 +2,8 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { applicationTitle } from './shared/utils/app-title';
+import { AuthGuard } from './shared/core/guards/auth/auth.guard';
+import { UnauthGuard } from './shared/core/guards/unauth/unauth.guard';
 
 const combinedTitle = `| ${applicationTitle}`;
 const routes: Routes = [
@@ -11,11 +13,13 @@ const routes: Routes = [
   },
   {
     path: 'administration',
+    canLoad: [AuthGuard],
     loadChildren: () => import('./pages/administration/administration.module').then((m) => m.AdministrationModule),
     title: `Administration ${combinedTitle}`,
   },
   {
     path: 'login',
+    canLoad: [UnauthGuard],
     loadChildren: () => import('./pages/log-in/log-in.module').then((m) => m.LogInModule),
     // data: {
     //   hideHeader: true,
@@ -25,6 +29,7 @@ const routes: Routes = [
   },
   {
     path: 'signup',
+    canLoad: [UnauthGuard],
     loadChildren: () => import('./pages/sign-up/sign-up.module').then((m) => m.SignUpModule),
     // data: {
     //   hideHeader: true,
@@ -34,6 +39,7 @@ const routes: Routes = [
   },
   {
     path: 'users',
+    canLoad: [AuthGuard],
     loadChildren: () => import('./pages/users/users.module').then((m) => m.UsersModule),
     title: `Utilisateurs ${combinedTitle}`,
   },

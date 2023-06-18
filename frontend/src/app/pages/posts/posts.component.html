@@ -1,5 +1,9 @@
 <div class="col">
-  <app-posts-list [posts]="posts$ | async" (selected)="selectPost($event)"></app-posts-list>
+  <app-posts-list
+    [isAuthenticated]="isAuthenticated$ | async"
+    [posts]="posts$ | async"
+    (selected)="selectPost($event)"
+  ></app-posts-list>
   <div class="d-flex justify-content-center mt-5" *ngIf="posts$">
     <ngb-pagination
       aria-label="Pagination des publications"
