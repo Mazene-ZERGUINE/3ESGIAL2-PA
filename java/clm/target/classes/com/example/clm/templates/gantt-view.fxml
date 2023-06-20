@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane prefHeight="650.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.clm.controllers.GanttController">
+	<children>
+		<AnchorPane prefHeight="650.0" prefWidth="1100.0" styleClass="mainPane">
+			<children>
+				<BorderPane prefHeight="57.0" prefWidth="1100.0" style="-fx-background-color: #000958;">
+					<top>
+						<AnchorPane prefHeight="57.0" prefWidth="1110.0" styleClass="nav-bar" BorderPane.alignment="CENTER">
+							<children>
+								<Text fx:id="projects" fill="WHITE" layoutX="447.0" layoutY="36.0" onMouseClicked="#onProjectsBtnClick" strokeType="OUTSIDE" strokeWidth="0.0" text="Projets" textAlignment="CENTER" AnchorPane.leftAnchor="447.0" AnchorPane.rightAnchor="613.01953125" AnchorPane.topAnchor="16.6640625">
+									<font>
+										<Font size="20.0" />
+									</font>
+								</Text>
+								<Text fill="WHITE" layoutX="518.0" layoutY="35.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Ticket" AnchorPane.topAnchor="15.6640625">
+									<font>
+										<Font size="20.0" />
+									</font>
+								</Text>
+								<Text fill="RED" layoutX="596.0" layoutY="36.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Planification" AnchorPane.topAnchor="16.6640625">
+									<font>
+										<Font size="20.0" />
+									</font>
+								</Text>
+								<Text fx:id="logoutBtn" fill="WHITE" layoutX="964.0" layoutY="36.0" onMouseClicked="#onLogoutBtnClick" strokeType="OUTSIDE" strokeWidth="0.0" text="Se déconnecter" AnchorPane.topAnchor="17.53125">
+									<font>
+										<Font size="20.0" />
+									</font>
+								</Text>
+								<Text fill="WHITE" layoutX="351.0" layoutY="37.0" onMouseClicked="#switchToMembersPage" strokeType="OUTSIDE" strokeWidth="0.0" text="Membres" AnchorPane.topAnchor="17.0">
+									<font>
+										<Font size="20.0" />
+									</font>
+								</Text>
+								<ImageView fitHeight="48.0" fitWidth="69.0" layoutX="10.0" layoutY="4.0" onMouseClicked="#onThemeBtnClicked" pickOnBounds="true" preserveRatio="true">
+									<image>
+										<Image url="@../images/theme_21581.png" />
+									</image>
+								</ImageView>
+							</children>
+						</AnchorPane>
+					</top>
+				</BorderPane>
+            <ListView fx:id="projectsList" layoutX="29.0" layoutY="110.0" onMouseClicked="#onProjectListSelect" prefHeight="472.0" prefWidth="187.0" />
+            <Label layoutX="62.0" layoutY="70.0" prefHeight="31.0" prefWidth="121.0" text="Projets" textFill="#000958" textOverrun="WORD_ELLIPSIS">
+               <font>
+                  <Font name="Ayuthaya" size="22.0" />
+               </font>
+            </Label>
+            <BarChart fx:id="chart" layoutX="216.0" layoutY="103.0" prefHeight="525.0" prefWidth="865.0" styleClass="chart">
+              <xAxis>
+                <NumberAxis fx:id="daysAxis" side="BOTTOM" />
+              </xAxis>
+              <yAxis>
+                <CategoryAxis fx:id="tasksAxis" side="LEFT" />
+              </yAxis>
+            </BarChart>
+			</children>
+		</AnchorPane>
+	</children>
+</AnchorPane>

@@ -1,0 +1,14 @@
+.add-button {
+  -fx-background-color: #32a534;
+  -fx-text-fill: white;
+}
+
+.delete-button {
+  -fx-background-color: #a83234;
+  -fx-text-fill: white;
+}
+
+.update-button {
+  -fx-background-color: #2e96ff;
+  -fx-text-fill: white;
+}

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="650.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.clm.controllers.CategoriesController">
+   <children>
+      <AnchorPane fx:id="mainPane" prefHeight="650.0" prefWidth="1100.0" styleClass="mainPane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <BorderPane prefHeight="57.0" prefWidth="1100.0" style="-fx-background-color: #000958;">
+               <right>
+                  <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="57.0" prefWidth="1114.0" styleClass="nav-bar" BorderPane.alignment="CENTER">
+                     <children>
+                        <Text fill="RED" layoutX="447.0" layoutY="36.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Projets" textAlignment="CENTER" AnchorPane.leftAnchor="447.0" AnchorPane.rightAnchor="613.01953125" AnchorPane.topAnchor="16.6640625">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                        </Text>
+                        <Text fx:id="ticketBtn" fill="WHITE" layoutX="526.0" layoutY="36.0" onMouseClicked="#switchToTicketPage" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="nav-titles" text="Ticket" AnchorPane.topAnchor="16.6640625">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                        </Text>
+                        <Text fill="WHITE" layoutX="596.0" layoutY="36.0" onMouseClicked="#switchToPlanificationPage" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="nav-titles" text="Planification" AnchorPane.topAnchor="16.6640625">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                        </Text>
+                        <Text fx:id="logOutBtn" fill="WHITE" layoutX="964.0" layoutY="36.0" onMouseClicked="#onLogOutBtnClick" strokeType="OUTSIDE" strokeWidth="0.0" text="Se déconnecter" AnchorPane.topAnchor="16.6640625">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                        </Text>
+                        <Text fill="WHITE" layoutX="351.0" layoutY="37.0" onMouseClicked="#switchToMembersPage" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="nav-titles" text="Membres" AnchorPane.topAnchor="17.0">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                        </Text>
+                        <ImageView fitHeight="48.0" fitWidth="69.0" layoutX="10.0" layoutY="4.0" onMouseClicked="#onThemeBtnClicked" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../images/theme_21581.png" />
+                           </image>
+                        </ImageView>
+                     </children>
+                  </AnchorPane>
+               </right>
+            </BorderPane>
+            <ListView fx:id="categoriesListView" layoutX="39.0" layoutY="111.0" onMouseClicked="#onCategorieListSelected" prefHeight="487.0" prefWidth="589.0" styleClass="users-list" />
+            <AnchorPane layoutX="641.0" layoutY="62.0" prefHeight="588.0" prefWidth="471.0">
+               <children>
+                  <Button fx:id="addBtn" graphicTextGap="3.0" layoutX="21.0" layoutY="52.0" mnemonicParsing="false" onAction="#onaddBtnClick" prefHeight="40.0" prefWidth="127.0" styleClass="add-button" text="Ajouter" textOverrun="CLIP" />
+                  <Button fx:id="deleteBtn" layoutX="172.0" layoutY="52.0" mnemonicParsing="false" onAction="#onDeleteBtnClick" prefHeight="40.0" prefWidth="127.0" styleClass="delete-button" text="Effacer" />
+                  <Button fx:id="updateBtn" layoutX="320.0" layoutY="52.0" mnemonicParsing="false" onAction="#onUpdateBtnClick" prefHeight="40.0" prefWidth="127.0" styleClass="update-button" text="Modifier" textFill="WHITE" />
+                  <TextField fx:id="categorieTitle" layoutX="32.0" layoutY="155.0" prefHeight="26.0" prefWidth="384.0" styleClass="inputs" />
+                  <TextArea fx:id="categorieDescription" layoutX="31.0" layoutY="233.0" prefHeight="101.0" prefWidth="388.0" styleClass="inputs" />
+                  <Text layoutX="26.0" layoutY="143.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="titles" text="Projet" wrappingWidth="77.04687118530273" />
+                  <Text layoutX="27.0" layoutY="218.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="titles" text="Description" wrappingWidth="77.04687118530273" />
+                  <ListView fx:id="membersList" layoutX="29.0" layoutY="351.0" prefHeight="188.0" prefWidth="394.0" styleClass="users-list" />
+               </children>
+            </AnchorPane>
+         </children>
+      </AnchorPane>
+   </children>
+</AnchorPane>
