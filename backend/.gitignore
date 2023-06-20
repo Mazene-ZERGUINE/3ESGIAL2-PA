@@ -4,6 +4,8 @@
 .idea
 ../.idea
 ../.vscode/
+!./uploads/publications/images/.gitkeep
+./uploads/publications/images/*
 
 ### Node ###
 # Logs
