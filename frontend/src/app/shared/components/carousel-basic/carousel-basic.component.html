@@ -2,11 +2,10 @@
   <ng-template ngbSlide *ngFor="let image of images; let index = index">
     <div class="picsum-img-wrapper">
       <!-- TODO -->
-      <img [src]="images[index]" alt="..." />
+      <img [src]="'http://' + images[index].lien" alt="..." class="carousel-img" />
     </div>
   </ng-template>
 </ngb-carousel>
-
 <!--<ng-template #elseBlock>-->
 <!--  <p class="text-secondary text-center">Pas d'image disponible</p>-->
 <!--</ng-template>-->

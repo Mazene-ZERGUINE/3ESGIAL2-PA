@@ -1,9 +1,9 @@
 <div class="row">
   <!-- TODO -->
-  <div class="col my-3" *ngIf="true">
+  <div class="col my-3" *ngIf="post">
     <!--    <p *ngFor="categorie in post.categories">-->
     <div class="d-flex justify-content-between">
-      <h1 class="my-3">post.titre</h1>
+      <h1 class="my-3">{{ post.titre }}</h1>
       <!-- TODO -->
       <div>
         <button title="Aimer." class="btn btn-outline-warning" (click)="onUnstar()">
@@ -15,27 +15,31 @@
       </div>
     </div>
     <p>
-      <span class="badge rounded-pill text-bg-secondary">categorie.libelle</span>
+      <span class="badge rounded-pill text-bg-secondary">{{ $any(post)['categorie']['libelle'] }}</span>
     </p>
     <p>
-      <small class="text-body-secondary">Par : post.utilisateur.utilisateur_id</small>
+      <small class="text-body-secondary">
+        Par : {{ $any(post)['utilisateur']['nom'] }} {{ $any(post)['utilisateur']['prenom'] }}
+      </small>
       <br />
-      <small class="text-body-secondary">Le : post.created_at</small>
+      <small class="text-body-secondary">Le : {{ post.created_at | date | date : 'dd MMMM yyyy' : '' : 'fr' }}</small>
     </p>
     <p></p>
     <!-- TODO -->
-    <p *ngIf="true">post.description</p>
+    <p *ngIf="true">{{ post.description }}</p>
     <div class="row justify-content-center">
       <div class="col-sd-auto col-md-6">
-        <ngbd-carousel-basic [images]="images"></ngbd-carousel-basic>
+        <ngbd-carousel-basic [images]="post.images"></ngbd-carousel-basic>
       </div>
     </div>
-    <button class="btn btn-outline-info mx-2" (click)="onReport()">
-      <i class="bi bi-exclamation-triangle-fill"></i>
-    </button>
-    <button class="btn btn-info mx-2 no-pointer">
-      <i class="bi bi-exclamation-triangle-fill"></i>
-    </button>
+    <span *ngIf="post.utilisateur_id !== currentUserId">
+      <button class="btn btn-outline-info mx-2" (click)="onReport()">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+      </button>
+      <button class="btn btn-info mx-2 no-pointer">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+      </button>
+    </span>
     <!-- TODO -->
     <button title="Aimer." class="btn btn-outline-success">
       <i class="bi bi-hand-thumbs-up-fill"></i>
@@ -46,12 +50,14 @@
       {{ 0 | thousandSuffix }}
     </button>
     <!-- TODO -->
-    <button class="btn btn-outline-warning mx-2" (click)="onEdit(2)">
-      <i class="bi bi-pencil-fill"></i>
-    </button>
-    <button class="btn btn-outline-danger mx-2" (click)="onDelete()">
-      <i class="bi bi-trash-fill"></i>
-    </button>
+    <span *ngIf="post.utilisateur_id === currentUserId">
+      <button class="btn btn-outline-warning mx-2" (click)="onEdit(2)">
+        <i class="bi bi-pencil-fill"></i>
+      </button>
+      <button class="btn btn-outline-danger mx-2" (click)="onDelete()">
+        <i class="bi bi-trash-fill"></i>
+      </button>
+    </span>
   </div>
 </div>
 <hr class="my-4" />

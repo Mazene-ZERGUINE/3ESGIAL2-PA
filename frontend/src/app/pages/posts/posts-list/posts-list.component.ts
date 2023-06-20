@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Post } from '../shared/models/post.interface';
 import { Router } from '@angular/router';
 import { Status } from '../../sign-up/shared/enums/status.enum';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-posts-list',
@@ -9,13 +10,14 @@ import { Status } from '../../sign-up/shared/enums/status.enum';
   styleUrls: ['./posts-list.component.scss'],
 })
 export class PostsListComponent {
+  @Input() currentUserId?: number;
   @Input() isAuthenticated: null | boolean = false;
   @Input() posts: null | Post[] = [];
   @Output() selected = new EventEmitter<Post>();
 
   readonly activeStatus = Status.active;
 
-  constructor(private readonly router: Router) {}
+  constructor(public readonly sanitizer: DomSanitizer, private readonly router: Router) {}
 
   onDislike(e: MouseEvent): void {
     this.stopPropagation(e);

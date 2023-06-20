@@ -1,16 +1,17 @@
 <div class="col">
   <app-posts-list
+    [currentUserId]="currentUserId"
     [isAuthenticated]="isAuthenticated$ | async"
     [posts]="posts$ | async"
     (selected)="selectPost($event)"
   ></app-posts-list>
-  <div class="d-flex justify-content-center mt-5" *ngIf="posts$">
+  <div class="d-flex justify-content-center mt-5" *ngIf="posts$ | async">
     <ngb-pagination
       aria-label="Pagination des publications"
       [collectionSize]="(posts$ | async)?.length ?? 0"
       [(page)]="page"
       (pageChange)="onPageChange($event)"
-      *ngIf="$any(posts$ | async)?.length >= 1"
+      *ngIf="$any(posts$)?.length >= 1"
     ></ngb-pagination>
   </div>
   <app-back-to-top></app-back-to-top>

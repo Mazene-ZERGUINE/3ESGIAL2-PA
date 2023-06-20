@@ -44,6 +44,11 @@ const routes: Routes = [
     title: `Utilisateurs ${combinedTitle}`,
   },
   {
+    path: 'not-found',
+    loadChildren: () => import('./shared/pages/not-found/not-found.module').then((m) => m.NotFoundModule),
+    title: `Page introuvable ${combinedTitle}`,
+  },
+  {
     path: '**',
     loadChildren: () => import('./shared/pages/not-found/not-found.module').then((m) => m.NotFoundModule),
     title: `Page introuvable ${combinedTitle}`,
