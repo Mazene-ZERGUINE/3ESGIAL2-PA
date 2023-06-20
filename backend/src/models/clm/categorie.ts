@@ -25,6 +25,6 @@ Categorie.init(
 );
 
 //#region 		categorie & publication
-Categorie.hasMany(Publication, { foreignKey: 'categorie_id' });
+Categorie.hasMany(Publication, { foreignKey: 'categorie_id', onDelete: 'SET NULL' });
 Publication.belongsTo(Categorie, { foreignKey: 'categorie_id' });
 //#endregion	categorie & publication

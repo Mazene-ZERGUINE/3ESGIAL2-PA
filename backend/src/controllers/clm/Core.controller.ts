@@ -63,6 +63,28 @@ export abstract class CoreController {
 		};
 	}
 
+	static coreGetAllAndOrderedBy(model: any, order: 'ASC' | 'DESC', field: string) {
+		return async ({ query: { page } }: Request, res: Response) => {
+			const providedPage = page ? Number(page) : 1;
+
+			try {
+				const items = await model.findAll({
+					offset: (providedPage - 1) * CoreController.PAGE_SIZE,
+					limit: CoreController.PAGE_SIZE,
+					include: {
+						all: true,
+						nested: true,
+					},
+					order: [[field, order]],
+				});
+
+				res.status(200).json({ data: items });
+			} catch (error) {
+				CoreController.handleError(error, res);
+			}
+		};
+	}
+
 	static coreGetOneByPk(model: any) {
 		return async (req: Request, res: Response) => {
 			try {

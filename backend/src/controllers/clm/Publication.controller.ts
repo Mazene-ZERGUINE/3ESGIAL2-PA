@@ -3,8 +3,66 @@ import { Request, Response } from 'express';
 import { Publication } from '../../models/clm/publication';
 import { Utilisateur } from '../../models/clm/utilisateur';
 import { Categorie } from '../../models/clm/categorie';
+import { Status } from '../../enum/clm/status.enum';
+import * as fs from 'fs';
+import { Image } from '../../models/clm/image';
 
 export class PublicationController extends CoreController {
+	static async create(req: Request, res: Response): Promise<void> {
+		const files = req.files;
+		const { titre, description, statut, utilisateur_id, categorie_id } = req.body;
+		// TODO check
+
+		try {
+			if (statut !== Status.active) {
+				res.status(400).json({ message: 'Statut incorrect.' });
+				return;
+			}
+			if (!(await Utilisateur.findByPk(utilisateur_id))) {
+				res.status(400).json({ message: 'Utilisateur incorrect.' });
+				return;
+			}
+			if (!(await Categorie.findByPk(categorie_id))) {
+				res.status(400).json({ message: 'Catégorie incorrecte.' });
+				return;
+			}
+
+			const publication = await Publication.create({
+				titre,
+				description,
+				statut,
+				utilisateur_id,
+				categorie_id,
+				created_at: new Date(),
+				updated_at: null,
+			});
+
+			if (!files || !Array.isArray(files)) {
+				res.status(201).end();
+				return;
+			}
+
+			for (const file of files) {
+				await Image.create({
+					titre,
+					libelle: file.originalname,
+					lien: `${process.env.HOST}${process.env.PORT ? `:${process.env.PORT}` : ''}/${file.path}`,
+					publication_id: publication.getDataValue('publication_id'),
+				});
+			}
+
+			res.status(201).end();
+		} catch (error) {
+			if (Array.isArray(files)) {
+				for (const file of files) {
+					fs.unlink(file.path, (err) => console.error(err));
+				}
+			}
+
+			CoreController.handleError(error, res);
+		}
+	}
+
 	static async updateById(req: Request, res: Response): Promise<void> {
 		const { titre, description, statut, utilisateur_id, categorie_id, created_at, updated_at } = req.body;
 		// TODO check...
@@ -16,11 +74,11 @@ export class PublicationController extends CoreController {
 				return;
 			}
 			if (!(await Utilisateur.findByPk(utilisateur_id))) {
-				res.status(400).json({ message: 'Utilisateur inexistant.' });
+				res.status(400).json({ message: 'Utilisateur incorrect.' });
 				return;
 			}
 			if (!(await Categorie.findByPk(categorie_id))) {
-				res.status(400).json({ message: 'Catégorie inexistante.' });
+				res.status(400).json({ message: 'Catégorie incorrecte.' });
 				return;
 			}
 

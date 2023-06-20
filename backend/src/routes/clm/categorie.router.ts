@@ -1,13 +1,15 @@
 import { Router } from 'express';
+
 import { CategorieController } from '../../controllers/clm/Categorie.controller';
 import { Categorie } from '../../models/clm/categorie';
+import { isAdministrator, isAuthenticated } from '../../middlewares/clm/auth.middleware';
 
 const router = Router();
 router
-	.get('/', CategorieController.coreGetAll(Categorie))
+	.get('/', [isAuthenticated], CategorieController.coreGetAll(Categorie))
 	.get('/:id', CategorieController.coreGetOneByPk(Categorie))
-	.post('/', CategorieController.coreCreateWithoutTimestamps(Categorie))
-	.put('/:id', CategorieController.coreUpdateByIdWithoutTimestamps(Categorie))
-	.delete('/:id', CategorieController.coreDeleteById(Categorie));
+	.post('/', [isAuthenticated, isAdministrator], CategorieController.coreCreateWithoutTimestamps(Categorie))
+	.put('/:id', [isAuthenticated, isAdministrator], CategorieController.coreUpdateByIdWithoutTimestamps(Categorie))
+	.delete('/:id', [isAuthenticated, isAdministrator], CategorieController.coreDeleteById(Categorie));
 
 export default router;

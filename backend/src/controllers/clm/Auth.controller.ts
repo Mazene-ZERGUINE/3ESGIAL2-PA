@@ -16,7 +16,7 @@ export class AuthController extends CoreController {
 		try {
 			const utilisateur = await Utilisateur.findOne({ where: { email: providedEmail } });
 			if (!utilisateur) {
-				res.status(404).end();
+				res.status(401).end();
 				return;
 			}
 
@@ -31,7 +31,13 @@ export class AuthController extends CoreController {
 				throw new Error('Clé secrète manquante.');
 			}
 
-			const token = sign({ pseudonyme: utilisateur.getDataValue('pseudonyme') }, apiKey);
+			const token = sign(
+				{
+					utilisateur_id: utilisateur.getDataValue('utilisateur_id'),
+					pseudonyme: utilisateur.getDataValue('pseudonyme'),
+				},
+				apiKey,
+			);
 
 			await Session.create({
 				token,
@@ -45,7 +51,8 @@ export class AuthController extends CoreController {
 	}
 
 	static async logOut(req: Request, res: Response): Promise<void> {
-		const token = req.headers.authorization?.split(' ');
+		// TODO to remove when the auth middleware is implemented
+		const token = req.headers.authorization?.split(' ')[1];
 		if (!token) {
 			res.status(400).end();
 			return;
