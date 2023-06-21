@@ -10,6 +10,8 @@ import authRouter from '../routes/clm/auth.router';
 import sessionRouter from '../routes/clm/session.router';
 import categorieRouter from '../routes/clm/categorie.router';
 import publicationRouter from '../routes/clm/publication.router';
+import { isAdministrator, isAuthenticated } from '../middlewares/clm/auth.middleware';
+import imageRouter from '../routes/clm/image.router';
 
 export default class AppRouter {
 	private readonly categoryRoutes: any = require('../routes/client/categories.routes');
@@ -18,10 +20,10 @@ export default class AppRouter {
 
 	initRoutes = (app: Express) => {
 		app
-			.use(express.json({ type: '*/*' }))
+			// .use(express.json({ type: '*/*' }))
 			.use(cors())
-			.use(json({ type: '*/*' }))
-			.use(helmet());
+			.use(json())
+			.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
 		app.use('/api/client/categories', this.categoryRoutes);
 		app.use('/api/client/users', userRouter);
 		app.use('/api/client/tasks', this.tasksRoutes);
@@ -30,10 +32,12 @@ export default class AppRouter {
 		app.post('/api/client/recover_password', recoverPassword);
 		//#region			clm
 		app
+			.use('/uploads/publications/images', express.static('uploads/publications/images'))
 			.use('/api/clm/auth', authRouter)
 			.use('/api/clm/categories', categorieRouter)
+			.use('/api/clm/images', imageRouter)
 			.use('/api/clm/publications', publicationRouter)
-			.use('/api/clm/sessions', sessionRouter)
+			.use('/api/clm/sessions', [isAuthenticated, isAdministrator], sessionRouter)
 			.use('/api/clm/utilisateurs', utilisateurRouter);
 		//#endregion	clm
 	};

@@ -3,6 +3,7 @@ import { environment } from '../../../../../environments/environment';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { JwtHelperService } from '@auth0/angular-jwt';
 
 @Injectable({
   providedIn: 'root',
@@ -12,7 +13,7 @@ export class AuthService {
   private readonly API_URL = `${environment.apiUrl}/auth`;
   private readonly _isAuthenticated$ = new BehaviorSubject(false);
 
-  constructor(private readonly httpClient: HttpClient, private readonly router: Router) {}
+  constructor(private readonly httpClient: HttpClient, private readonly jwtHelper: JwtHelperService) {}
 
   get isAuthenticated() {
     return this._isAuthenticated$.value;
@@ -20,6 +21,12 @@ export class AuthService {
 
   get isAuthenticated$() {
     return this._isAuthenticated$.asObservable();
+  }
+
+  async getCurrentUserId(): Promise<undefined | number> {
+    const token = await this.jwtHelper.tokenGetter();
+
+    return this.jwtHelper.decodeToken(token)?.utilisateur_id;
   }
 
   setToken(token: null | string) {
@@ -37,17 +44,15 @@ export class AuthService {
     this._isAuthenticated$.next(false);
   }
 
-  // emitOnIsAuthenticated$(value: boolean) {
-  //   this._isAuthenticated$.next(value);
-  // }
+  emitOnIsAuthenticated$(value: boolean) {
+    this._isAuthenticated$.next(value);
+  }
 
   logIn(payload: { email: string; password: string }): Observable<{ access_token: string }> {
     return this.httpClient.post<{ access_token: string }>(`${this.API_URL}/log-in`, payload);
   }
 
-  async logOut(): Promise<void> {
-    this.setToken(null);
-    this._isAuthenticated$.next(false);
-    await this.router.navigate(['/login']);
+  logOut(): Observable<void> {
+    return this.httpClient.get<void>(`${this.API_URL}/log-out`);
   }
 }

@@ -7,7 +7,11 @@
   <ng-template #elsePostsBlock>
     <div class="col-10 col-sm-7" *ngFor="let post of posts; trackBy: trackById">
       <div class="col card my-5 mb-3" *ngIf="post.statut === activeStatus">
-        <a class="text-reset text-decoration-none" [routerLink]="'/posts/' + post.publication_id">
+        <a
+          class="text-reset text-decoration-none"
+          [routerLink]="'/posts/' + post.publication_id"
+          (click)="selectPost(post)"
+        >
           <div class="row g-0">
             <div class="col-md-4">
               <div class="ratio ratio-1x1">
@@ -18,14 +22,18 @@
                   Pas d'image
                 </span>
                 <ng-template #elseImageBlock>
-                  <img [src]="post.images[0].lien" class="img-fluid rounded-start" [alt]="post.images[0].libelle" />
+                  <img
+                    [src]="'http://' + post.images[0].lien"
+                    class="img-fluid rounded-start"
+                    [alt]="post.images[0].libelle"
+                  />
                 </ng-template>
               </div>
             </div>
             <div class="col-md-8">
               <div class="card-body">
                 <div class="d-flex justify-content-between">
-                  <h5 class="card-title">Titre</h5>
+                  <h5 class="card-title">{{ post.titre }}</h5>
                   <!-- TODO -->
                   <span *ngIf="isAuthenticated">
                     <button title="Aimer." class="btn btn-outline-warning" (click)="onUnstar($event)">
@@ -37,20 +45,26 @@
                   </span>
                 </div>
                 <p class="card-text">
-                  <small class="text-body-secondary">Par : post.utilisateur.utilisateur_id</small>
+                  <small class="text-body-secondary">
+                    Par : {{ $any(post)['utilisateur']['nom'] }} {{ $any(post)['utilisateur']['prenom'] }}
+                  </small>
                 </p>
                 <p class="card-text">
-                  <small class="text-body-secondary">Le : post.created_at</small>
+                  <small class="text-body-secondary"
+                    >Le : {{ post.created_at | date | date : 'dd MMMM yyyy' : '' : 'fr' }}</small
+                  >
                 </p>
               </div>
             </div>
             <div class="card-footer d-flex justify-content-around" (click)="stopPropagation($event)">
-              <button title="Signaler la publication." class="btn btn-outline-info mx-2" (click)="onReport($event)">
-                <i class="bi bi-exclamation-triangle-fill"></i>
-              </button>
-              <button title="Vous avez signalé la publication." class="btn btn-info mx-2 no-pointer">
-                <i class="bi bi-exclamation-triangle-fill"></i>
-              </button>
+              <span *ngIf="post.utilisateur_id !== currentUserId">
+                <button title="Signaler la publication." class="btn btn-outline-info mx-2" (click)="onReport($event)">
+                  <i class="bi bi-exclamation-triangle-fill"></i>
+                </button>
+                <button title="Vous avez signalé la publication." class="btn btn-info mx-2 no-pointer">
+                  <i class="bi bi-exclamation-triangle-fill"></i>
+                </button>
+              </span>
               <!-- TODO -->
               <button title="Aimer." class="btn btn-outline-success" (click)="onLike($event)">
                 <i class="bi bi-hand-thumbs-up"></i>

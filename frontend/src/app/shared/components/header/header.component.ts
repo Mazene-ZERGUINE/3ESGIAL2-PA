@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth/auth.service';
-import { Observable } from 'rxjs';
+import { first, Observable, take } from 'rxjs';
 
 @Component({
   selector: 'app-header',
@@ -33,19 +33,25 @@ export class HeaderComponent {
     { path: '/signup', label: "S'inscrire" },
   ];
 
-  constructor(private readonly authService: AuthService, private readonly _router: Router) {
+  constructor(private readonly authService: AuthService, private readonly router: Router) {
     this.isAuthenticated = this.authService.isAuthenticated$;
   }
 
   async onSignupClick(): Promise<void> {
-    await this._router.navigate(['signup']);
+    await this.router.navigate(['signup']);
   }
 
   async onLoginClick(): Promise<void> {
-    await this._router.navigate(['login']);
+    await this.router.navigate(['login']);
   }
 
-  async onLogoutClick(): Promise<void> {
-    await this.authService.logOut();
+  onLogoutClick() {
+    this.authService
+      .logOut()
+      .pipe(first())
+      .subscribe(() => {
+        this.authService.deleteToken();
+        this.router.navigateByUrl('login');
+      });
   }
 }

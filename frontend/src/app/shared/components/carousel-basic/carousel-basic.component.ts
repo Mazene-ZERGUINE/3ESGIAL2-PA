@@ -1,6 +1,8 @@
 import { Component, Input } from '@angular/core';
 import { NgbCarouselModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgFor, NgIf } from '@angular/common';
+import { DomSanitizer } from '@angular/platform-browser';
+
 import { Image } from '../../../pages/posts/shared/models/post.interface';
 
 @Component({
@@ -13,4 +15,6 @@ import { Image } from '../../../pages/posts/shared/models/post.interface';
 })
 export class CarouselBasicComponent {
   @Input() images: Image[] = [];
+
+  constructor(public readonly sanitizer: DomSanitizer) {}
 }

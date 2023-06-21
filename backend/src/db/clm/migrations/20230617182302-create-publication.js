@@ -1,5 +1,4 @@
 'use strict';
-const { DataTypes } = require('sequelize');
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
 	async up(queryInterface, Sequelize) {
@@ -20,14 +19,14 @@ module.exports = {
 				type: Sequelize.ENUM('actif', 'inactif'),
 			},
 			utilisateur_id: {
-				type: DataTypes.INTEGER,
+				type: Sequelize.INTEGER,
 				references: {
 					model: 'utilisateur',
 					key: 'utilisateur_id',
 				},
 			},
 			categorie_id: {
-				type: DataTypes.INTEGER,
+				type: Sequelize.INTEGER,
 				references: {
 					model: 'categorie',
 					key: 'categorie_id',

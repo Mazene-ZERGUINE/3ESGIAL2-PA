@@ -13,7 +13,7 @@
         class="text-danger my-2"
         *ngIf="form.get('nom')?.touched && form.get('nom')?.dirty && form.get('nom')?.getError('pattern')"
       >
-        Le champ doit contenir des lettres.
+        Le champ ne peut contenir que des lettres, des espaces, des tirets et des apostrophes.
       </small>
     </div>
     <div class="mb-3">
@@ -23,7 +23,7 @@
         class="text-danger my-2"
         *ngIf="form.get('prenom')?.touched && form.get('prenom')?.dirty && form.get('prenom')?.getError('pattern')"
       >
-        Le champ doit contenir des lettres.
+        Le champ ne peut contenir que des lettres, des espaces, des tirets et des apostrophes.
       </small>
     </div>
     <div class="mb-3">
@@ -67,6 +67,16 @@
         formControlName="pseudonyme"
         required
       />
+      <small
+        class="text-danger my-2"
+        *ngIf="
+          form.get('pseudonyme')?.touched &&
+          form.get('pseudonyme')?.dirty &&
+          form.get('pseudonyme')?.getError('pattern')
+        "
+      >
+        Le champ doit contenir des lettres et/ou des chiffres.
+      </small>
     </div>
     <div class="mb-3">
       <label class="form-label required" for="ville">Ville</label>

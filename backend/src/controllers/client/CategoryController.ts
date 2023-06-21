@@ -63,7 +63,6 @@ const addNewCategory = (req: Request, res: Response) => {
 };
 
 const deleteCategory = (req: Request, res: Response) => {
-	console.log('ok');
 	const id: number = parseInt(req.params.id_category);
 	clientPool.query(categoriesQueries.deleteQuery, [id], (error: Error, results: any) => {
 		if (error) {

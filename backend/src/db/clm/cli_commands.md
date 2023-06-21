@@ -1,53 +1,63 @@
-# categorie
+# Modeles
+
+## categorie
 
 ```
 sequelize-cli model:generate --name categorie --attributes categorie_id:integer,libelle:string
 ```
 
-# commentaire
+## commentaire
 
 ```
 sequelize-cli model:generate --name commentaire --attributes
 ```
 
-# image
+## image
 
 ```
-sequelize-cli model:generate --name image --attributes
+sequelize-cli model:generate --name image --attributes image_id:integer,libelle:string,lien:string,publication_id:number
 ```
 
-# messagerie
+## messagerie
 
 ```
 sequelize-cli model:generate --name messagerie --attributes
 ```
 
-# personne_signalement
+## personne_signalement
 
 ```
 sequelize-cli model:generate --name personne_signalement --attributes
 ```
 
-# publication
+## publication
 
 ```
 sequelize-cli model:generate --name publication --attributes publication_id:integer,titre:string,description:text,statut:enum:'{actif,inactif}',utilisateur_id:integer,categorie_id:integer
 ```
 
-# publication_signalement
+## publication_signalement
 
 ```
 sequelize-cli model:generate --name publication_signalement --attributes
 ```
 
-# session
+## session
 
 ```
 sequelize-cli model:generate --name session --attributes session_id:integer,token:text,utilisateur_id:integer
 ```
 
-# utilisateur
+## utilisateur
 
 ```
 sequelize-cli model:generate --name utilisateur --attributes utilisateur_id:integer,email:string,mot_de_passe:string,pseudonyme:string,nom:string,prenom:string,departement:string,ville:string,role:enum:'{administrateur, utilisateur}',statut:enum:'{actif, banni, inactif}'
+```
+
+# Seed
+
+## categorie
+
+```
+sequelize-cli seed:generate --name categorie
 ```

@@ -2,6 +2,9 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { DefaultUrlSerializer, UrlSerializer, UrlTree } from '@angular/router';
+import { DatePipe, registerLocaleData } from '@angular/common';
+import localeFr from '@angular/common/locales/fr';
+import { JwtModule } from '@auth0/angular-jwt';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -10,7 +13,6 @@ import { ComponentsModule } from './shared/components/components.module';
 import { ToastComponent } from './shared/components/toast/toast.component';
 import { CarouselBasicComponent } from './shared/components/carousel-basic/carousel-basic.component';
 import { RequestInterceptor } from './shared/core/interceptors/request.interceptor';
-import { JwtModule } from '@auth0/angular-jwt';
 
 export class LowerCaseUrlSerializer extends DefaultUrlSerializer {
   override parse(url: string): UrlTree {
@@ -39,6 +41,7 @@ export function tokenGetter() {
     }),
   ],
   providers: [
+    DatePipe,
     {
       provide: UrlSerializer,
       useClass: LowerCaseUrlSerializer,
@@ -51,4 +54,8 @@ export function tokenGetter() {
   ],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule {
+  constructor() {
+    registerLocaleData(localeFr);
+  }
+}

@@ -1,14 +1,28 @@
 import { Injectable } from '@angular/core';
-import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor, HttpErrorResponse } from '@angular/common/http';
-import { catchError, Observable, of, tap, throwError } from 'rxjs';
+import {
+  HttpRequest,
+  HttpHandler,
+  HttpEvent,
+  HttpInterceptor,
+  HttpErrorResponse,
+  HttpResponse,
+} from '@angular/common/http';
+import { catchError, Observable, throwError } from 'rxjs';
 import { HttpError } from '../enums/http-error.enums';
 import { ToastService } from '../../components/toast/shared/toast.service';
+import { JwtHelperService } from '@auth0/angular-jwt';
 
 @Injectable()
 export class RequestInterceptor implements HttpInterceptor {
-  constructor(private readonly toastService: ToastService) {}
+  constructor(private readonly jwtHelper: JwtHelperService, private readonly toastService: ToastService) {}
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
+    request = request.clone({
+      setHeaders: {
+        authorization: `Bearer ${this.jwtHelper.tokenGetter()}`,
+      },
+    });
+
     return next.handle(request).pipe(
       catchError((err) => {
         return this.handleError(request, err);

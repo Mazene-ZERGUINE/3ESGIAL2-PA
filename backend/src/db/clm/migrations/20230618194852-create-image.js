@@ -2,26 +2,29 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
 	async up(queryInterface, Sequelize) {
-		await queryInterface.createTable('session', {
-			session_id: {
+		await queryInterface.createTable('image', {
+			image_id: {
 				allowNull: false,
 				autoIncrement: true,
 				primaryKey: true,
 				type: Sequelize.INTEGER,
 			},
-			token: {
-				type: Sequelize.TEXT,
+			libelle: {
+				type: Sequelize.STRING,
 			},
-			utilisateur_id: {
+			lien: {
+				type: Sequelize.STRING,
+			},
+			publication_id: {
 				type: Sequelize.INTEGER,
 				references: {
-					model: 'utilisateur',
-					key: 'utilisateur_id',
+					model: 'publication',
+					key: 'publication_id',
 				},
 			},
 		});
 	},
 	async down(queryInterface, Sequelize) {
-		await queryInterface.dropTable('session');
+		await queryInterface.dropTable('image');
 	},
 };

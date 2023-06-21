@@ -5,8 +5,10 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { SignUpService } from './shared/sign-up.service';
 import { frenchDepartments } from './shared/data/french-departments';
 import {
+  onlyLettersAndDashesAndSpacesRegex,
   onlyLettersRegex,
   startsWithLetterWhichContainsLetterAndNumbersRegex,
+  startsWithLetterWhichContainsLettersAndSpacesAndApostrophesAndCannotEndWithSpacesApostrophesDashes,
   startsWithNumberWhichContainsLetterOrNumberRegex,
 } from '../../shared/utils/regex.utils';
 import { Role } from './shared/enums/role.enum';
@@ -21,9 +23,10 @@ import { ToastService } from '../../shared/components/toast/shared/toast.service
   styleUrls: ['./sign-up.component.scss'],
 })
 export class SignUpComponent implements OnInit {
+  readonly passwordMinLength = 8;
+
   form?: FormGroup;
   frenchDepartments = [...frenchDepartments] as const;
-  readonly passwordMinLength = 8;
 
   constructor(
     private readonly fb: FormBuilder,
@@ -38,15 +41,25 @@ export class SignUpComponent implements OnInit {
 
   initForm(): void {
     this.form = this.fb.group({
-      nom: this.fb.control('', [Validators.required, Validators.pattern(onlyLettersRegex)]),
-      prenom: this.fb.control('', [Validators.required, Validators.pattern(onlyLettersRegex)]),
+      nom: this.fb.control('', [
+        Validators.required,
+        Validators.pattern(
+          startsWithLetterWhichContainsLettersAndSpacesAndApostrophesAndCannotEndWithSpacesApostrophesDashes,
+        ),
+      ]),
+      prenom: this.fb.control('', [
+        Validators.required,
+        Validators.pattern(
+          startsWithLetterWhichContainsLettersAndSpacesAndApostrophesAndCannotEndWithSpacesApostrophesDashes,
+        ),
+      ]),
       email: this.fb.control('', [Validators.required, Validators.email]),
       mot_de_passe: this.fb.control('', [Validators.required, Validators.minLength(this.passwordMinLength)]),
       pseudonyme: this.fb.control('', [
         Validators.required,
         Validators.pattern(startsWithLetterWhichContainsLetterAndNumbersRegex),
       ]),
-      ville: this.fb.control('', [Validators.required, Validators.pattern(onlyLettersRegex)]),
+      ville: this.fb.control('', [Validators.required, Validators.pattern(onlyLettersAndDashesAndSpacesRegex)]),
       departement: this.fb.control('', [
         Validators.required,
         Validators.pattern(startsWithNumberWhichContainsLetterOrNumberRegex),

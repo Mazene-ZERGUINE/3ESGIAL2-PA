@@ -17,6 +17,10 @@ export interface PostDTO {
   description: string;
   statut: Status;
   images: Image[];
+  utilisateur_id: number;
+  categorie_id: number;
+  created_at: Date;
+  updated_at: null | Date;
 }
 
 export interface Post extends PostDTO {

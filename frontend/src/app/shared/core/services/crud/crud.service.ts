@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../../../environments/environment';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+
+import { environment } from '../../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -18,13 +19,14 @@ export abstract class CrudService {
   }
 
   //#region GET methods
-  getAll<T>(path: string): Observable<T[]> {
-    return this.httpClient.get<T[]>(this.getPath(path));
+  getAll<T>(path: string): Observable<T> {
+    return this.httpClient.get<T>(this.getPath(path));
   }
 
   getOneById<T>(path: string, id: number): Observable<T> {
     return this.httpClient.get<T>(this.getPath(path, id));
   }
+
   //#endregion
 
   updateById(path: string, id: number, payload: any): Observable<void> {
