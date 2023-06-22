@@ -49,6 +49,11 @@
                               <Image url="@../images/theme_21581.png" />
                            </image>
                         </ImageView>
+                        <ImageView fitHeight="48.0" fitWidth="69.0" layoutX="67.0" layoutY="4.0" onMouseClicked="#onTerminalBtnClick" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../images/Alecive-Flatwoken-Apps-Terminal-Pc-104.512.png" />
+                           </image>
+                        </ImageView>
                      </children>
                   </AnchorPane>
                </right>
