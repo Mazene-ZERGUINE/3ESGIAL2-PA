@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 
 export abstract class CoreController {
-	static readonly PAGE_SIZE = 20;
+	static readonly PAGE_SIZE = 2;
 
 	static coreCreateWithoutTimestamps(model: any) {
 		return async (req: Request, res: Response) => {
@@ -27,6 +27,7 @@ export abstract class CoreController {
 
 	static coreDeleteById(model: any) {
 		return async (req: Request, res: Response) => {
+			// TODO check if the id is the user
 			try {
 				const item = await model.findByPk(req.params.id);
 				if (!item) {
@@ -69,8 +70,8 @@ export abstract class CoreController {
 
 			try {
 				const items = await model.findAll({
-					offset: (providedPage - 1) * CoreController.PAGE_SIZE,
-					limit: CoreController.PAGE_SIZE,
+					// offset: (providedPage - 1) * CoreController.PAGE_SIZE,
+					// limit: CoreController.PAGE_SIZE,
 					include: {
 						all: true,
 						nested: true,

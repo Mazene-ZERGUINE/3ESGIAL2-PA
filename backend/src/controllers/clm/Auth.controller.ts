@@ -33,8 +33,9 @@ export class AuthController extends CoreController {
 
 			const token = sign(
 				{
-					utilisateur_id: utilisateur.getDataValue('utilisateur_id'),
 					pseudonyme: utilisateur.getDataValue('pseudonyme'),
+					utilisateur_id: utilisateur.getDataValue('utilisateur_id'),
+					role: utilisateur.getDataValue('role'),
 				},
 				apiKey,
 			);
@@ -60,12 +61,10 @@ export class AuthController extends CoreController {
 
 		try {
 			const session = await Session.findOne({ where: { token } });
-			if (!session) {
-				res.status(404).end();
-				return;
+			if (session) {
+				await session.destroy();
 			}
 
-			await session.destroy();
 			res.status(200).end();
 		} catch (error) {
 			CoreController.handleError(error, res);
