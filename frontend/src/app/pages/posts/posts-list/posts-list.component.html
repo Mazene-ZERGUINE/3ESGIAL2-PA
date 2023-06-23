@@ -66,18 +66,39 @@
                 </button>
               </span>
               <!-- TODO -->
-              <button title="Aimer." class="btn btn-outline-success" (click)="onLike($event)">
-                <i class="bi bi-hand-thumbs-up"></i>
-                {{ 0 | thousandSuffix }}
-              </button>
-              <button title="Ne plus aimer." class="btn btn-success" (click)="onDislike($event)">
+              <button
+                title="Aimer."
+                class="btn btn-outline-success"
+                (click)="onLike($event, post.publication_id, currentUserId)"
+                *ngIf="!likeInfo[post.publication_id]?.liked; else elseDislikeButton"
+              >
                 <i class="bi bi-hand-thumbs-up-fill"></i>
-                {{ 0 | thousandSuffix }}
+                {{ likeInfo[post.publication_id]?.count | thousandSuffix }}
               </button>
+              <ng-template #elseDislikeButton>
+                <button
+                  title="Ne plus aimer."
+                  class="btn btn-success"
+                  (click)="onDislike($event, post.publication_id, currentUserId)"
+                >
+                  <i class="bi bi-hand-thumbs-up-fill"></i>
+                  {{ likeInfo[post.publication_id]?.count | thousandSuffix }}
+                </button>
+              </ng-template>
             </div>
           </div>
         </a>
       </div>
     </div>
+
+    <!--    <div *ngIf="posts && posts.length >= 1">-->
+    <!--      <ngb-pagination-->
+    <!--        aria-label="Pagination des publications"-->
+    <!--        [collectionSize]="posts.length"-->
+    <!--        [(page)]="page"-->
+    <!--        (pageChange)="onPageChange($event)"-->
+    <!--        [pageSize]="1"-->
+    <!--      ></ngb-pagination>-->
+    <!--    </div>-->
   </ng-template>
 </div>

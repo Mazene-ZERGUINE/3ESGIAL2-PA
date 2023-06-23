@@ -10,7 +10,7 @@ import { environment } from '../../../../../environments/environment';
 export abstract class CrudService {
   private readonly _apiUrl: string;
 
-  protected constructor(private readonly httpClient: HttpClient) {
+  protected constructor(protected readonly httpClient: HttpClient) {
     this._apiUrl = environment.apiUrl;
   }
 
@@ -18,7 +18,7 @@ export abstract class CrudService {
     return this.httpClient.post<void>(this.getPath(path), payload);
   }
 
-  //#region GET methods
+  //#region     GET methods
   getAll<T>(path: string): Observable<T> {
     return this.httpClient.get<T>(this.getPath(path));
   }
@@ -26,8 +26,7 @@ export abstract class CrudService {
   getOneById<T>(path: string, id: number): Observable<T> {
     return this.httpClient.get<T>(this.getPath(path, id));
   }
-
-  //#endregion
+  //#endregion  GET methods
 
   updateById(path: string, id: number, payload: any): Observable<void> {
     return this.httpClient.put<void>(this.getPath(path, id), payload);
@@ -37,7 +36,7 @@ export abstract class CrudService {
     return this.httpClient.delete<void>(this.getPath(path, id));
   }
 
-  private getPath(_path: string, id?: number | string): string {
+  protected getPath(_path: string, id?: number | string): string {
     const path = `${this._apiUrl}/${_path}`;
 
     return !id ? path : `${path}/${id}`;

@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 import { AuthService } from '../../shared/core/services/auth/auth.service';
+import { Role } from '../sign-up/shared/enums/role.enum';
 
 @UntilDestroy()
 @Component({

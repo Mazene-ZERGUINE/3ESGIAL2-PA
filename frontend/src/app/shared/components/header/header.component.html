@@ -18,7 +18,7 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
           <!--          <div class="navbar-nav justify-content-center">-->
-          <li class="nav-item dropdown" *ngIf="isAuthenticated | async">
+          <li class="nav-item dropdown" *ngIf="(isAuthenticated | async) && (isAdmin | async)">
             <a class="nav-link p-2 m-2 dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               Administration
             </a>

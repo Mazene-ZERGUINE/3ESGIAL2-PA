@@ -116,6 +116,7 @@ export class PostFormComponent implements OnInit {
 
     const token = await this.jwtHelper.tokenGetter();
     const { utilisateur_id } = this.jwtHelper.decodeToken(token);
+
     const formData = new FormData();
     formData.append('titre', this.form.get('titre')?.value);
     formData.append('description', this.form.get('description')?.value);

@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { Post } from './shared/models/post.interface';
-import { Observable, of } from 'rxjs';
-import { Status } from '../sign-up/shared/enums/status.enum';
+import { catchError, concatMap, from, map, Observable, of, switchMap, tap } from 'rxjs';
 import { ViewportScroller } from '@angular/common';
 import { AuthService } from '../../shared/core/services/auth/auth.service';
 import { PostsService } from './shared/services/posts/posts.service';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Response } from '../../shared/core/models/interfaces/response.interface';
 import { JwtHelperService } from '@auth0/angular-jwt';
+import { PostLikesService } from '../../shared/core/services/post-likes/post-likes.service';
 
 @UntilDestroy()
 @Component({
@@ -18,19 +18,23 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 export class PostsComponent implements OnInit {
   readonly isAuthenticated$: Observable<boolean>;
   readonly posts$: Observable<null | Post[]>;
+  readonly likeInfo$?: Observable<{ [key: string]: { count: number; liked: boolean } }>;
 
   page = 1;
   selectedPost?: Post;
   currentUserId?: number;
+  likeInfo: { [key: number]: { count: number; liked: boolean } } = {};
 
   constructor(
     private readonly authService: AuthService,
     private readonly jwtHelper: JwtHelperService,
+    private readonly postLikesService: PostLikesService,
     private readonly postsService: PostsService,
     private readonly viewportScroller: ViewportScroller,
   ) {
     this.isAuthenticated$ = this.authService.isAuthenticated$;
     this.posts$ = this.postsService.posts$;
+    this.likeInfo$ = this.postLikesService.likeInfo$;
   }
 
   async ngOnInit(): Promise<void> {
@@ -95,11 +99,32 @@ export class PostsComponent implements OnInit {
     //
     // this.posts$ = of(arr);
 
+    let publication_id: number;
+
     this.postsService
       .getAll<Response<Post[]>>('publications')
-      .pipe(untilDestroyed(this))
-      .subscribe((res) => {
-        this.postsService.emitPosts(res.data);
+      .pipe(
+        tap((res) => {
+          this.postsService.emitPosts(res.data);
+        }),
+        concatMap((res) => {
+          const posts = res?.data || [];
+
+          return from(posts).pipe(
+            concatMap((post) => {
+              publication_id = post.publication_id;
+              return this.postLikesService.getByPostId('appreciations/publications', post.publication_id);
+            }),
+          );
+        }),
+        tap((data: any) => {
+          this.likeInfo[publication_id] = { count: data.data.count, liked: data.data.liked };
+        }),
+        catchError((err) => of(err)),
+        untilDestroyed(this),
+      )
+      .subscribe((_) => {
+        this.postLikesService.emitLikeInfo(this.likeInfo);
       });
   }
 

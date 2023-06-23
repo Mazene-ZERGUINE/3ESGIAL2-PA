@@ -41,14 +41,21 @@
       </button>
     </span>
     <!-- TODO -->
-    <button title="Aimer." class="btn btn-outline-success">
+    <button
+      title="Aimer."
+      class="btn btn-outline-success"
+      (click)="onLike(postId, currentUserId)"
+      *ngIf="!likeInfo?.liked; else elseDislikeButton"
+    >
       <i class="bi bi-hand-thumbs-up-fill"></i>
-      {{ 0 | thousandSuffix }}
+      {{ likeInfo?.count | thousandSuffix }}
     </button>
-    <button title="Ne plus aimer." class="btn btn-success">
-      <i class="bi bi-hand-thumbs-up-fill"></i>
-      {{ 0 | thousandSuffix }}
-    </button>
+    <ng-template #elseDislikeButton>
+      <button title="Ne plus aimer." class="btn btn-success" (click)="onDislike(postId, currentUserId)">
+        <i class="bi bi-hand-thumbs-up-fill"></i>
+        {{ likeInfo?.count | thousandSuffix }}
+      </button>
+    </ng-template>
     <!-- TODO -->
     <span *ngIf="post.utilisateur_id === currentUserId">
       <button class="btn btn-outline-warning mx-2" (click)="onEdit(2)">

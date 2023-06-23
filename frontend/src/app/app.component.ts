@@ -5,6 +5,7 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 
 import { AuthService } from './shared/core/services/auth/auth.service';
 import { ToastService } from './shared/components/toast/shared/toast.service';
+import { Role } from './pages/sign-up/shared/enums/role.enum';
 
 @Component({
   selector: 'app-root',
@@ -42,6 +43,9 @@ export class AppComponent {
       }
 
       this.authService.setToken(token);
+
+      const role = await this.jwtHelper.decodeToken(token)?.role;
+      this.authService.emitOnIsAdmin$(role === Role.admin);
     } catch (e) {
       this.toastService.showDanger('Une erreur est survenue. Veuillez rafraichir la page.');
     }
