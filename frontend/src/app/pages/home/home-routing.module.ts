@@ -9,13 +9,12 @@ const routes: Routes = [
   {
     path: '',
     component: HomeComponent,
-    children: [
-      {
-        path: '',
-        loadChildren: () => import('./../posts/posts.module').then((m) => m.PostsModule),
-        title: `Accueil ${combinedTitle}`,
-      },
-    ],
+    title: `Publications ${combinedTitle}`,
+  },
+  {
+    path: 'posts',
+    loadChildren: () => import('./../posts/posts.module').then((m) => m.PostsModule),
+    title: `Publications ${combinedTitle}`,
   },
 ];
 

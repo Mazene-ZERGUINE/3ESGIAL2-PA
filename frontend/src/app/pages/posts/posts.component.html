@@ -12,7 +12,7 @@
     <ngb-pagination
       aria-label="Pagination des publications"
       [collectionSize]="(posts$ | async)?.length ?? 0"
-      [(page)]="page"
+      [(page)]="currentPage"
       [pageSize]="2"
       (pageChange)="onPageChange($event)"
       *ngIf="$any(posts$ | async)?.length >= 1"

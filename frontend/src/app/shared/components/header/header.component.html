@@ -37,7 +37,9 @@
             </ul>
           </li>
           <li class="navbar-nav justify-content-center" *ngIf="!(isAuthenticated | async); else elsePublierBlock">
-            <a class="nav-link p-2 m-2" [routerLink]="'/login'"> Publier </a>
+            <a class="nav-link p-2 m-2" [routerLink]="'/login'">
+              <button class="btn btn-outline-success">Publier</button>
+            </a>
           </li>
           <ng-template #elsePublierBlock>
             <li class="navbar-nav justify-content-center">
@@ -47,10 +49,13 @@
                 routerLinkActive="active"
                 [routerLinkActiveOptions]="{ exact: true }"
               >
-                Publier
+                <button class="btn btn-outline-success">Publier</button>
               </a>
             </li>
           </ng-template>
+          <li class="navbar-nav justify-content-center">
+            <a class="nav-link p-2 m-2" [routerLink]="'/posts'">Publications</a>
+          </li>
           <li class="nav-item dropdown" *ngIf="isAuthenticated | async">
             <a class="nav-link p-2 m-2 dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               Mon espace

@@ -8,6 +8,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Response } from '../../shared/core/models/interfaces/response.interface';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { PostLikesService } from '../../shared/core/services/post-likes/post-likes.service';
+import { ActivatedRoute } from '@angular/router';
 
 @UntilDestroy()
 @Component({
@@ -17,19 +18,21 @@ import { PostLikesService } from '../../shared/core/services/post-likes/post-lik
 })
 export class PostsComponent implements OnInit {
   readonly isAuthenticated$: Observable<boolean>;
-  readonly posts$: Observable<null | Post[]>;
   readonly likeInfo$?: Observable<{ [key: string]: { count: number; liked: boolean } }>;
+  readonly posts$: Observable<null | Post[]>;
 
-  page = 1;
-  selectedPost?: Post;
   currentUserId?: number;
   likeInfo: { [key: number]: { count: number; liked: boolean } } = {};
+  currentPage = 1;
+  selectedPost?: Post;
+  pageParam?: number;
 
   constructor(
     private readonly authService: AuthService,
     private readonly jwtHelper: JwtHelperService,
     private readonly postLikesService: PostLikesService,
     private readonly postsService: PostsService,
+    private readonly route: ActivatedRoute,
     private readonly viewportScroller: ViewportScroller,
   ) {
     this.isAuthenticated$ = this.authService.isAuthenticated$;
@@ -38,9 +41,18 @@ export class PostsComponent implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
+    this.subscribeToQueryParams();
     await this.setCurrentUserId();
-    this.viewportScroller.scrollToPosition([0, 0]);
     this.getPosts();
+
+    this.viewportScroller.scrollToPosition([0, 0]);
+  }
+
+  subscribeToQueryParams(): void {
+    this.route.queryParams.subscribe((params) => {
+      this.currentPage = params['p'];
+      this.currentPage = Object.is(Number(this.pageParam), NaN) ? 1 : Number(this.pageParam);
+    });
   }
 
   /**
@@ -129,7 +141,8 @@ export class PostsComponent implements OnInit {
   }
 
   onPageChange(page: number): void {
-    this.page = page;
+    this.pageParam = page;
+    this.currentPage = page;
     // TODO
   }
 
