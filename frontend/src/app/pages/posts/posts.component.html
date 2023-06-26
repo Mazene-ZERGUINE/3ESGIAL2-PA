@@ -11,9 +11,9 @@
   <div class="d-flex justify-content-center mt-5" *ngIf="posts$ | async">
     <ngb-pagination
       aria-label="Pagination des publications"
-      [collectionSize]="(posts$ | async)?.length ?? 0"
-      [(page)]="currentPage"
-      [pageSize]="2"
+      [collectionSize]="collectionSize"
+      [(page)]="pageParam"
+      [pageSize]="20"
       (pageChange)="onPageChange($event)"
       *ngIf="$any(posts$ | async)?.length >= 1"
     ></ngb-pagination>

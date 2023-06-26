@@ -46,7 +46,7 @@ export class LogInComponent {
       .pipe(untilDestroyed(this))
       .subscribe((res) => {
         this.authService.setToken(res.access_token);
-        this.router.navigateByUrl('');
+        this.router.navigateByUrl('/');
       });
   }
 }

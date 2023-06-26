@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { CrudService } from '../crud/crud.service';
+import { CoreService } from '../crud/core.service';
 
 @Injectable({
   providedIn: 'root',
 })
-export class CategoriesService extends CrudService {}
+export class CategoriesService extends CoreService {}

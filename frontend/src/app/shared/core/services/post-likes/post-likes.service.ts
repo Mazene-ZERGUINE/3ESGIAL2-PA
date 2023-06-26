@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
-import { CrudService } from '../crud/crud.service';
+import { CoreService } from '../crud/core.service';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
-export class PostLikesService extends CrudService {
+export class PostLikesService extends CoreService {
   private readonly _currentCountPost$ = new BehaviorSubject<number>(0);
   private readonly _likeInfo$ = new BehaviorSubject<{ [key: string]: { count: number; liked: boolean } }>({});
 

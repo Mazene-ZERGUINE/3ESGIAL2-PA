@@ -7,9 +7,13 @@ import { Status } from '../../sign-up/shared/enums/status.enum';
 import { ToastService } from '../../../shared/components/toast/shared/toast.service';
 import { PostsService } from '../shared/services/posts/posts.service';
 import { CategoriesService } from '../../../shared/core/services/categories/categories.service';
-import { Categorie } from '../shared/models/post.interface';
+import { Categorie, Post } from '../shared/models/post.interface';
 import { Response } from '../../../shared/core/models/interfaces/response.interface';
 import { JwtHelperService } from '@auth0/angular-jwt';
+import { catchError, map, of, tap } from 'rxjs';
+import { HttpError } from '../../../shared/core/enums/http-error.enums';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Role } from '../../sign-up/shared/enums/role.enum';
 
 @UntilDestroy()
 @Component({
@@ -18,11 +22,15 @@ import { JwtHelperService } from '@auth0/angular-jwt';
   styleUrls: ['./post-form.component.scss'],
 })
 export class PostFormComponent implements OnInit {
-  canEdit = false;
+  isEditPage = false;
   categories?: Categorie[];
   form?: FormGroup;
   filePath?: string;
   files?: File[] = [];
+  id = 0;
+  decodedToken?: any;
+
+  private removedFiles: any[] = [];
 
   readonly bmp = 'image/bmp';
   readonly jpg = 'image/jpg';
@@ -45,10 +53,68 @@ export class PostFormComponent implements OnInit {
     return this.form?.value.images as File[];
   }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.getCategories();
-    this.setCanEdit();
-    this.canEdit ? this.initEditForm() : this.initAddForm();
+    this.setIsEditPage();
+    await this.setDecodedToken();
+
+    if (!this.isEditPage) {
+      this.initAddForm();
+    } else {
+      this.getPostById();
+      this.initEditForm();
+    }
+  }
+
+  getPostById() {
+    // this.router.navigateByUrl("not-found")
+
+    this.postsService
+      .getOneById<Response<Post>>('publications', this.id)
+      .pipe(
+        map((res) => res?.data),
+        map((data) => {
+          // {pseudonyme: 'b', utilisateur_id: 2, role: 'utilisateur', iat: 1687763160}
+          const canEdit = data.utilisateur_id == this.decodedToken.utilisateur_id || this.decodedToken === Role.admin;
+          if (!canEdit) {
+            return null;
+          }
+
+          return data;
+        }),
+        catchError((err, caught) => {
+          if (err.status === HttpError['404NotFound']) {
+            this.router.navigateByUrl('not-found', { skipLocationChange: true });
+          }
+
+          return of(err);
+        }),
+        untilDestroyed(this),
+      )
+      .subscribe((data) => {
+        console.log('sub', data);
+        if (!data) {
+          this.router.navigate(['posts'], { queryParams: { page: 1 } });
+          this.toastService.showDanger("Vous n'êtes pas autorisé.");
+          return;
+        }
+
+        if (data instanceof HttpErrorResponse) {
+          return;
+        }
+
+        const images: any[] = [];
+        for (const image of data?.images) {
+          images.push({ name: image.libelle });
+        }
+
+        this.form?.patchValue({
+          titre: data?.titre,
+          description: data?.description,
+          images: images,
+          categorie: data?.categorie_id,
+        });
+      });
   }
 
   getCategories() {
@@ -81,6 +147,7 @@ export class PostFormComponent implements OnInit {
   }
 
   onDelete(file: File): void {
+    this.removedFiles = [...this.removedFiles, file];
     this.form!.value.images = this.images.filter((image) => image.name !== file.name);
   }
 
@@ -109,13 +176,17 @@ export class PostFormComponent implements OnInit {
     this.form?.value.images.push(file);
   }
 
-  async onSubmit(): Promise<void> {
+  async setDecodedToken(): Promise<void> {
+    const token = await this.jwtHelper.tokenGetter();
+    this.decodedToken = this.jwtHelper.decodeToken(token);
+  }
+
+  onSubmit(): void {
     if (!this.form || this.form?.invalid) {
       return;
     }
 
-    const token = await this.jwtHelper.tokenGetter();
-    const { utilisateur_id } = this.jwtHelper.decodeToken(token);
+    const { utilisateur_id } = this.decodedToken;
 
     const formData = new FormData();
     formData.append('titre', this.form.get('titre')?.value);
@@ -127,22 +198,46 @@ export class PostFormComponent implements OnInit {
     const images = this.images;
     if (Array.isArray(images)) {
       images.forEach((image, i) => {
+        console.log('images', image);
         formData?.append('images', image);
       });
     }
 
-    this.postsService
-      .create('publications', formData)
-      .pipe(untilDestroyed(this))
-      .subscribe((_) => {
-        this.router.navigateByUrl('/');
-        this.toastService.showSuccess('Publication créée !');
-      });
+    console.log('removedfiles', this.removedFiles);
+    for (const removedFile of this.removedFiles) {
+      // console.log("removedf",removedFile);
+      formData?.append('removed_files', removedFile.name);
+    }
+
+    // formData?.append("removed_files", )
+
+    // console.log(JSON.stringify(formData.get("removed_files")));
+    // console.log(formData.getAll("removed_files"));
+
+    if (this.isEditPage) {
+      this.postsService
+        .updateById('publications', this.id, formData)
+        .pipe(untilDestroyed(this))
+        .subscribe((_) => {
+          // this.router.navigate(['posts'], { queryParams: { page: 1 } });
+          // location.href = '/posts';
+          this.toastService.showSuccess('Publication modifiée !');
+        });
+    } else {
+      this.postsService
+        .create('publications', formData)
+        .pipe(untilDestroyed(this))
+        .subscribe((_) => {
+          // this.router.navigate(['posts'], { queryParams: { page: 1 } });
+          location.href = '/posts';
+          this.toastService.showSuccess('Publication créée !');
+        });
+    }
   }
 
-  setCanEdit(): void {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
+  private setIsEditPage(): void {
+    this.id = Number(this.route.snapshot.paramMap.get('id'));
 
-    this.canEdit = !Object.is(NaN, id) && id > 0;
+    this.isEditPage = !Object.is(NaN, this.id) && this.id > 0;
   }
 }

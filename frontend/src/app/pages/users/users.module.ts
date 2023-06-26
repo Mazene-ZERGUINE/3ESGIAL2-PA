@@ -7,7 +7,7 @@ import { UserPostsListComponent } from './user-posts-list/user-posts-list.compon
 import { UserProfileComponent } from './user-profile/user-profile.component';
 import { UserProfileDetailsComponent } from './user-profile-details/user-profile-details.component';
 import { NgbPagination } from '@ng-bootstrap/ng-bootstrap';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ComponentsModule } from '../../shared/components/components.module';
 import { UserTableComponent } from './user-table/user-table.component';
 import { UserChatsListComponent } from './user-chats-list/user-chats-list.component';
@@ -23,6 +23,6 @@ import { UserChatComponent } from './user-chat/user-chat.component';
     UserChatsListComponent,
     UserChatComponent,
   ],
-  imports: [CommonModule, UsersRoutingModule, NgbPagination, ReactiveFormsModule, ComponentsModule],
+  imports: [CommonModule, UsersRoutingModule, NgbPagination, ReactiveFormsModule, ComponentsModule, FormsModule],
 })
 export class UsersModule {}

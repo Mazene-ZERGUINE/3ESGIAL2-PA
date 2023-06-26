@@ -14,12 +14,16 @@ export abstract class CoreService {
     this._apiUrl = environment.apiUrl;
   }
 
-  count(path: string,): Observable<number> {
-    return this.httpClient.get<number>(this.getPath(path));
+  count<T>(path: string): Observable<T> {
+    return this.httpClient.get<T>(this.getPath(path));
   }
 
   create(path: string, payload: any): Observable<void> {
     return this.httpClient.post<void>(this.getPath(path), payload);
+  }
+
+  delete(path: string, id: number): Observable<void> {
+    return this.httpClient.delete<void>(this.getPath(path, id));
   }
 
   //#region     GET methods
@@ -27,18 +31,26 @@ export abstract class CoreService {
     return this.httpClient.get<T>(this.getPath(path));
   }
 
+  getOneByField<T>(path: string, field: string): Observable<T> {
+    return this.httpClient.get<T>(this.getPath(path, field));
+  }
+
   getOneById<T>(path: string, id: number): Observable<T> {
     return this.httpClient.get<T>(this.getPath(path, id));
   }
+
   //#endregion  GET methods
+
+  //#region     UPDATE methods
+  updateByField(path: string, field: string, payload: any): Observable<void> {
+    return this.httpClient.put<void>(this.getPath(path, field), payload);
+  }
 
   updateById(path: string, id: number, payload: any): Observable<void> {
     return this.httpClient.put<void>(this.getPath(path, id), payload);
   }
 
-  delete(path: string, id: number): Observable<void> {
-    return this.httpClient.delete<void>(this.getPath(path, id));
-  }
+  //#endregion  UPDATE methods
 
   protected getPath(_path: string, id?: number | string): string {
     const path = `${this._apiUrl}/${_path}`;

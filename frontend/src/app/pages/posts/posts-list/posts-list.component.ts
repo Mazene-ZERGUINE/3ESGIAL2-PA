@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { Post } from '../shared/models/post.interface';
 import { Router } from '@angular/router';
 import { Status } from '../../sign-up/shared/enums/status.enum';
@@ -24,34 +24,12 @@ export class PostsListComponent {
   @Output() liked = new EventEmitter<void>();
   @Output() disliked = new EventEmitter<void>();
 
-  page = 1;
-
   constructor(
     public readonly sanitizer: DomSanitizer,
     private readonly postLikesService: PostLikesService,
     private readonly router: Router,
   ) {}
 
-  onPageChange(a: any) {}
-  // async onDislike(e: MouseEvent): Promise<void> {
-  //   if (!this.isAuthenticated) {
-  //     await this.router.navigateByUrl('/login');
-  //     return
-  //   }
-  //
-  //   this.stopPropagation(e);
-  //   // TODO
-  // }
-  //
-  // async onLike(e: MouseEvent): Promise<void> {
-  //   if (!this.isAuthenticated) {
-  //     await this.router.navigateByUrl('/login');
-  //     return
-  //   }
-  //
-  //
-  //   // TODO
-  // }
   async onLike(e: MouseEvent, postId: number, userId?: number): Promise<void> {
     this.stopPropagation(e);
 

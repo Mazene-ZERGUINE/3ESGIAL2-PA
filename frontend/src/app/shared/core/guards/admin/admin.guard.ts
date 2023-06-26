@@ -18,7 +18,7 @@ export class AdminGuard implements CanLoad {
 
   private async isAdmin(): Promise<boolean> {
     if (!this.authService.isAdmin) {
-      await this.router.navigateByUrl('');
+      await this.router.navigateByUrl('/');
       return false;
     }
 

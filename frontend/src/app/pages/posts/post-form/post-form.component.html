@@ -1,5 +1,5 @@
 <div class="col">
-  <h1 class="my-3">{{ canEdit ? 'Edition de publication' : 'Ajout de publication' }}</h1>
+  <h1 class="my-3">{{ isEditPage ? 'Edition ' : 'Ajout ' }} de publication</h1>
   <form
     enctype="multipart/form-data"
     class="border border-secondary border-opacity-50 rounded p-3"
@@ -60,8 +60,8 @@
         </button>
       </li>
     </ul>
-    <button [ngClass]="canEdit ? 'btn btn-outline-warning' : 'btn btn-outline-success'" [disabled]="form.invalid">
-      {{ canEdit ? 'Editer' : 'Ajouter' }}
+    <button [ngClass]="isEditPage ? 'btn btn-outline-warning' : 'btn btn-outline-success'" [disabled]="form.invalid">
+      {{ isEditPage ? 'Editer' : 'Ajouter' }}
     </button>
   </form>
 </div>

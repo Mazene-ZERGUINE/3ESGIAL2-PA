@@ -54,7 +54,7 @@
             </li>
           </ng-template>
           <li class="navbar-nav justify-content-center">
-            <a class="nav-link p-2 m-2" [routerLink]="'/posts'">Publications</a>
+            <a class="nav-link p-2 m-2" [routerLink]="'/posts'" [queryParams]="{ page: 1 }">Publications</a>
           </li>
           <li class="nav-item dropdown" *ngIf="isAuthenticated | async">
             <a class="nav-link p-2 m-2 dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -68,6 +68,7 @@
                   [routerLink]="userRoute.path"
                   routerLinkActive="active"
                   [routerLinkActiveOptions]="{ exact: true }"
+                  [queryParams]="userRoute.label !== 'Publications' ? null : { page: 1 }"
                 >
                   {{ userRoute.label }}
                 </a>

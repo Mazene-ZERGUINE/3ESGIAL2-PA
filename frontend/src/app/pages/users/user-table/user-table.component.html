@@ -10,13 +10,11 @@
   <table class="table table-striped">
     <thead>
       <tr>
-        <ng-container *ngFor="let item of $any(items[0]) | keyvalue; let firstItem = first">
-          <th scope="col" *ngIf="firstItem; else elseThBlock">Identifiant</th>
-          <ng-template #elseThBlock>
-            <th scope="col">
-              {{ $any(item.key) | titlecase }}
-            </th>
-          </ng-template>
+        <ng-container *ngFor="let item of $any(items[0]) | keyvalue">
+          <th scope="col" *ngIf="item.key === 'publication_id'">{{ $any(item.key) | titlecase }}</th>
+        </ng-container>
+        <ng-container *ngFor="let item of $any(items[0]) | keyvalue">
+          <th scope="col" *ngIf="item.key !== 'publication_id'">{{ $any(item.key) | titlecase }}</th>
         </ng-container>
         <th scope="col">Edition</th>
         <th scope="col">Suppression</th>
@@ -24,15 +22,19 @@
     </thead>
     <tbody>
       <tr *ngFor="let item of items">
-        <ng-container *ngFor="let prop of $any(item) | keyvalue; let firstItem = first">
-          <th scope="row" *ngIf="firstItem; else elseTd">
+        <ng-container *ngFor="let prop of $any(item) | keyvalue">
+          <th scope="row" *ngIf="prop.key === 'publication_id'">
             {{ prop.value }}
           </th>
-          <ng-template #elseTd>
-            <td>
-              {{ prop.value }}
-            </td>
-          </ng-template>
+        </ng-container>
+        <ng-container *ngFor="let prop of $any(item) | keyvalue; let firstItem = first">
+          <td *ngIf="prop.key !== 'publication_id'">
+            {{
+              prop.key !== 'created_at' && prop.key !== 'updated_at'
+                ? prop.value
+                : ($any(prop.value) | date | date : 'dd MMMM yyyy' : '' : 'fr')
+            }}
+          </td>
         </ng-container>
         <td>
           <button class="btn btn-outline-warning" (click)="onEdit(path, $any(item)[entityName + '_id'])" *ngIf="path">
@@ -40,7 +42,7 @@
           </button>
         </td>
         <td>
-          <button class="btn btn-outline-danger" (click)="onDelete($any(item)[entityName + '_id'])">
+          <button class="btn btn-outline-danger" disabled (click)="onDelete($any(item)[entityName + '_id'])">
             <i class="bi bi-trash-fill"></i>
           </button>
         </td>
@@ -49,13 +51,15 @@
   </table>
 </div>
 
-<ngb-pagination
-  class="d-flex justify-content-center mt-5"
-  aria-label="Posts pagination"
-  [collectionSize]="items.length"
-  [(page)]="page"
-  (pageChange)="onPageChange($event)"
-  *ngIf="items.length >= 1"
-></ngb-pagination>
+<!--<div class="d-flex justify-content-center mt-5" *ngIf="posts$ | async">-->
+<!--  <ngb-pagination-->
+<!--    class="d-flex justify-content-center mt-5"-->
+<!--    aria-label="Posts pagination"-->
+<!--    [collectionSize]="items.length"-->
+<!--    [(page)]="page"-->
+<!--    (pageChange)="onPageChange($event)"-->
+<!--    *ngIf="items?.length >= 1"-->
+<!--  ></ngb-pagination>-->
+<!--</div>-->
 
 <app-back-to-top></app-back-to-top>

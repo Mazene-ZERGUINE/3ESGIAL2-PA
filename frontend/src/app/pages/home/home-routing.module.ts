@@ -9,7 +9,7 @@ const routes: Routes = [
   {
     path: '',
     component: HomeComponent,
-    title: `Publications ${combinedTitle}`,
+    title: `Accueil ${combinedTitle}`,
   },
   {
     path: 'posts',

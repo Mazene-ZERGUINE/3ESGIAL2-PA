@@ -13,7 +13,7 @@
         class="text-danger my-2"
         *ngIf="form.get('nom')?.touched && form.get('nom')?.dirty && form.get('nom')?.getError('pattern')"
       >
-        Le champ doit contenir des lettres.
+        Le champ ne peut contenir que des lettres, des espaces, des tirets et des apostrophes.
       </small>
     </div>
     <div class="mb-3">
@@ -23,7 +23,7 @@
         class="text-danger my-2"
         *ngIf="form.get('prenom')?.touched && form.get('prenom')?.dirty && form.get('prenom')?.getError('pattern')"
       >
-        Le champ doit contenir des lettres.
+        Le champ ne peut contenir que des lettres, des espaces, des tirets et des apostrophes.
       </small>
     </div>
     <div class="mb-3">
@@ -34,39 +34,6 @@
         *ngIf="form.get('email')?.touched && form.get('email')?.dirty && form.get('email')?.getError('email')"
       >
         Le champ doit contenir un courriel.
-      </small>
-    </div>
-    <div class="mb-3">
-      <label class="form-label required" for="password2"
-        >Mot de passe (taille minimale : {{ passwordMinLength }})</label
-      >
-      <input class="form-control" type="password2" id="password" name="password" formControlName="password" required />
-      <small
-        class="text-danger my-2"
-        *ngIf="
-          form.get('password')?.touched && form.get('password')?.dirty && form.get('password')?.getError('minlength')
-        "
-      >
-        Le mot de passe doit contenir au moins {{ passwordMinLength }} caractères.
-      </small>
-    </div>
-    <div class="mb-3">
-      <label class="form-label required" for="password2">Mot de passe de confirmation</label>
-      <input
-        class="form-control"
-        type="password2"
-        id="password2"
-        name="password2"
-        formControlName="password2"
-        required
-      />
-      <small
-        class="text-danger my-2"
-        *ngIf="
-          form.get('password2')?.touched && form.get('password2')?.dirty && form.get('password2')?.getError('minlength')
-        "
-      >
-        Le mot de passe doit contenir au moins {{ passwordMinLength }} caractères.
       </small>
     </div>
     <div class="mb-3">
@@ -112,6 +79,6 @@
   </form>
 
   <div class="d-flex justify-content-end mt-4">
-    <button class="btn btn-outline-danger" (click)="onDelete()">Supprimer le compte</button>
+    <button class="btn btn-outline-danger" [disabled]="true" (click)="onDelete()">Supprimer le compte</button>
   </div>
 </div>

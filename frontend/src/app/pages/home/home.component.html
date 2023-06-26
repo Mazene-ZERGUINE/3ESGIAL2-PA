@@ -1,9 +1,9 @@
-<h1 class="my-3 text-center">Du partage de biens matériels pour un monde plus écologique.</h1>
+<h1 class="my-3 text-center">Partager des biens matériels pour un monde plus écologique.</h1>
 
 <div class="d-flex justify-content-center mt-5">
   <div class="col-6 d-flex justify-content-center rounded bg-success bg-gradient bg-opacity-25 p-4">
     <div class="me-5 align-self-center">📣 Pour participer</div>
-    <a class="text-reset text-decoration-none" [routerLink]="'/posts/add'">
+    <a class="text-reset text-decoration-none" [routerLink]="!(isAuthenticated$ | async) ? '/login' : '/posts/add'">
       <button type="button" class="btn btn-outline-success">Déposer une annonce</button>
     </a>
   </div>

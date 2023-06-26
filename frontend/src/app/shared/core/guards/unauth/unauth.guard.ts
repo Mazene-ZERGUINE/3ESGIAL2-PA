@@ -18,7 +18,7 @@ export class UnauthGuard implements CanLoad {
 
   private async isAuthenticated(): Promise<boolean> {
     if (this.authService.isAuthenticated) {
-      await this.router.navigateByUrl('');
+      await this.router.navigateByUrl('/');
       return false;
     }
 
