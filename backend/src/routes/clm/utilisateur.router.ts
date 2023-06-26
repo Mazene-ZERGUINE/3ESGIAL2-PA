@@ -8,6 +8,8 @@ const router = Router();
 router
 	.get('/', [isAuthenticated, isAdministrator], UtilisateurController.coreGetAll(Utilisateur))
 	.get('/:pseudonyme', UtilisateurController.getByPseudonyme)
+	.get('/:pseudonyme/publications', isAuthenticated, UtilisateurController.getAllPublications)
+	.get('/:pseudonyme/publications/count', isAuthenticated, UtilisateurController.countAllPublications)
 	.post('/', UtilisateurController.create)
 	.put('/:pseudonyme', isAuthenticated, UtilisateurController.updateByPseudonyme)
 	.delete('/:id', isAuthenticated, UtilisateurController.coreDeleteById(Utilisateur));

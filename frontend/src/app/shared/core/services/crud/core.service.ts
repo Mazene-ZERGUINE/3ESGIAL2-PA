@@ -7,11 +7,15 @@ import { environment } from '../../../../../environments/environment';
 @Injectable({
   providedIn: 'root',
 })
-export abstract class CrudService {
+export abstract class CoreService {
   private readonly _apiUrl: string;
 
   protected constructor(protected readonly httpClient: HttpClient) {
     this._apiUrl = environment.apiUrl;
+  }
+
+  count(path: string,): Observable<number> {
+    return this.httpClient.get<number>(this.getPath(path));
   }
 
   create(path: string, payload: any): Observable<void> {

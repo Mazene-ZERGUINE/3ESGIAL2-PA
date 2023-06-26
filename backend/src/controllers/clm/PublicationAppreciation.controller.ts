@@ -75,9 +75,6 @@ export class PublicationAppreciationController extends CoreController {
 		// TODO check
 
 		try {
-			const token = decode(req.headers?.authorization!.split(' ')[1]);
-			const utilisateur_id = (token as any)?.utilisateur_id;
-
 			if (!(await Publication.findByPk(publicationId))) {
 				res.status(400).json({ message: 'La publication est incorrecte.' });
 			}
@@ -87,6 +84,20 @@ export class PublicationAppreciationController extends CoreController {
 			});
 			if (!publicationAppreciations) {
 				res.status(404).end();
+				return;
+			}
+
+			const token = req.headers?.authorization?.split(' ')[1];
+			const decodedToken = !token ? '' : decode(token);
+			const utilisateur_id = (decodedToken as any)?.utilisateur_id;
+			if (!utilisateur_id) {
+				res.status(200).json({
+					data: {
+						count: publicationAppreciations.length,
+						liked: false,
+					},
+				});
+
 				return;
 			}
 

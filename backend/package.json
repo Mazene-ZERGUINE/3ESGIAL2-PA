@@ -14,7 +14,7 @@
 		"db:migrate:seed": "npm run db:migrate && npm run db:seed",
 		"db:seed": "sequelize db:seed:all",
 		"db:drop": "sequelize db:drop",
-		"db:drop:create:migrate:seed": "npm run db:drop && npm run db:create && npm run db:migrate:seed"
+		"db:drop:create:migrate:seed": "npm run db:drop && npm run db:create && npm run db:migrate && npm run db:seed"
 	},
 	"keywords": [],
 	"author": "",

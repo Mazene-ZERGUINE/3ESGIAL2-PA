@@ -8,9 +8,10 @@ import { multerConfig } from '../../middlewares/clm/multer.middleware';
 const router = Router();
 router
 	.get('/', PublicationController.coreGetAllAndOrderedBy(Publication, 'DESC', 'created_at'))
+	.get('/count/all', PublicationController.coreCount(Publication))
 	.get('/:id', PublicationController.coreGetOneByPk(Publication))
 	.post('/', [isAuthenticated, multerConfig.array('images', 3)], PublicationController.create)
-	.put('/:id', isAuthenticated, PublicationController.updateById)
+	.put('/:id', [isAuthenticated, multerConfig.array('images', 3)], PublicationController.updateById)
 	.delete('/:id', isAuthenticated, PublicationController.coreDeleteById(Publication));
 
 export default router;

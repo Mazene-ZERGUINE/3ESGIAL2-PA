@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 
 export abstract class CoreController {
-	static readonly PAGE_SIZE = 2;
+	static readonly PAGE_SIZE = 20;
 
 	static coreCreateWithoutTimestamps(model: any) {
 		return async (req: Request, res: Response) => {
@@ -64,14 +64,24 @@ export abstract class CoreController {
 		};
 	}
 
+	static coreCount(model: any) {
+		return async ({ query: { page } }: Request, res: Response) => {
+			try {
+				res.status(200).json({ data: await model.count() });
+			} catch (error) {
+				CoreController.handleError(error, res);
+			}
+		};
+	}
+
 	static coreGetAllAndOrderedBy(model: any, order: 'ASC' | 'DESC', field: string) {
 		return async ({ query: { page } }: Request, res: Response) => {
 			const providedPage = page ? Number(page) : 1;
 
 			try {
 				const items = await model.findAll({
-					// offset: (providedPage - 1) * CoreController.PAGE_SIZE,
-					// limit: CoreController.PAGE_SIZE,
+					offset: (providedPage - 1) * CoreController.PAGE_SIZE,
+					limit: CoreController.PAGE_SIZE,
 					include: {
 						all: true,
 						nested: true,
