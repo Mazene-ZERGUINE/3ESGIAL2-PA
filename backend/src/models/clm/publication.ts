@@ -1,6 +1,7 @@
 import { DataTypes, Model } from 'sequelize';
 import { sequelize } from '../../db/clm/db_connection';
 import { Utilisateur } from './utilisateur';
+import { PublicationAppreciation } from './publication-appreciation';
 
 export class Publication extends Model {}
 
@@ -48,4 +49,18 @@ Publication.init(
 //#region 		publication & utilisateur
 Publication.belongsTo(Utilisateur, { foreignKey: 'utilisateur_id' });
 Utilisateur.hasMany(Publication, { foreignKey: 'utilisateur_id' });
+//#endregion	publication & utilisateur
+
+//#region 		publication & utilisateur
+Publication.belongsToMany(Utilisateur, {
+	through: PublicationAppreciation,
+	foreignKey: 'publication_id',
+	otherKey: 'utilisateur_id',
+});
+
+Utilisateur.belongsToMany(Publication, {
+	through: PublicationAppreciation,
+	foreignKey: 'utilisateur_id',
+	otherKey: 'publication_id',
+});
 //#endregion	publication & utilisateur

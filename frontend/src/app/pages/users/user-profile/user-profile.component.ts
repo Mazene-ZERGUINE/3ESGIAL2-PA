@@ -1,52 +1,97 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { map } from 'rxjs';
+import { JwtHelperService } from '@auth0/angular-jwt';
 
 import { frenchDepartments } from '../../sign-up/shared/data/french-departments';
-import { SignUpService } from '../../sign-up/shared/sign-up.service';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ModalFocusConfirmComponent } from '../../../shared/components/modal-focus-confirm/modal-focus-confirm.component';
+import { UserProfileService } from '../shared/services/user-profile/user-profile.service';
+import { UserDTO } from '../../../shared/core/models/interfaces/user.interface';
+import { Response } from '../../../shared/core/models/interfaces/response.interface';
+import { AuthService } from '../../../shared/core/services/auth/auth.service';
+import { ToastService } from '../../../shared/components/toast/shared/toast.service';
+import {
+  onlyLettersAndDashesAndSpacesRegex,
+  startsWithLetterWhichContainsLetterAndNumbersRegex,
+  startsWithLetterWhichContainsLettersAndSpacesAndApostrophesAndCannotEndWithSpacesApostrophesDashes,
+  startsWithNumberWhichContainsLetterOrNumberRegex,
+} from '../../../shared/utils/regex.utils';
 
+@UntilDestroy()
 @Component({
   selector: 'app-user-profile',
   templateUrl: './user-profile.component.html',
   styleUrls: ['./user-profile.component.scss'],
 })
 export class UserProfileComponent {
-  form?: FormGroup;
-  frenchDepartments = [...frenchDepartments] as const;
   readonly passwordMinLength = 8;
 
+  form?: FormGroup;
+  frenchDepartments = [...frenchDepartments] as const;
+
+  private decodedToken: any;
+
   constructor(
+    private readonly authService: AuthService,
     private readonly fb: FormBuilder,
+    private readonly jwtHelper: JwtHelperService,
     private readonly modalService: NgbModal,
     private readonly router: Router,
-    private readonly signUpService: SignUpService,
+    private readonly toastService: ToastService,
+    private readonly userProfileService: UserProfileService,
   ) {}
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.initForm();
+    await this.setDecodeToken();
+    this.getUserProfile();
+  }
+
+  getUserProfile() {
+    this.userProfileService
+      .getOneByField<Response<UserDTO>>('utilisateurs', this.decodedToken?.pseudonyme)
+      .pipe(
+        map((res) => res?.data),
+        untilDestroyed(this),
+      )
+      .subscribe((data) => {
+        this.form?.setValue({
+          nom: data?.nom,
+          prenom: data?.prenom,
+          email: data?.email,
+          pseudonyme: data?.pseudonyme,
+          ville: data?.ville,
+          departement: data?.departement,
+        });
+      });
   }
 
   initForm(): void {
-    const onlyLettersRegex = /^[a-zA-Z]+$/;
-    const startsWithLetterWhichContainsLetterAndNumbers = /^[a-zA-Z][a-zA-Z0-9]*$/;
-    const startsWithNumberWhichContainsLetterOrNumber = /^[0-9][A-Z0-9]+$/;
-
     this.form = this.fb.group({
-      nom: this.fb.control('', [Validators.required, Validators.pattern(onlyLettersRegex)]),
-      prenom: this.fb.control('', [Validators.required, Validators.pattern(onlyLettersRegex)]),
+      nom: this.fb.control('', [
+        Validators.required,
+        Validators.pattern(
+          startsWithLetterWhichContainsLettersAndSpacesAndApostrophesAndCannotEndWithSpacesApostrophesDashes,
+        ),
+      ]),
+      prenom: this.fb.control('', [
+        Validators.required,
+        Validators.pattern(
+          startsWithLetterWhichContainsLettersAndSpacesAndApostrophesAndCannotEndWithSpacesApostrophesDashes,
+        ),
+      ]),
       email: this.fb.control('', [Validators.required, Validators.email]),
-      mot_de_passe: this.fb.control('', [Validators.required, Validators.minLength(this.passwordMinLength)]),
-      password2: this.fb.control('', [Validators.required, Validators.minLength(this.passwordMinLength)]),
       pseudonyme: this.fb.control('', [
         Validators.required,
-        Validators.pattern(startsWithLetterWhichContainsLetterAndNumbers),
+        Validators.pattern(startsWithLetterWhichContainsLetterAndNumbersRegex),
       ]),
-      ville: this.fb.control('', [Validators.required, Validators.pattern(onlyLettersRegex)]),
+      ville: this.fb.control('', [Validators.required, Validators.pattern(onlyLettersAndDashesAndSpacesRegex)]),
       departement: this.fb.control('', [
         Validators.required,
-        Validators.pattern(startsWithNumberWhichContainsLetterOrNumber),
+        Validators.pattern(startsWithNumberWhichContainsLetterOrNumberRegex),
       ]),
     });
   }
@@ -72,12 +117,26 @@ export class UserProfileComponent {
       return;
     }
 
-    let formattedVille: string;
     const ville = this.form.get('ville')?.value.trim();
-    if (ville) {
-      formattedVille = ville.charAt(0).toUpperCase() + ville.slice(1).toLowerCase();
-    }
+    const formattedVille = ville.charAt(0).toUpperCase() + ville.slice(1).toLowerCase();
 
-    // TODO
+    const payload: UserDTO = {
+      ...this.form.value,
+      ville: formattedVille,
+    };
+
+    this.userProfileService
+      .updateByField('utilisateurs', this.decodedToken.pseudonyme, payload)
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.authService.deleteToken();
+        this.toastService.showSuccess('Profil modifié !');
+        this.router.navigateByUrl('login');
+      });
+  }
+
+  private async setDecodeToken(): Promise<void> {
+    const token = await this.jwtHelper.tokenGetter();
+    this.decodedToken = this.jwtHelper.decodeToken(token);
   }
 }

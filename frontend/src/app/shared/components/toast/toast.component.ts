@@ -9,7 +9,7 @@ import { ToastService } from './shared/toast.service';
   standalone: true,
   imports: [NgbToastModule, NgIf, NgTemplateOutlet, NgFor],
   templateUrl: './toast.component.html',
-  host: { class: 'toast-container position-fixed top-0 end-0 p-3', style: 'z-index: 1200' },
+  host: { class: 'toast-container position-fixed bottom-0 end-0 p-3 pt-5', style: 'z-index: 1200' },
 })
 export class ToastComponent {
   constructor(public toastService: ToastService) {}

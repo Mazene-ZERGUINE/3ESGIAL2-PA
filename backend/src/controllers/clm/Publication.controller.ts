@@ -1,10 +1,11 @@
-import { CoreController } from './Core.controller';
 import { Request, Response } from 'express';
+import * as fs from 'fs';
+
+import { CoreController } from './Core.controller';
 import { Publication } from '../../models/clm/publication';
 import { Utilisateur } from '../../models/clm/utilisateur';
 import { Categorie } from '../../models/clm/categorie';
 import { Status } from '../../enum/clm/status.enum';
-import * as fs from 'fs';
 import { Image } from '../../models/clm/image';
 
 export class PublicationController extends CoreController {
@@ -64,7 +65,10 @@ export class PublicationController extends CoreController {
 	}
 
 	static async updateById(req: Request, res: Response): Promise<void> {
-		const { titre, description, statut, utilisateur_id, categorie_id, created_at, updated_at } = req.body;
+		const { id: publicationId } = req.params;
+		const files = req.files;
+		const { titre, description, statut, utilisateur_id, categorie_id, created_at, updated_at, removed_files } =
+			req.body;
 		// TODO check...
 
 		try {
@@ -82,7 +86,47 @@ export class PublicationController extends CoreController {
 				return;
 			}
 
-			currentPublication.setAttributes({ ...req.body, updated_at: new Date() });
+			if (!files || !Array.isArray(files)) {
+				res.status(200).end();
+				return;
+			}
+
+			if (typeof removed_files === 'string') {
+				const image = await Image.findOne({ where: { libelle: removed_files, publication_id: publicationId } });
+				if (image) {
+					const path = image.getDataValue('lien').split('/uploads/publications/images/')[1];
+					fs.unlink(`uploads/publications/images/${path}`, (err) => console.error(err));
+					await image.destroy();
+				}
+			}
+			if (Array.isArray(removed_files)) {
+				for (const removedFile of removed_files) {
+					console.log('removed file: ' + removedFile);
+					const image = await Image.findOne({ where: { libelle: removedFile, publication_id: publicationId } });
+					if (!image) {
+						continue;
+					}
+
+					const path = image.getDataValue('lien').split('/uploads/publications/images/')[1];
+					fs.unlink(`uploads/publications/images/${path}`, (err) => console.error(err));
+					await image.destroy();
+				}
+			}
+
+			for (const file of files) {
+				await Image.create({
+					titre,
+					libelle: file.originalname,
+					lien: `${process.env.HOST}${process.env.PORT ? `:${process.env.PORT}` : ''}/${file.path}`,
+					publication_id: currentPublication.getDataValue('publication_id'),
+				});
+			}
+
+			currentPublication.setAttributes({
+				...req.body,
+				created_at: currentPublication.getDataValue('created_at'),
+				updated_at: new Date(),
+			});
 			await currentPublication.save();
 			res.status(200).end();
 		} catch (error) {

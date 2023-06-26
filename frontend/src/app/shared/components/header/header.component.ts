@@ -9,6 +9,7 @@ import { first, Observable, take } from 'rxjs';
   styleUrls: ['./header.component.scss'],
 })
 export class HeaderComponent {
+  readonly isAdmin: Observable<boolean>;
   readonly isAuthenticated: Observable<boolean>;
 
   backOfficeRoutes: ReadonlyArray<{ path: string; label: string }> = [
@@ -34,6 +35,7 @@ export class HeaderComponent {
   ];
 
   constructor(private readonly authService: AuthService, private readonly router: Router) {
+    this.isAdmin = this.authService.isAdmin$;
     this.isAuthenticated = this.authService.isAuthenticated$;
   }
 

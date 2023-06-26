@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
-import { CrudService } from '../../../../../shared/core/services/crud/crud.service';
+import { CoreService } from '../../../../../shared/core/services/crud/core.service';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Post } from '../../models/post.interface';
 
 @Injectable({
   providedIn: 'root',
 })
-export class PostsService extends CrudService {
+export class PostsService extends CoreService {
   private readonly _posts$ = new BehaviorSubject<Post[]>([]);
   private readonly _selectedPost$ = new BehaviorSubject<null | Post>(null);
 

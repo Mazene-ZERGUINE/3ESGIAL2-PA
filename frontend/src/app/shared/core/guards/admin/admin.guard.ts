@@ -6,18 +6,18 @@ import { AuthService } from '../../services/auth/auth.service';
 @Injectable({
   providedIn: 'root',
 })
-export class UnauthGuard implements CanLoad {
+export class AdminGuard implements CanLoad {
   constructor(private readonly authService: AuthService, private readonly router: Router) {}
 
   canLoad(
     route: Route,
     segments: UrlSegment[],
   ): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-    return this.isAuthenticated();
+    return this.isAdmin();
   }
 
-  private async isAuthenticated(): Promise<boolean> {
-    if (this.authService.isAuthenticated) {
+  private async isAdmin(): Promise<boolean> {
+    if (!this.authService.isAdmin) {
       await this.router.navigateByUrl('/');
       return false;
     }

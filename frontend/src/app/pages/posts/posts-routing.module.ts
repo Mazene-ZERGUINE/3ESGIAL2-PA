@@ -13,17 +13,17 @@ const routes: Routes = [
     component: PostsComponent,
   },
   {
-    path: 'posts/add',
+    path: 'add',
     component: PostFormComponent,
     title: `Ajout de publication ${combinedTitle}`,
   },
   {
-    path: 'posts/:id/edit',
+    path: ':id/edit',
     component: PostFormComponent,
     title: `Edition de publication ${combinedTitle}`,
   },
   {
-    path: 'posts/:id',
+    path: ':id',
     component: PostDetailsComponent,
     title: `Détails de publication ${combinedTitle}`,
   },

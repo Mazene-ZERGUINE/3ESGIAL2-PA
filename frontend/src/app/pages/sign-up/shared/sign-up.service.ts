@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { CrudService } from '../../../shared/core/services/crud/crud.service';
+import { CoreService } from '../../../shared/core/services/crud/core.service';
 
 @Injectable({
   providedIn: 'root',
 })
-export class SignUpService extends CrudService {}
+export class SignUpService extends CoreService {}

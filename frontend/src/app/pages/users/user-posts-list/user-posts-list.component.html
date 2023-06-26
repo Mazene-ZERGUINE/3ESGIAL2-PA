@@ -62,3 +62,25 @@
 
 <!--<app-back-to-top></app-back-to-top>-->
 <app-user-table [entityName]="entityName" [items]="posts" [path]="path"></app-user-table>
+
+<!--<div class="d-flex justify-content-center mt-5" *ngIf="posts$ | async">-->
+<!--  <ngb-pagination-->
+<!--    aria-label="Pagination des publications"-->
+<!--    [collectionSize]="collectionSize"-->
+<!--    [(page)]="pageParam"-->
+<!--    [pageSize]="20"-->
+<!--    (pageChange)="onPageChange($event)"-->
+<!--    *ngIf="$any(posts$ | async)?.length >= 1"-->
+<!--  ></ngb-pagination>-->
+<!--</div>-->
+<div class="d-flex justify-content-center mt-5" *ngIf="posts.length >= 1">
+  <ngb-pagination
+    aria-label="Pagination des publications"
+    [collectionSize]="collectionSize"
+    [(page)]="pageParam"
+    [pageSize]="2"
+    (pageChange)="onPageChange($event)"
+  ></ngb-pagination>
+</div>
+
+<app-back-to-top></app-back-to-top>

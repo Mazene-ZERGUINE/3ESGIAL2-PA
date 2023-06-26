@@ -1,5 +1,11 @@
 # Modeles
 
+## publication-appreciation
+
+```
+sequelize-cli model:generate --name publication-appreciation --attributes publication_id:integer,utilisateur_id:integer
+```
+
 ## categorie
 
 ```

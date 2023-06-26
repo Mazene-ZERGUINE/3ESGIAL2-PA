@@ -6,7 +6,6 @@ import { SignUpService } from './shared/sign-up.service';
 import { frenchDepartments } from './shared/data/french-departments';
 import {
   onlyLettersAndDashesAndSpacesRegex,
-  onlyLettersRegex,
   startsWithLetterWhichContainsLetterAndNumbersRegex,
   startsWithLetterWhichContainsLettersAndSpacesAndApostrophesAndCannotEndWithSpacesApostrophesDashes,
   startsWithNumberWhichContainsLetterOrNumberRegex,

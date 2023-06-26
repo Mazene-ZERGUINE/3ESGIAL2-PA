@@ -27,6 +27,7 @@ export abstract class CoreController {
 
 	static coreDeleteById(model: any) {
 		return async (req: Request, res: Response) => {
+			// TODO check if the id is the user
 			try {
 				const item = await model.findByPk(req.params.id);
 				if (!item) {
@@ -57,6 +58,16 @@ export abstract class CoreController {
 				});
 
 				res.status(200).json({ data: items });
+			} catch (error) {
+				CoreController.handleError(error, res);
+			}
+		};
+	}
+
+	static coreCount(model: any) {
+		return async ({ query: { page } }: Request, res: Response) => {
+			try {
+				res.status(200).json({ data: await model.count() });
 			} catch (error) {
 				CoreController.handleError(error, res);
 			}

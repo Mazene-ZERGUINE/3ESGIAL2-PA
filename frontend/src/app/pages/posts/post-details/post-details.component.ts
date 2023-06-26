@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { catchError, map, of, switchMap } from 'rxjs';
+import { catchError, map, Observable, of, switchMap } from 'rxjs';
 
 import { PostsService } from '../shared/services/posts/posts.service';
 import { Post } from '../shared/models/post.interface';
@@ -10,6 +10,7 @@ import { ModalFocusConfirmComponent } from '../../../shared/components/modal-foc
 import { ModalReportComponent } from '../../../shared/components/modal-report/modal-report.component';
 import { Response } from '../../../shared/core/models/interfaces/response.interface';
 import { AuthService } from '../../../shared/core/services/auth/auth.service';
+import { PostLikesService } from '../../../shared/core/services/post-likes/post-likes.service';
 
 @UntilDestroy()
 @Component({
@@ -18,21 +19,50 @@ import { AuthService } from '../../../shared/core/services/auth/auth.service';
   styleUrls: ['./post-details.component.scss'],
 })
 export class PostDetailsComponent implements OnInit, OnDestroy {
-  currentUserId?: undefined | number;
+  readonly postId: number;
+  readonly isIdInvalid: boolean;
+
+  currentUserId?: number;
+  isAuthenticated: boolean;
+  likeInfo?: { count: number; liked: boolean };
   post?: Post;
 
   constructor(
     private readonly authService: AuthService,
     private readonly route: ActivatedRoute,
     private readonly modalService: NgbModal,
+    private readonly postLikesService: PostLikesService,
     private readonly postsService: PostsService,
     private readonly router: Router,
-  ) {}
+  ) {
+    this.isAuthenticated = this.authService.isAuthenticated;
+    this.postId = Number(this.route.snapshot.paramMap.get('id'));
+    this.isIdInvalid = isNaN(this.postId) || this.postId <= 0;
+  }
 
   async ngOnInit(): Promise<void> {
+    if (this.isIdInvalid) {
+      await this.router.navigateByUrl('/not-found', { skipLocationChange: true });
+      return;
+    }
+
     this.subscribeToSelectedPost$();
 
     await this.setCurrentUserId();
+    this.getByPostId(this.postId);
+  }
+
+  getByPostId(postId: number): void {
+    this.postLikesService
+      .getByPostId<Response<{ count: number; liked: boolean }>>(`appreciations/publications`, postId)
+      .pipe(
+        map((res) => res?.data),
+        untilDestroyed(this),
+      )
+      .subscribe((data) => {
+        this.likeInfo = { count: data.count, liked: data.liked };
+        this.postLikesService.emitCurrentCountPost(data.count);
+      });
   }
 
   async onDelete(): Promise<void> {
@@ -52,7 +82,42 @@ export class PostDetailsComponent implements OnInit, OnDestroy {
     await this.router.navigateByUrl(`posts/${id}/edit`);
   }
 
+  async onLike(postId: number, userId?: number): Promise<void> {
+    const isUnauthenticated = !this.isAuthenticated || !userId;
+    if (isUnauthenticated) {
+      await this.router.navigateByUrl('/login');
+      return;
+    }
+
+    this.postLikesService
+      .create(`appreciations/publications/${postId}/count`, { publication_id: postId })
+      .pipe(untilDestroyed(this))
+      .subscribe((_) => {
+        this.getByPostId(postId);
+      });
+  }
+
+  async onDislike(postId: number, userId?: number): Promise<void> {
+    const isUnauthenticated = !this.isAuthenticated || !userId;
+    if (isUnauthenticated) {
+      await this.router.navigateByUrl('/login');
+      return;
+    }
+
+    this.postLikesService
+      .deleteLike(`appreciations/publications`, postId)
+      .pipe(untilDestroyed(this))
+      .subscribe((_) => {
+        this.getByPostId(postId);
+      });
+  }
+
   async onReport(): Promise<void> {
+    if (!this.isAuthenticated) {
+      await this.router.navigateByUrl('/login');
+      return;
+    }
+
     try {
       const description = await this.modalService.open(ModalReportComponent).result;
       console.log(description);
@@ -76,17 +141,14 @@ export class PostDetailsComponent implements OnInit, OnDestroy {
             return of({ data });
           }
 
-          const id = Number(this.route.snapshot.paramMap.get('id'));
-          const isIdInvalid = isNaN(id) || id <= 0;
+          const isIdInvalid = isNaN(this.postId) || this.postId <= 0;
           if (isIdInvalid) {
             return of(null);
           }
 
-          return this.postsService.getOneById<Response<Post>>('publications', id);
+          return this.postsService.getOneById<Response<Post>>('publications', this.postId);
         }),
-        map((res) => {
-          return res?.data;
-        }),
+        map((res) => res?.data),
         catchError((err) => {
           this.router.navigateByUrl('/not-found', { skipLocationChange: true });
           return of(err);
@@ -98,11 +160,11 @@ export class PostDetailsComponent implements OnInit, OnDestroy {
       });
   }
 
-  private async setCurrentUserId() {
+  private async setCurrentUserId(): Promise<void> {
     this.currentUserId = await this.authService.getCurrentUserId();
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.postsService.emitSelectedPost(null);
   }
 }

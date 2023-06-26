@@ -4,6 +4,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { applicationTitle } from './shared/utils/app-title';
 import { AuthGuard } from './shared/core/guards/auth/auth.guard';
 import { UnauthGuard } from './shared/core/guards/unauth/unauth.guard';
+import { AdminGuard } from './shared/core/guards/admin/admin.guard';
 
 const combinedTitle = `| ${applicationTitle}`;
 const routes: Routes = [
@@ -13,7 +14,7 @@ const routes: Routes = [
   },
   {
     path: 'administration',
-    canLoad: [AuthGuard],
+    canLoad: [AuthGuard, AdminGuard],
     loadChildren: () => import('./pages/administration/administration.module').then((m) => m.AdministrationModule),
     title: `Administration ${combinedTitle}`,
   },
