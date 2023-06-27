@@ -11,7 +11,7 @@ export class AuthController extends CoreController {
 		let { email: providedEmail, mot_de_passe } = req.body;
 
 		// TODO email
-		providedEmail = providedEmail.trim().toLowerCase();
+		providedEmail = providedEmail?.trim().toLowerCase();
 
 		try {
 			const utilisateur = await Utilisateur.findOne({ where: { email: providedEmail } });
@@ -52,14 +52,13 @@ export class AuthController extends CoreController {
 	}
 
 	static async logOut(req: Request, res: Response): Promise<void> {
-		// TODO to remove when the auth middleware is implemented
-		const token = req.headers.authorization?.split(' ')[1];
-		if (!token) {
-			res.status(400).end();
-			return;
-		}
-
 		try {
+			const token = req.headers.authorization?.split(' ')[1];
+			if (!token) {
+				res.status(400).end();
+				return;
+			}
+
 			const session = await Session.findOne({ where: { token } });
 			if (session) {
 				await session.destroy();
