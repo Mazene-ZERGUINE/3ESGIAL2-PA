@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { filter, map, Observable, switchMap, tap } from 'rxjs';
+import { filter, map, switchMap, tap } from 'rxjs';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 import { Entity } from '../../administration/shared/enum/entity.enum';
@@ -53,7 +53,6 @@ export class UserPostsListComponent implements OnInit {
   getPosts(): void {
     this.userPostsService
       .count<Response<number>>(`utilisateurs/${this.decodedToken?.pseudonyme}/publications/count`)
-      // .count<Response<number>>('publications/count/all')
       .pipe(
         tap((res) => {
           this.collectionSize = res?.data || 0;
@@ -102,7 +101,11 @@ export class UserPostsListComponent implements OnInit {
   }
 
   private subscribeToRouter(): void {
-    this.router.events.pipe(filter((e) => e instanceof NavigationEnd)).subscribe((_) => {
+    this.router.events.pipe(filter((e) => e instanceof NavigationEnd)).subscribe((e) => {
+      if (e instanceof NavigationEnd && e.url === '/login') {
+        return;
+      }
+
       this.getPosts();
     });
   }

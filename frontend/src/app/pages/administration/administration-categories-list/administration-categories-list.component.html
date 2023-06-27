@@ -1,1 +1,13 @@
 <app-administration-table [entityName]="entityName" [items]="categories" [path]="path"></app-administration-table>
+
+<ngb-pagination
+  class="d-flex justify-content-center mt-5"
+  aria-label="Posts pagination"
+  [collectionSize]="collectionSize"
+  [(page)]="pageParam"
+  [pageSize]="20"
+  (pageChange)="onPageChange($event)"
+  *ngIf="collectionSize >= 1"
+></ngb-pagination>
+
+<app-back-to-top></app-back-to-top>

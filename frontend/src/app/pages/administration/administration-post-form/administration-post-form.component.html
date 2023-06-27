@@ -37,7 +37,7 @@
     <ul class="list-group mb-3">
       <li class="list-group-item d-flex justify-content-between" *ngFor="let image of $any(images)">
         {{ image.name }}
-        <button class="btn btn-outline-danger" (click)="onDelete(image)">
+        <button class="btn btn-outline-danger" disabled (click)="onDelete(image)">
           <i class="bi bi-trash-fill"></i>
         </button>
       </li>

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 import { frenchDepartments } from '../../sign-up/shared/data/french-departments';
 import { Status } from '../../sign-up/shared/enums/status.enum';
@@ -10,25 +11,35 @@ import {
   startsWithLetterWhichContainsLetterAndNumbersRegex,
   startsWithNumberWhichContainsLetterOrNumberRegex,
 } from '../../../shared/utils/regex.utils';
+import { UserDTO } from '../../../shared/core/models/interfaces/user.interface';
+import { SignUpService } from '../../sign-up/shared/sign-up.service';
+import { ToastService } from '../../../shared/components/toast/shared/toast.service';
 
+@UntilDestroy()
 @Component({
   selector: 'app-administration-user-form',
   templateUrl: './administration-user-form.component.html',
   styleUrls: ['./administration-user-form.component.scss'],
 })
 export class AdministrationUserFormComponent {
-  canEdit = false;
+  isEditPage = false;
   form?: FormGroup;
   frenchDepartments = [...frenchDepartments] as const;
   readonly passwordMinLength = 8;
   roles: ReadonlyArray<Role> = Object.values(Role);
   statuses: ReadonlyArray<Status> = Object.values(Status);
 
-  constructor(private readonly route: ActivatedRoute, private readonly fb: FormBuilder) {}
+  constructor(
+    private readonly route: ActivatedRoute,
+    private readonly fb: FormBuilder,
+    private readonly router: Router,
+    private readonly signUpService: SignUpService,
+    private readonly toastService: ToastService,
+  ) {}
 
   ngOnInit(): void {
-    this.setCanEdit();
-    this.canEdit ? this.initEditForm() : this.initAddForm();
+    this.setIsEditPage();
+    this.isEditPage ? this.initEditForm() : this.initAddForm();
   }
 
   initAddForm(): void {
@@ -79,18 +90,33 @@ export class AdministrationUserFormComponent {
       return;
     }
 
-    let formattedVille: string;
+    let formattedVille = '';
     const ville = this.form.get('ville')?.value.trim();
     if (ville) {
       formattedVille = ville.charAt(0).toUpperCase() + ville.slice(1).toLowerCase();
     }
 
-    // TODO
+    const role = Role.utilisateur;
+    const statut = Status.active;
+    const payload: UserDTO = {
+      ...this.form.value,
+      ville: formattedVille,
+      role,
+      statut,
+    };
+
+    this.signUpService
+      .create('utilisateurs', payload)
+      .pipe(untilDestroyed(this))
+      .subscribe((_) => {
+        this.toastService.showSuccess('Utilisateur créé !');
+        this.router.navigateByUrl('administration/users');
+      });
   }
 
-  setCanEdit(): void {
+  setIsEditPage(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
 
-    this.canEdit = !Object.is(NaN, id) && id > 0;
+    this.isEditPage = !Object.is(NaN, id) && id > 0;
   }
 }

@@ -30,6 +30,7 @@
                   [routerLink]="backOfficeRoute.path"
                   routerLinkActive="active"
                   [routerLinkActiveOptions]="{ exact: true }"
+                  [queryParams]="backOfficeRoute.queryParams"
                 >
                   {{ backOfficeRoute.label }}
                 </a>

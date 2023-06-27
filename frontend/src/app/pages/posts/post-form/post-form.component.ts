@@ -67,14 +67,11 @@ export class PostFormComponent implements OnInit {
   }
 
   getPostById() {
-    // this.router.navigateByUrl("not-found")
-
     this.postsService
       .getOneById<Response<Post>>('publications', this.id)
       .pipe(
         map((res) => res?.data),
         map((data) => {
-          // {pseudonyme: 'b', utilisateur_id: 2, role: 'utilisateur', iat: 1687763160}
           const canEdit = data.utilisateur_id == this.decodedToken.utilisateur_id || this.decodedToken === Role.admin;
           if (!canEdit) {
             return null;
@@ -92,7 +89,6 @@ export class PostFormComponent implements OnInit {
         untilDestroyed(this),
       )
       .subscribe((data) => {
-        console.log('sub', data);
         if (!data) {
           this.router.navigate(['posts'], { queryParams: { page: 1 } });
           this.toastService.showDanger("Vous n'êtes pas autorisé.");
@@ -198,29 +194,20 @@ export class PostFormComponent implements OnInit {
     const images = this.images;
     if (Array.isArray(images)) {
       images.forEach((image, i) => {
-        console.log('images', image);
         formData?.append('images', image);
       });
     }
 
-    console.log('removedfiles', this.removedFiles);
     for (const removedFile of this.removedFiles) {
-      // console.log("removedf",removedFile);
       formData?.append('removed_files', removedFile.name);
     }
-
-    // formData?.append("removed_files", )
-
-    // console.log(JSON.stringify(formData.get("removed_files")));
-    // console.log(formData.getAll("removed_files"));
 
     if (this.isEditPage) {
       this.postsService
         .updateById('publications', this.id, formData)
         .pipe(untilDestroyed(this))
         .subscribe((_) => {
-          // this.router.navigate(['posts'], { queryParams: { page: 1 } });
-          // location.href = '/posts';
+          this.router.navigateByUrl(`posts/${this.id}`);
           this.toastService.showSuccess('Publication modifiée !');
         });
     } else {
