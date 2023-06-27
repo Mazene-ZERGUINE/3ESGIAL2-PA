@@ -8,7 +8,7 @@ const router = Router();
 router
 	.get('/', [isAuthenticated], CommentaireController.coreGetAll(Commentaire))
 	.get('/:id', CommentaireController.coreGetOneByPk(Commentaire))
-	.get('/:id_publication', CommentaireController.getByIdPublication(Commentaire))
+	.get('/:id_publication', CommentaireController.coreGetOneByPk(Commentaire))
 	.post(
 		'/:id_user/:id_publication',
 		[isAuthenticated, isAdministrator],
