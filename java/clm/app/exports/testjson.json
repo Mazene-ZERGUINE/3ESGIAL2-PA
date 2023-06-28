@@ -1,30 +1,10 @@
 [
   {
-    "members": "dev1\n",
-    "description": "coucou",
-    "created_at": "2023-06-11T22:00:00.000Z",
-    "id": 1,
-    "label": "task1",
-    "deadline": "2023-06-30T22:00:00.000Z",
-    "startAt": "2023-06-11T22:00:00.000Z",
-    "status": "A FAIRE"
-  },
-  {
-    "members": "",
-    "description": "task2",
-    "created_at": "2023-06-12T22:00:00.000Z",
-    "id": 2,
-    "label": "task2",
-    "deadline": "2023-06-28T22:00:00.000Z",
-    "startAt": "2023-06-11T22:00:00.000Z",
-    "status": "EN COURS"
-  },
-  {
-    "members": "dev1\n",
+    "members": "dev2\n",
     "description": "",
     "created_at": "2023-06-12T22:00:00.000Z",
-    "id": 8,
-    "label": "cccc",
+    "id": 6,
+    "label": "ccc",
     "deadline": "2023-06-24T22:00:00.000Z",
     "startAt": "2023-06-12T22:00:00.000Z",
     "status": "A FAIRE"
@@ -33,100 +13,10 @@
     "members": "",
     "description": "",
     "created_at": "2023-06-13T22:00:00.000Z",
-    "id": 17,
-    "label": "coucou",
-    "deadline": "2023-06-21T22:00:00.000Z",
-    "startAt": "2023-06-12T22:00:00.000Z",
-    "status": "VERIFIE"
-  },
-  {
-    "members": "",
-    "description": "",
-    "created_at": "2023-06-13T22:00:00.000Z",
-    "id": 11,
-    "label": "admin@",
+    "id": 7,
+    "label": "toto",
     "deadline": "2023-06-29T22:00:00.000Z",
     "startAt": "2023-06-12T22:00:00.000Z",
-    "status": "A FAIRE"
-  },
-  {
-    "members": "",
-    "description": "ccccc",
-    "created_at": "2023-06-13T22:00:00.000Z",
-    "id": 9,
-    "label": "cccc",
-    "deadline": "2023-06-28T22:00:00.000Z",
-    "startAt": "2023-06-12T22:00:00.000Z",
-    "status": "BLOQUE"
-  },
-  {
-    "members": "dev1\n",
-    "description": "",
-    "created_at": "2023-06-13T22:00:00.000Z",
-    "id": 14,
-    "label": "task",
-    "deadline": "2023-06-29T22:00:00.000Z",
-    "startAt": "2023-06-12T22:00:00.000Z",
-    "status": "A FAIRE"
-  },
-  {
-    "members": "",
-    "description": "",
-    "created_at": "2023-06-13T22:00:00.000Z",
-    "id": 10,
-    "label": "cccc",
-    "deadline": "2023-06-27T22:00:00.000Z",
-    "startAt": "2023-06-12T22:00:00.000Z",
-    "status": "EN COURS"
-  },
-  {
-    "members": "mazene\ndev1\n",
-    "description": "",
-    "created_at": "2023-06-14T22:00:00.000Z",
-    "id": 4,
-    "label": "task3",
-    "deadline": "2023-06-20T22:00:00.000Z",
-    "startAt": "2023-06-12T22:00:00.000Z",
-    "status": "A FAIRE"
-  },
-  {
-    "members": "dev1\n",
-    "description": "cadazdaezafzeafa",
-    "created_at": "2023-06-14T22:00:00.000Z",
-    "id": 5,
-    "label": "cccc",
-    "deadline": "2023-07-07T22:00:00.000Z",
-    "startAt": "2023-06-12T22:00:00.000Z",
-    "status": "A FAIRE"
-  },
-  {
-    "members": "dev1\n",
-    "description": "",
-    "created_at": "2023-06-15T22:00:00.000Z",
-    "id": 15,
-    "label": "ccc",
-    "deadline": "2023-07-09T22:00:00.000Z",
-    "startAt": "2023-06-12T22:00:00.000Z",
-    "status": "A FAIRE"
-  },
-  {
-    "members": "",
-    "description": "",
-    "created_at": "2023-06-20T22:00:00.000Z",
-    "id": 13,
-    "label": "task3",
-    "deadline": "2023-07-05T22:00:00.000Z",
-    "startAt": "2023-06-12T22:00:00.000Z",
-    "status": "EN COURS"
-  },
-  {
-    "members": "dev1\n",
-    "description": "",
-    "created_at": "2023-06-21T22:00:00.000Z",
-    "id": 16,
-    "label": "coucou",
-    "deadline": "2023-06-29T22:00:00.000Z",
-    "startAt": "2023-06-12T22:00:00.000Z",
-    "status": "A FAIRE"
+    "status": "TERMINE"
   }
 ]

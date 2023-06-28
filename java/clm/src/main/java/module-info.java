@@ -9,8 +9,7 @@ module com.example.clm {
     requires TrayNotification;
     requires org.yaml.snakeyaml;
 	requires java.desktop;
-    requires richtextfx;
-    requires com.jfoenix;
+
 
     opens com.example.clm to javafx.fxml;
 	opens com.example.clm.models;

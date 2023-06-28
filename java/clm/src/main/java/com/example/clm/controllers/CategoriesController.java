@@ -381,11 +381,7 @@ public class CategoriesController extends Application implements Initializable {
 
 	@FXML
 	void onTerminalBtnClick(MouseEvent event) throws IOException {
-		openTerminal("cd src/main/java/com/example/clm/consolemode/",
-				"clear",
-				"javac ConsoleApp",
-				"java ConsoleApp.java"
-		);
+		openTerminal("clear","java -jar ./console/consoleapp.jar");
 	}
 
 

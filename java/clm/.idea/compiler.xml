@@ -12,7 +12,7 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="clm" options="--add-exports javafx.graphics/com.sun.javafx.stage=com.example.clm" />
+      <module name="clm" options="" />
     </option>
   </component>
 </project>
