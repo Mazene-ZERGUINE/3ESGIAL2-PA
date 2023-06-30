@@ -1,12 +1,18 @@
-<app-administration-table [entityName]="entityName" [items]="categories" [path]="path"></app-administration-table>
+<app-administration-categories-table
+  [entityName]="entityName"
+  [items]="categories"
+></app-administration-categories-table>
 
 <ngb-pagination
   class="d-flex justify-content-center mt-5"
-  aria-label="Posts pagination"
+  aria-label="Pagination de catégories"
   [collectionSize]="collectionSize"
   [(page)]="pageParam"
   [pageSize]="20"
   (pageChange)="onPageChange($event)"
+  [maxSize]="3"
+  [rotate]="true"
+  [boundaryLinks]="true"
   *ngIf="collectionSize >= 1"
 ></ngb-pagination>
 

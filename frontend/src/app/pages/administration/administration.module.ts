@@ -17,6 +17,9 @@ import { AdministrationReportedPostFormComponent } from './administration-report
 import { AdministrationReportedUserFormComponent } from './administration-reported-user-form/administration-reported-user-form.component';
 import { AdministrationUserFormComponent } from './administration-user-form/administration-user-form.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { AdministrationCategoriesTableComponent } from './administration-categories-table/administration-categories-table.component';
+import { AdministrationPostsTableComponent } from './administration-posts-table/administration-posts-table.component';
+import { AdministrationUsersTableComponent } from './administration-users-table/administration-users-table.component';
 
 @NgModule({
   declarations: [
@@ -32,6 +35,9 @@ import { ReactiveFormsModule } from '@angular/forms';
     AdministrationReportedPostFormComponent,
     AdministrationReportedUserFormComponent,
     AdministrationUserFormComponent,
+    AdministrationCategoriesTableComponent,
+    AdministrationPostsTableComponent,
+    AdministrationUsersTableComponent,
   ],
   imports: [CommonModule, AdministrationRoutingModule, NgbPagination, ComponentsModule, ReactiveFormsModule],
 })

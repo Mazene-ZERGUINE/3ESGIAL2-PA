@@ -10,7 +10,7 @@ import { CategoriesService } from '../../../shared/core/services/categories/cate
 import { Categorie, Post } from '../shared/models/post.interface';
 import { Response } from '../../../shared/core/models/interfaces/response.interface';
 import { JwtHelperService } from '@auth0/angular-jwt';
-import { catchError, map, of, tap } from 'rxjs';
+import { catchError, map, of } from 'rxjs';
 import { HttpError } from '../../../shared/core/enums/http-error.enums';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Role } from '../../sign-up/shared/enums/role.enum';
@@ -23,11 +23,11 @@ import { Role } from '../../sign-up/shared/enums/role.enum';
 })
 export class PostFormComponent implements OnInit {
   isEditPage = false;
-  categories?: Categorie[];
+  categories: Categorie[] = [];
   form?: FormGroup;
   filePath?: string;
   files?: File[] = [];
-  id = 0;
+  idParam = 0;
   decodedToken?: any;
 
   private removedFiles: any[] = [];
@@ -55,7 +55,7 @@ export class PostFormComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     this.getCategories();
-    this.setIsEditPage();
+    await this.setIsEditPage();
     await this.setDecodedToken();
 
     if (!this.isEditPage) {
@@ -68,7 +68,7 @@ export class PostFormComponent implements OnInit {
 
   getPostById() {
     this.postsService
-      .getOneById<Response<Post>>('publications', this.id)
+      .getOneById<Response<Post>>('publications', this.idParam)
       .pipe(
         map((res) => res?.data),
         map((data) => {
@@ -172,11 +172,6 @@ export class PostFormComponent implements OnInit {
     this.form?.value.images.push(file);
   }
 
-  async setDecodedToken(): Promise<void> {
-    const token = await this.jwtHelper.tokenGetter();
-    this.decodedToken = this.jwtHelper.decodeToken(token);
-  }
-
   onSubmit(): void {
     if (!this.form || this.form?.invalid) {
       return;
@@ -204,10 +199,10 @@ export class PostFormComponent implements OnInit {
 
     if (this.isEditPage) {
       this.postsService
-        .updateById('publications', this.id, formData)
+        .updateById('publications', this.idParam, formData)
         .pipe(untilDestroyed(this))
         .subscribe((_) => {
-          this.router.navigateByUrl(`posts/${this.id}`);
+          this.router.navigateByUrl(`posts/${this.idParam}`);
           this.toastService.showSuccess('Publication modifiée !');
         });
     } else {
@@ -222,9 +217,26 @@ export class PostFormComponent implements OnInit {
     }
   }
 
-  private setIsEditPage(): void {
-    this.id = Number(this.route.snapshot.paramMap.get('id'));
+  private async setDecodedToken(): Promise<void> {
+    const token = await this.jwtHelper.tokenGetter();
+    this.decodedToken = this.jwtHelper.decodeToken(token);
+  }
 
-    this.isEditPage = !Object.is(NaN, this.id) && this.id > 0;
+  private async setIsEditPage(): Promise<void> {
+    let idParam: null | string | number = this.route.snapshot.paramMap.get('id');
+    if (!idParam) {
+      return;
+    }
+
+    idParam = Number(this.route.snapshot.paramMap.get('id'));
+    const isIdParamValid = !Object.is(NaN, idParam) && idParam > 0;
+    if (!isIdParamValid) {
+      this.toastService.showDanger('La ressource demandée est incorrecte.');
+      await this.router.navigate(['users', 'posts'], { queryParams: { page: 1 } });
+      return;
+    }
+
+    this.idParam = idParam;
+    this.isEditPage = isIdParamValid;
   }
 }

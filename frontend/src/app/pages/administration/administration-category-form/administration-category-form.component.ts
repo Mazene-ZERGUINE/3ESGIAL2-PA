@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { map } from 'rxjs';
+import { catchError, map, of } from 'rxjs';
 
 import { minLengthValidator } from '../../../shared/utils/validator.utils';
 import { AdministrationCategoriesService } from '../shared/services/administration-categories/administration-categories.service';
@@ -17,7 +17,7 @@ import { Categorie } from '../../posts/shared/models/post.interface';
   styleUrls: ['./administration-category-form.component.scss'],
 })
 export class AdministrationCategoryFormComponent {
-  id = 0;
+  idParam = 0;
   isEditPage = false;
   form?: FormGroup;
 
@@ -29,8 +29,8 @@ export class AdministrationCategoryFormComponent {
     private readonly toastService: ToastService,
   ) {}
 
-  ngOnInit(): void {
-    this.setIsEditPage();
+  async ngOnInit(): Promise<void> {
+    await this.setIsEditPage();
 
     if (this.isEditPage) {
       this.getCategoryById();
@@ -41,12 +41,20 @@ export class AdministrationCategoryFormComponent {
 
   getCategoryById() {
     this.administrationCategoriesService
-      .getOneById<Response<Categorie>>('categories', this.id)
+      .getOneById<Response<Categorie>>('categories', this.idParam)
       .pipe(
         map((res) => res?.data),
+        catchError((_) => {
+          return of(null);
+        }),
         untilDestroyed(this),
       )
       .subscribe((data) => {
+        if (!data) {
+          this.router.navigate(['administration', 'categories'], { queryParams: { page: 1 } });
+          return;
+        }
+
         this.form?.setValue({ libelle: data?.libelle });
       });
   }
@@ -64,7 +72,7 @@ export class AdministrationCategoryFormComponent {
 
     if (this.isEditPage) {
       this.administrationCategoriesService
-        .updateById('categories', this.id, this.form.value)
+        .updateById('categories', this.idParam, this.form.value)
         .pipe(untilDestroyed(this))
         .subscribe((_) => {
           this.router.navigate(['administration', 'categories'], { queryParams: { page: 1 } });
@@ -81,9 +89,21 @@ export class AdministrationCategoryFormComponent {
     }
   }
 
-  setIsEditPage(): void {
-    this.id = Number(this.route.snapshot.paramMap.get('id'));
+  async setIsEditPage(): Promise<void> {
+    let idParam: null | string | number = this.route.snapshot.paramMap.get('id');
+    if (!idParam) {
+      return;
+    }
 
-    this.isEditPage = !Object.is(NaN, this.id) && this.id > 0;
+    idParam = Number(this.route.snapshot.paramMap.get('id'));
+    const isIdParamValid = !Object.is(NaN, idParam) && idParam > 0;
+    if (!isIdParamValid) {
+      this.toastService.showDanger('La ressource demandée est incorrecte.');
+      await this.router.navigate(['administration', 'users'], { queryParams: { page: 1 } });
+      return;
+    }
+
+    this.idParam = idParam;
+    this.isEditPage = isIdParamValid;
   }
 }

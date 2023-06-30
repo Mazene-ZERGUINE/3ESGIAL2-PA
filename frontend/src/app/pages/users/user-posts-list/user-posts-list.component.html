@@ -2,11 +2,14 @@
 
 <div class="d-flex justify-content-center mt-5" *ngIf="posts.length >= 1">
   <ngb-pagination
-    aria-label="Pagination des publications"
+    aria-label="Pagination des publications de l'utilisateur"
     [collectionSize]="collectionSize"
     [(page)]="pageParam"
     [pageSize]="20"
     (pageChange)="onPageChange($event)"
+    [maxSize]="3"
+    [rotate]="true"
+    [boundaryLinks]="true"
   ></ngb-pagination>
 </div>
 

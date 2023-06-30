@@ -14,10 +14,11 @@ export class AdministrationTableComponent<T> implements OnInit, OnChanges {
   @Input() entityName?: string;
   @Input() path?: Path;
 
-  // pageParam = 1;
+  readonly categoriesPath: Path = Path.categories;
   readonly postsPath: Path = Path.posts;
   readonly reportedPostsPath: Path = Path.reportedPosts;
   readonly reportedUsersPath: Path = Path.reportedUsers;
+  readonly usersPath: Path = Path.users;
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -35,6 +36,7 @@ export class AdministrationTableComponent<T> implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    console.log(this.items);
     const areInputsInvalid = !this.entityName || !this.path;
     if (areInputsInvalid) {
       this.stopRendering();
@@ -42,6 +44,7 @@ export class AdministrationTableComponent<T> implements OnInit, OnChanges {
   }
 
   async onAdd(path: string): Promise<void> {
+    console.log('onAdd');
     if (path === this.postsPath) {
       return;
     }
@@ -49,8 +52,8 @@ export class AdministrationTableComponent<T> implements OnInit, OnChanges {
     await this.router.navigateByUrl(`administration/${path}/add`);
   }
 
-  async onEdit(path: string, id: number): Promise<void> {
-    await this.router.navigateByUrl(`administration/${path}/${id}/edit`);
+  async onEdit(path: string, parameter: string | number): Promise<void> {
+    await this.router.navigateByUrl(`administration/${path}/${parameter}/edit`);
   }
 
   onDelete(id: number): void {

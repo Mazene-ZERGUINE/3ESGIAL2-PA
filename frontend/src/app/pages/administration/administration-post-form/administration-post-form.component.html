@@ -22,6 +22,24 @@
       <input class="form-control" type="text" id="description" name="description" formControlName="description" />
     </div>
     <div class="mb-3">
+      <label class="form-label required" for="categorie">Catégorie</label>
+      <select class="form-select" formControlName="categorie" id="categorie" aria-label="Sélection de catégorie">
+        <option *ngFor="let categorie of categories" [value]="categorie.categorie_id">
+          {{ categorie.libelle }}
+        </option>
+      </select>
+      <small
+        class="text-danger my-2"
+        *ngIf="
+          form.get('departement')?.touched &&
+          form.get('departement')?.dirty &&
+          form.get('departement')?.getError('pattern')
+        "
+      >
+        Le champ est incorrect.
+      </small>
+    </div>
+    <div class="mb-3">
       <label class="form-label" for="images">Ajouter une image</label>
       <div>
         <input
@@ -45,9 +63,11 @@
     <div class="mb-3">
       <label class="form-label required" for="statut">Statut</label>
       <select class="form-select" formControlName="statut" id="statut" aria-label="Sélection de statut">
-        <option *ngFor="let status of statuses" [value]="status">
-          {{ status }}
-        </option>
+        <ng-container *ngFor="let status of statuses">
+          <option [value]="status" *ngIf="status !== 'banni'">
+            {{ status }}
+          </option>
+        </ng-container>
       </select>
       <small
         class="text-danger my-2"

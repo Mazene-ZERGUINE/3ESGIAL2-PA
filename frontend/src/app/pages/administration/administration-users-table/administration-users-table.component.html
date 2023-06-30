@@ -1,0 +1,60 @@
+<h1>Administration des {{ entityName }}s</h1>
+
+<div class="d-flex justify-content-end">
+  <button class="btn btn-outline-success" (click)="onAdd(usersPath)">
+    <i class="bi bi-plus-lg"></i>
+  </button>
+</div>
+
+<div class="table-responsive">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <!--#region     id -->
+        <ng-container *ngFor="let item of $any(items[0]) | keyvalue">
+          <th scope="col" *ngIf="item.key === 'utilisateur_id'">
+            {{ $any(item.key) | titlecase }}
+          </th>
+        </ng-container>
+        <!--#endregion  id -->
+        <!--#region     remaining fields -->
+        <ng-container *ngFor="let item of $any(items[0]) | keyvalue">
+          <th scope="col" *ngIf="item.key !== 'utilisateur_id'">
+            {{ $any(item.key) | titlecase }}
+          </th>
+        </ng-container>
+        <!--#endregion  remaining fields -->
+        <th scope="col">Edition</th>
+        <th scope="col">Suppression</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of items">
+        <!--#region utilisateur_id -->
+        <ng-container *ngFor="let prop of $any(item) | keyvalue">
+          <th scope="row" *ngIf="prop.key === 'utilisateur_id'">
+            {{ prop.value }}
+          </th>
+        </ng-container>
+        <!--#endregion utilisateur_id -->
+        <!--#region     all fields except utilisateur_id-->
+        <ng-container *ngFor="let prop of $any(item) | keyvalue">
+          <td *ngIf="prop.key !== 'utilisateur_id'">
+            {{ prop.value }}
+          </td>
+        </ng-container>
+        <!--#endregion  all fields except utilisateur_id-->
+        <td>
+          <button class="btn btn-outline-warning" (click)="onEdit(usersPath, $any(item)['pseudonyme'])">
+            <i class="bi bi-pencil-fill"></i>
+          </button>
+        </td>
+        <td>
+          <button class="btn btn-outline-danger" disabled (click)="onDelete()">
+            <i class="bi bi-trash-fill"></i>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

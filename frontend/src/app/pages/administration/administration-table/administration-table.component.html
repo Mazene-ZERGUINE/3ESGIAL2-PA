@@ -1,4 +1,13 @@
-<h1>Administration de {{ entityName }}s</h1>
+<h1>
+  Administration des
+  {{
+    entityName === 'publication_signalement'
+      ? 'signalements de publication'
+      : entityName === 'personne_signalement'
+      ? "signalements d'utilisateur"
+      : entityName + 's'
+  }}
+</h1>
 
 <div class="d-flex justify-content-end" *ngIf="path">
   <button class="btn btn-outline-success" (click)="onAdd(path)" *ngIf="path !== postsPath">
@@ -10,45 +19,76 @@
   <table class="table table-striped">
     <thead>
       <tr>
-        <ng-container *ngFor="let item of $any(items[0]) | keyvalue; let firstItem = first">
-          <th scope="col" *ngIf="firstItem; else elseThBlock">Identifiant</th>
-          <ng-template #elseThBlock>
-            <th scope="col">
+        <!--#region     publication : id -->
+        <ng-container *ngIf="path === postsPath">
+          <ng-container *ngFor="let item of $any(items[0])">
+            <th scope="col" *ngIf="item.key === 'publication_id'">{{ item.key }} !!!</th>
+          </ng-container>
+        </ng-container>
+        <!--#endregion  publication : id -->
+        <!--#region     utilisateur : id -->
+        <ng-container *ngIf="path === usersPath">
+          <ng-container *ngFor="let item of $any(items[0])">
+            <th scope="col" *ngIf="item.key === 'utilisateur_id'">
+              {{ item.key }}
+            </th>
+          </ng-container>
+        </ng-container>
+        <!--#endregion  utilisateur : id -->
+        <!--#region     all tables except utilisateur -->
+        <ng-container *ngIf="path !== usersPath && path !== postsPath">
+          <th scope="col" *ngFor="let item of $any(items[0]) | keyvalue">
+            {{ item.key }}
+          </th>
+        </ng-container>
+        <!--#endregion  all tables except utilisateur -->
+        <!--#region utilisateur : all fields except utilisateur_id -->
+        <ng-container *ngIf="path === usersPath">
+          <ng-container *ngFor="let item of $any(items[0]) | keyvalue">
+            <th scope="col" *ngIf="item.key !== 'utilisateur_id'">
               {{ $any(item.key) | titlecase }}
             </th>
-          </ng-template>
+          </ng-container>
         </ng-container>
+        <!--#endregion utilisateur : all fields except utilisateur_id -->
         <th scope="col" *ngIf="path !== reportedPostsPath && path !== reportedUsersPath">Edition</th>
         <th scope="col">Suppression</th>
       </tr>
     </thead>
-    <tbody>
-      <tr *ngFor="let item of items">
-        <ng-container *ngFor="let prop of $any(item) | keyvalue; let firstItem = first">
-          <th scope="row" *ngIf="firstItem; else elseTd">
-            {{ prop.value }}
-          </th>
-          <ng-template #elseTd>
-            <td>
-              {{ prop.value }}
-            </td>
-          </ng-template>
-        </ng-container>
-        <td>
-          <button
-            class="btn btn-outline-warning"
-            *ngIf="path && path !== reportedPostsPath && path !== reportedUsersPath"
-            (click)="onEdit(path, $any(item)[entityName + '_id'])"
-          >
-            <i class="bi bi-pencil-fill"></i>
-          </button>
-        </td>
-        <td>
-          <button class="btn btn-outline-danger" disabled (click)="onDelete($any(item)[entityName + '_id'])">
-            <i class="bi bi-trash-fill"></i>
-          </button>
-        </td>
-      </tr>
-    </tbody>
+    <!--    <tbody>-->
+    <!--    <tr *ngFor="let item of items">-->
+    <!--      &lt;!&ndash;#region utilisateur_id &ndash;&gt;-->
+    <!--      <ng-container *ngFor="let prop of $any(item) | keyvalue">-->
+    <!--        <th scope="row" *ngIf="path === usersPath && prop.key === 'utilisateur_id'">-->
+    <!--          {{ prop.value }}-->
+    <!--        </th>-->
+    <!--      </ng-container>-->
+    <!--      &lt;!&ndash;#endregion utilisateur_id &ndash;&gt;-->
+    <!--      <ng-container *ngFor="let prop of $any(item) | keyvalue">-->
+    <!--        <td *ngIf="path === usersPath && prop.key !== 'utilisateur_id'; else elseTdBlock">-->
+    <!--          {{ prop.value }}-->
+    <!--        </td>-->
+    <!--        <ng-template #elseTdBlock>-->
+    <!--          <td *ngIf="path !== usersPath">-->
+    <!--            {{ prop.value }}-->
+    <!--          </td>-->
+    <!--        </ng-template>-->
+    <!--      </ng-container>-->
+    <!--      <td>-->
+    <!--        <button-->
+    <!--          class="btn btn-outline-warning"-->
+    <!--          *ngIf="path && path !== reportedPostsPath && path !== reportedUsersPath"-->
+    <!--          (click)="onEdit(path, $any(item)[path === usersPath ? 'pseudonyme' : entityName + '_id'])"-->
+    <!--        >-->
+    <!--          <i class="bi bi-pencil-fill"></i>-->
+    <!--        </button>-->
+    <!--      </td>-->
+    <!--      <td>-->
+    <!--        <button class="btn btn-outline-danger" disabled (click)="onDelete($any(item)[entityName + '_id'])">-->
+    <!--          <i class="bi bi-trash-fill"></i>-->
+    <!--        </button>-->
+    <!--      </td>-->
+    <!--    </tr>-->
+    <!--    </tbody>-->
   </table>
 </div>

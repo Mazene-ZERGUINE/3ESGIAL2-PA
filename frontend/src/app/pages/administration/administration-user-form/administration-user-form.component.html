@@ -36,7 +36,7 @@
         Le champ doit contenir un courriel.
       </small>
     </div>
-    <div class="mb-3">
+    <div class="mb-3" *ngIf="!isEditPage">
       <label class="form-label required" for="mot_de_passe"
         >Mot de passe (taille minimale : {{ passwordMinLength }})</label
       >
