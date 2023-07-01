@@ -30,6 +30,7 @@
                   [routerLink]="backOfficeRoute.path"
                   routerLinkActive="active"
                   [routerLinkActiveOptions]="{ exact: true }"
+                  [queryParams]="backOfficeRoute.queryParams"
                 >
                   {{ backOfficeRoute.label }}
                 </a>
@@ -54,7 +55,9 @@
             </li>
           </ng-template>
           <li class="navbar-nav justify-content-center">
-            <a class="nav-link p-2 m-2" [routerLink]="'/posts'" [queryParams]="{ page: 1 }">Publications</a>
+            <a class="nav-link p-2 m-2" [routerLink]="'/posts'" routerLinkActive="active" [queryParams]="{ page: 1 }"
+              >Publications</a
+            >
           </li>
           <li class="nav-item dropdown" *ngIf="isAuthenticated | async">
             <a class="nav-link p-2 m-2 dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">

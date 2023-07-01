@@ -6,7 +6,12 @@ import { isAdministrator, isAuthenticated } from '../../middlewares/clm/auth.mid
 
 const router = Router();
 router
-	.get('/', [isAuthenticated, isAdministrator], UtilisateurController.coreGetAll(Utilisateur))
+	.get(
+		'/',
+		[isAuthenticated, isAdministrator],
+		UtilisateurController.coreGetAllWithoutInclude(Utilisateur, 'utilisateur'),
+	)
+	.get('/count/all', [isAuthenticated, isAdministrator], UtilisateurController.coreCount(Utilisateur))
 	.get('/:pseudonyme', UtilisateurController.getByPseudonyme)
 	.get('/:pseudonyme/publications', isAuthenticated, UtilisateurController.getAllPublications)
 	.get('/:pseudonyme/publications/count', isAuthenticated, UtilisateurController.countAllPublications)

@@ -1,85 +1,15 @@
-<!--<h1>Historique de mes publications</h1>-->
-
-<!--<div class="table-responsive" *ngIf="posts$ && $any(posts$ | async)?.length >= 1">-->
-<!--  <table class="table table-striped">-->
-<!--    <thead>-->
-<!--      <tr>-->
-<!--        <ng-container *ngFor="let item of $any(posts$ | async)[0] | keyvalue; let firstItem = first">-->
-<!--          <th scope="col" *ngIf="firstItem; else elseThBlock">Identifiant</th>-->
-<!--          <ng-template #elseThBlock>-->
-<!--            <th scope="col">-->
-<!--              {{ $any(item.key) | titlecase }}-->
-<!--            </th>-->
-<!--          </ng-template>-->
-<!--        </ng-container>-->
-<!--        <th scope="col">Edition</th>-->
-<!--        <th scope="col">Suppression</th>-->
-<!--      </tr>-->
-<!--    </thead>-->
-<!--    <tbody>-->
-<!--      <tr>-->
-<!--        <ng-container *ngFor="let prop of $any(posts$ | async)[0] | keyvalue; let firstProp = first">-->
-<!--          <th scope="row" *ngIf="firstProp; else elseTd">-->
-<!--            {{ prop.value }}-->
-<!--          </th>-->
-<!--          <ng-template #elseTd>-->
-<!--            <td>-->
-<!--              {{ prop.value }}-->
-<!--            </td>-->
-<!--          </ng-template>-->
-<!--        </ng-container>-->
-<!--        <td>-->
-<!--          &lt;!&ndash;        <button&ndash;&gt;-->
-<!--          &lt;!&ndash;          class="btn btn-warning"&ndash;&gt;-->
-<!--          &lt;!&ndash;          (click)="onEdit(path, $any(item)[entityName + '_id'])"&ndash;&gt;-->
-<!--          &lt;!&ndash;        >&ndash;&gt;-->
-<!--          &lt;!&ndash;          <i class="bi bi-pencil-fill"></i>&ndash;&gt;-->
-<!--          &lt;!&ndash;        </button>&ndash;&gt;-->
-<!--          <button class="btn btn-warning" (click)="onEdit('', 0)">-->
-<!--            <i class="bi bi-pencil-fill"></i>-->
-<!--          </button>-->
-<!--        </td>-->
-<!--        <td>-->
-<!--          &lt;!&ndash;        <button class="btn btn-danger" (click)="onDelete($any(item)[entityName + '_id'])">&ndash;&gt;-->
-<!--          &lt;!&ndash;          <i class="bi bi-trash-fill"></i>&ndash;&gt;-->
-<!--          &lt;!&ndash;        </button>&ndash;&gt;-->
-<!--          <button class="btn btn-danger" (click)="onDelete(0)">-->
-<!--            <i class="bi bi-trash-fill"></i>-->
-<!--          </button>-->
-<!--        </td>-->
-<!--      </tr>-->
-<!--    </tbody>-->
-<!--  </table>-->
-
-<!--  <ngb-pagination-->
-<!--    class="d-flex justify-content-center mt-5"-->
-<!--    aria-label="Posts pagination"-->
-<!--    [collectionSize]="(posts$ | async)?.length ?? 0"-->
-<!--    [(page)]="page"-->
-<!--    (pageChange)="onPageChange($event)"-->
-<!--  ></ngb-pagination>-->
-<!--</div>-->
-
-<!--<app-back-to-top></app-back-to-top>-->
 <app-user-table [entityName]="entityName" [items]="posts" [path]="path"></app-user-table>
 
-<!--<div class="d-flex justify-content-center mt-5" *ngIf="posts$ | async">-->
-<!--  <ngb-pagination-->
-<!--    aria-label="Pagination des publications"-->
-<!--    [collectionSize]="collectionSize"-->
-<!--    [(page)]="pageParam"-->
-<!--    [pageSize]="20"-->
-<!--    (pageChange)="onPageChange($event)"-->
-<!--    *ngIf="$any(posts$ | async)?.length >= 1"-->
-<!--  ></ngb-pagination>-->
-<!--</div>-->
 <div class="d-flex justify-content-center mt-5" *ngIf="posts.length >= 1">
   <ngb-pagination
-    aria-label="Pagination des publications"
+    aria-label="Pagination des publications de l'utilisateur"
     [collectionSize]="collectionSize"
     [(page)]="pageParam"
-    [pageSize]="2"
+    [pageSize]="20"
     (pageChange)="onPageChange($event)"
+    [maxSize]="3"
+    [rotate]="true"
+    [boundaryLinks]="true"
   ></ngb-pagination>
 </div>
 

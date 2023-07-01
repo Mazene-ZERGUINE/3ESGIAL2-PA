@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { filter, map, Observable, switchMap, tap } from 'rxjs';
+import { filter, map, switchMap, tap } from 'rxjs';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 import { Entity } from '../../administration/shared/enum/entity.enum';
@@ -20,7 +20,7 @@ export class UserPostsListComponent implements OnInit {
   entityName = Entity.publication;
   page = 1;
   path = Path.posts;
-  posts: Post[] = [];
+  posts: Partial<Post>[] = [];
   // posts$: Observable<null|Post[]>;
 
   collectionSize = 0;
@@ -53,17 +53,30 @@ export class UserPostsListComponent implements OnInit {
   getPosts(): void {
     this.userPostsService
       .count<Response<number>>(`utilisateurs/${this.decodedToken?.pseudonyme}/publications/count`)
-      // .count<Response<number>>('publications/count/all')
       .pipe(
         tap((res) => {
           this.collectionSize = res?.data || 0;
         }),
         switchMap((_) =>
-          this.userPostsService.getAll<Response<Post[]>>(
+          this.userPostsService.getAll<Response<Partial<Post>[]>>(
             `utilisateurs/${this.decodedToken?.pseudonyme}/publications?page=${this.pageParam}`,
           ),
         ),
-        map((res) => res?.data),
+        map((res) => {
+          if (res?.data) {
+            for (let i = 0; i < res.data.length; i++) {
+              res.data[i] = {
+                created_at: res.data[i].created_at,
+                publication_id: res.data[i].publication_id,
+                statut: res.data[i].statut,
+                titre: res.data[i].titre,
+                updated_at: res.data[i].updated_at,
+              };
+            }
+          }
+
+          return res?.data;
+        }),
         untilDestroyed(this),
       )
       .subscribe((data) => {
@@ -102,7 +115,11 @@ export class UserPostsListComponent implements OnInit {
   }
 
   private subscribeToRouter(): void {
-    this.router.events.pipe(filter((e) => e instanceof NavigationEnd)).subscribe((_) => {
+    this.router.events.pipe(filter((e) => e instanceof NavigationEnd)).subscribe((e) => {
+      if (e instanceof NavigationEnd && e.url === '/login') {
+        return;
+      }
+
       this.getPosts();
     });
   }

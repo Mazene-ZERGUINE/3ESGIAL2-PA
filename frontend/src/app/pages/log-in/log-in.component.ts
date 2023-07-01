@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { ToastService } from 'src/app/shared/components/toast/shared/toast.service';
 
 import { AuthService } from '../../shared/core/services/auth/auth.service';
 import { Role } from '../sign-up/shared/enums/role.enum';
@@ -19,6 +20,7 @@ export class LogInComponent {
     private readonly authService: AuthService,
     private readonly fb: FormBuilder,
     private readonly router: Router,
+    private readonly toastService: ToastService,
   ) {}
 
   ngOnInit(): void {
@@ -47,6 +49,7 @@ export class LogInComponent {
       .subscribe((res) => {
         this.authService.setToken(res.access_token);
         this.router.navigateByUrl('/');
+        this.toastService.showStandard('Bienvenue !');
       });
   }
 }

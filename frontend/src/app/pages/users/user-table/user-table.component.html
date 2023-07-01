@@ -10,9 +10,12 @@
   <table class="table table-striped">
     <thead>
       <tr>
-        <ng-container *ngFor="let item of $any(items[0]) | keyvalue">
-          <th scope="col" *ngIf="item.key === 'publication_id'">{{ $any(item.key) | titlecase }}</th>
-        </ng-container>
+        <!--        <ng-container *ngFor="let item of $any(items[0]) | keyvalue">-->
+        <!--          <th scope="col" *ngIf="item.key === 'publication_id'">{{ $any(item.key) | titlecase }}</th>-->
+        <!--        </ng-container>-->
+        <!--        <ng-container *ngFor="let item of $any(items[0]) | keyvalue">-->
+        <!--          <th scope="col" *ngIf="item.key !== 'publication_id'">{{ $any(item.key) | titlecase }}</th>-->
+        <!--        </ng-container>-->
         <ng-container *ngFor="let item of $any(items[0]) | keyvalue">
           <th scope="col" *ngIf="item.key !== 'publication_id'">{{ $any(item.key) | titlecase }}</th>
         </ng-container>
@@ -22,11 +25,11 @@
     </thead>
     <tbody>
       <tr *ngFor="let item of items">
-        <ng-container *ngFor="let prop of $any(item) | keyvalue">
-          <th scope="row" *ngIf="prop.key === 'publication_id'">
-            {{ prop.value }}
-          </th>
-        </ng-container>
+        <!--        <ng-container *ngFor="let prop of $any(item) | keyvalue">-->
+        <!--          <th scope="row" *ngIf="prop.key === 'publication_id'">-->
+        <!--            {{ prop.value }}-->
+        <!--          </th>-->
+        <!--        </ng-container>-->
         <ng-container *ngFor="let prop of $any(item) | keyvalue; let firstItem = first">
           <td *ngIf="prop.key !== 'publication_id'">
             {{

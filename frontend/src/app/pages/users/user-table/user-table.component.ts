@@ -57,6 +57,8 @@ export class UserTableComponent<T> implements OnInit, OnChanges {
   }
 
   async onEdit(path: string, id: number): Promise<void> {
+    console.log(this.entityName);
+    console.log(path, id);
     await this.router.navigateByUrl(`${path}/${id}/edit`);
   }
 

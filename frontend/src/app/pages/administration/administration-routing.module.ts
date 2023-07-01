@@ -28,7 +28,7 @@ const routes: Routes = [
   // { path: 'reported-posts/:id/edit', component: AdministrationReportedPostFormComponent },
   { path: 'users', component: AdministrationUsersListComponent },
   { path: 'users/add', component: AdministrationUserFormComponent },
-  { path: 'users/:id/edit', component: AdministrationUserFormComponent },
+  { path: 'users/:username/edit', component: AdministrationUserFormComponent },
 ];
 
 @NgModule({

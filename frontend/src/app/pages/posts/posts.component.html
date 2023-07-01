@@ -15,6 +15,9 @@
       [(page)]="pageParam"
       [pageSize]="20"
       (pageChange)="onPageChange($event)"
+      [maxSize]="3"
+      [rotate]="true"
+      [boundaryLinks]="true"
       *ngIf="$any(posts$ | async)?.length >= 1"
     ></ngb-pagination>
   </div>

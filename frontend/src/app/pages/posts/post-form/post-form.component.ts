@@ -10,7 +10,7 @@ import { CategoriesService } from '../../../shared/core/services/categories/cate
 import { Categorie, Post } from '../shared/models/post.interface';
 import { Response } from '../../../shared/core/models/interfaces/response.interface';
 import { JwtHelperService } from '@auth0/angular-jwt';
-import { catchError, map, of, tap } from 'rxjs';
+import { catchError, map, of } from 'rxjs';
 import { HttpError } from '../../../shared/core/enums/http-error.enums';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Role } from '../../sign-up/shared/enums/role.enum';
@@ -23,11 +23,11 @@ import { Role } from '../../sign-up/shared/enums/role.enum';
 })
 export class PostFormComponent implements OnInit {
   isEditPage = false;
-  categories?: Categorie[];
+  categories: Categorie[] = [];
   form?: FormGroup;
   filePath?: string;
   files?: File[] = [];
-  id = 0;
+  idParam = 0;
   decodedToken?: any;
 
   private removedFiles: any[] = [];
@@ -55,7 +55,7 @@ export class PostFormComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     this.getCategories();
-    this.setIsEditPage();
+    await this.setIsEditPage();
     await this.setDecodedToken();
 
     if (!this.isEditPage) {
@@ -67,14 +67,11 @@ export class PostFormComponent implements OnInit {
   }
 
   getPostById() {
-    // this.router.navigateByUrl("not-found")
-
     this.postsService
-      .getOneById<Response<Post>>('publications', this.id)
+      .getOneById<Response<Post>>('publications', this.idParam)
       .pipe(
         map((res) => res?.data),
         map((data) => {
-          // {pseudonyme: 'b', utilisateur_id: 2, role: 'utilisateur', iat: 1687763160}
           const canEdit = data.utilisateur_id == this.decodedToken.utilisateur_id || this.decodedToken === Role.admin;
           if (!canEdit) {
             return null;
@@ -92,7 +89,6 @@ export class PostFormComponent implements OnInit {
         untilDestroyed(this),
       )
       .subscribe((data) => {
-        console.log('sub', data);
         if (!data) {
           this.router.navigate(['posts'], { queryParams: { page: 1 } });
           this.toastService.showDanger("Vous n'êtes pas autorisé.");
@@ -176,11 +172,6 @@ export class PostFormComponent implements OnInit {
     this.form?.value.images.push(file);
   }
 
-  async setDecodedToken(): Promise<void> {
-    const token = await this.jwtHelper.tokenGetter();
-    this.decodedToken = this.jwtHelper.decodeToken(token);
-  }
-
   onSubmit(): void {
     if (!this.form || this.form?.invalid) {
       return;
@@ -198,29 +189,20 @@ export class PostFormComponent implements OnInit {
     const images = this.images;
     if (Array.isArray(images)) {
       images.forEach((image, i) => {
-        console.log('images', image);
         formData?.append('images', image);
       });
     }
 
-    console.log('removedfiles', this.removedFiles);
     for (const removedFile of this.removedFiles) {
-      // console.log("removedf",removedFile);
       formData?.append('removed_files', removedFile.name);
     }
 
-    // formData?.append("removed_files", )
-
-    // console.log(JSON.stringify(formData.get("removed_files")));
-    // console.log(formData.getAll("removed_files"));
-
     if (this.isEditPage) {
       this.postsService
-        .updateById('publications', this.id, formData)
+        .updateById('publications', this.idParam, formData)
         .pipe(untilDestroyed(this))
         .subscribe((_) => {
-          // this.router.navigate(['posts'], { queryParams: { page: 1 } });
-          // location.href = '/posts';
+          this.router.navigateByUrl(`posts/${this.idParam}`);
           this.toastService.showSuccess('Publication modifiée !');
         });
     } else {
@@ -235,9 +217,26 @@ export class PostFormComponent implements OnInit {
     }
   }
 
-  private setIsEditPage(): void {
-    this.id = Number(this.route.snapshot.paramMap.get('id'));
+  private async setDecodedToken(): Promise<void> {
+    const token = await this.jwtHelper.tokenGetter();
+    this.decodedToken = this.jwtHelper.decodeToken(token);
+  }
 
-    this.isEditPage = !Object.is(NaN, this.id) && this.id > 0;
+  private async setIsEditPage(): Promise<void> {
+    let idParam: null | string | number = this.route.snapshot.paramMap.get('id');
+    if (!idParam) {
+      return;
+    }
+
+    idParam = Number(this.route.snapshot.paramMap.get('id'));
+    const isIdParamValid = !Object.is(NaN, idParam) && idParam > 0;
+    if (!isIdParamValid) {
+      this.toastService.showDanger('La ressource demandée est incorrecte.');
+      await this.router.navigate(['users', 'posts'], { queryParams: { page: 1 } });
+      return;
+    }
+
+    this.idParam = idParam;
+    this.isEditPage = isIdParamValid;
   }
 }

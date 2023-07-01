@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 import { frenchDepartments } from '../../sign-up/shared/data/french-departments';
 import { Status } from '../../sign-up/shared/enums/status.enum';
@@ -10,25 +11,77 @@ import {
   startsWithLetterWhichContainsLetterAndNumbersRegex,
   startsWithNumberWhichContainsLetterOrNumberRegex,
 } from '../../../shared/utils/regex.utils';
+import { User, UserDTO } from '../../../shared/core/models/interfaces/user.interface';
+import { SignUpService } from '../../sign-up/shared/sign-up.service';
+import { ToastService } from '../../../shared/components/toast/shared/toast.service';
+import { AdministrationUsersService } from '../shared/services/administration-users/administration-users.service';
+import { catchError, map, of } from 'rxjs';
+import { Response } from '../../../shared/core/models/interfaces/response.interface';
 
+@UntilDestroy()
 @Component({
   selector: 'app-administration-user-form',
   templateUrl: './administration-user-form.component.html',
   styleUrls: ['./administration-user-form.component.scss'],
 })
 export class AdministrationUserFormComponent {
-  canEdit = false;
+  readonly passwordMinLength = 8;
+
+  isEditPage = false;
   form?: FormGroup;
   frenchDepartments = [...frenchDepartments] as const;
-  readonly passwordMinLength = 8;
   roles: ReadonlyArray<Role> = Object.values(Role);
   statuses: ReadonlyArray<Status> = Object.values(Status);
+  usernameParam: string;
 
-  constructor(private readonly route: ActivatedRoute, private readonly fb: FormBuilder) {}
+  constructor(
+    private readonly administrationUsersService: AdministrationUsersService,
+    private readonly route: ActivatedRoute,
+    private readonly fb: FormBuilder,
+    private readonly router: Router,
+    private readonly signUpService: SignUpService,
+    private readonly toastService: ToastService,
+  ) {
+    this.usernameParam = this.route.snapshot.paramMap.get('username') || '';
+  }
 
-  ngOnInit(): void {
-    this.setCanEdit();
-    this.canEdit ? this.initEditForm() : this.initAddForm();
+  async ngOnInit(): Promise<void> {
+    await this.setIsEditPage();
+
+    if (this.isEditPage) {
+      this.initEditForm();
+      this.getUser(this.usernameParam);
+    } else {
+      this.initAddForm();
+    }
+  }
+
+  getUser(username: string) {
+    this.administrationUsersService
+      .getOneByField<Response<User>>('utilisateurs', username)
+      .pipe(
+        map((res) => res?.data),
+        catchError((_) => of(null)),
+        untilDestroyed(this),
+      )
+      .subscribe((data) => {
+        if (!data) {
+          this.router.navigate(['administration', 'users'], { queryParams: { page: 1 } });
+          return;
+        }
+
+        this.form?.patchValue({
+          nom: data?.nom,
+          prenom: data?.prenom,
+          email: data?.email,
+          // mot_de_passe: data?.mot_de_passe,
+          pseudonyme: data?.pseudonyme,
+          ville: data?.ville,
+          departement: data?.departement,
+          role: data?.role,
+          statut: data?.statut,
+        });
+      });
   }
 
   initAddForm(): void {
@@ -56,7 +109,7 @@ export class AdministrationUserFormComponent {
       nom: this.fb.control('', [Validators.required, Validators.pattern(onlyLettersRegex)]),
       prenom: this.fb.control('', [Validators.required, Validators.pattern(onlyLettersRegex)]),
       email: this.fb.control('', [Validators.required, Validators.email]),
-      mot_de_passe: this.fb.control('', [Validators.required, Validators.minLength(this.passwordMinLength)]),
+      // mot_de_passe: this.fb.control('', [Validators.required, Validators.minLength(this.passwordMinLength)]),
       pseudonyme: this.fb.control('', [
         Validators.required,
         Validators.pattern(startsWithLetterWhichContainsLetterAndNumbersRegex),
@@ -79,18 +132,54 @@ export class AdministrationUserFormComponent {
       return;
     }
 
-    let formattedVille: string;
+    let formattedVille = '';
     const ville = this.form.get('ville')?.value.trim();
     if (ville) {
       formattedVille = ville.charAt(0).toUpperCase() + ville.slice(1).toLowerCase();
     }
 
-    // TODO
+    const role = Role.utilisateur;
+    const statut = Status.active;
+    const payload: UserDTO = {
+      ...this.form.value,
+      ville: formattedVille,
+      role,
+      statut,
+    };
+
+    if (this.isEditPage) {
+      this.administrationUsersService
+        .updateByField('utilisateurs', this.usernameParam, payload)
+        .pipe(untilDestroyed(this))
+        .subscribe((_) => {
+          this.router.navigate(['administration', 'users'], { queryParams: { page: 1 } });
+          this.toastService.showSuccess('Utilisateur modifié !');
+        });
+    } else {
+      this.signUpService
+        .create('utilisateurs', payload)
+        .pipe(untilDestroyed(this))
+        .subscribe((_) => {
+          this.toastService.showSuccess('Utilisateur créé !');
+          this.router.navigateByUrl('administration/users');
+        });
+    }
   }
 
-  setCanEdit(): void {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
+  async setIsEditPage(): Promise<void> {
+    const usernameParam = this.route.snapshot.paramMap.get('username');
+    if (!usernameParam) {
+      return;
+    }
 
-    this.canEdit = !Object.is(NaN, id) && id > 0;
+    const isUsernameParamValid = startsWithLetterWhichContainsLetterAndNumbersRegex.test(usernameParam);
+    if (!isUsernameParamValid) {
+      this.toastService.showDanger('La ressource demandée est incorrecte.');
+      await this.router.navigate(['administration', 'users'], { queryParams: { page: 1 } });
+      return;
+    }
+
+    this.usernameParam = usernameParam;
+    this.isEditPage = isUsernameParamValid;
   }
 }

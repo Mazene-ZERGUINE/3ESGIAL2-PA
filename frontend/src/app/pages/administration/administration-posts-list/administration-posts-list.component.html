@@ -1,1 +1,16 @@
-<app-administration-table [entityName]="entityName" [items]="users" [path]="path"></app-administration-table>
+<app-administration-posts-table [entityName]="entityName" [items]="posts"></app-administration-posts-table>
+
+<ngb-pagination
+  class="d-flex justify-content-center mt-5"
+  aria-label="Posts pagination"
+  [collectionSize]="collectionSize"
+  [(page)]="pageParam"
+  [pageSize]="20"
+  (pageChange)="onPageChange($event)"
+  [maxSize]="3"
+  [rotate]="true"
+  [boundaryLinks]="true"
+  *ngIf="collectionSize >= 1"
+></ngb-pagination>
+
+<app-back-to-top></app-back-to-top>

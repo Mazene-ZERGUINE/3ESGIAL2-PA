@@ -1,5 +1,5 @@
 <div class="col">
-  <h1 class="my-3">{{ canEdit ? 'Edition de catégorie' : 'Ajout de catégorie' }}</h1>
+  <h1 class="my-3">{{ isEditPage ? 'Edition de catégorie' : 'Ajout de catégorie' }}</h1>
 
   <form
     class="border border-secondary border-opacity-50 rounded p-3"
@@ -25,6 +25,6 @@
         Le champ doit contenir un libellé.
       </div>
     </div>
-    <button class="btn btn-outline-success" [disabled]="form.invalid">{{ canEdit ? 'Editer' : 'Ajouter' }}</button>
+    <button class="btn btn-outline-success" [disabled]="form.invalid">{{ isEditPage ? 'Editer' : 'Ajouter' }}</button>
   </form>
 </div>

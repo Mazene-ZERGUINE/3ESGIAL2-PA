@@ -54,10 +54,8 @@ export class UtilisateurController extends CoreController {
 
 		try {
 			const items = await Publication.findAll({
-				// offset: (providedPage - 1) * CoreController.PAGE_SIZE,
-				offset: (providedPage - 1) * 2,
-				// limit: CoreController.PAGE_SIZE,
-				limit: 2,
+				offset: (providedPage - 1) * CoreController.PAGE_SIZE,
+				limit: CoreController.PAGE_SIZE,
 				where: { utilisateur_id },
 				order: [['created_at', 'DESC']],
 			});

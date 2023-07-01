@@ -1,5 +1,5 @@
 <div class="col">
-  <h1 class="my-3">{{ canEdit ? 'Edition' : 'Ajout' }} d'utilisateur</h1>
+  <h1 class="my-3">{{ isEditPage ? 'Edition' : 'Ajout' }} d'utilisateur</h1>
   <form
     class="border border-secondary border-opacity-50 rounded p-3"
     *ngIf="form"
@@ -36,13 +36,24 @@
         Le champ doit contenir un courriel.
       </small>
     </div>
-    <div class="mb-3">
-      <label class="form-label required" for="password">Mot de passe (taille minimale : {{ passwordMinLength }})</label>
-      <input class="form-control" type="password" id="password" name="password" formControlName="password" required />
+    <div class="mb-3" *ngIf="!isEditPage">
+      <label class="form-label required" for="mot_de_passe"
+        >Mot de passe (taille minimale : {{ passwordMinLength }})</label
+      >
+      <input
+        class="form-control"
+        type="password"
+        id="mot_de_passe"
+        name="mot_de_passe"
+        formControlName="mot_de_passe"
+        required
+      />
       <small
         class="text-danger my-2"
         *ngIf="
-          form.get('password')?.touched && form.get('password')?.dirty && form.get('password')?.getError('minlength')
+          form.get('mot_de_passe')?.touched &&
+          form.get('mot_de_passe')?.dirty &&
+          form.get('mot_de_passe')?.getError('minlength')
         "
       >
         Le mot de passe doit contenir au moins {{ passwordMinLength }} caractères.
@@ -115,8 +126,8 @@
         Le champ est incorrect.
       </small>
     </div>
-    <button [ngClass]="canEdit ? 'btn btn-outline-warning' : 'btn btn-outline-success'" [disabled]="form.invalid">
-      {{ canEdit ? 'Editer' : 'Ajouter' }}
+    <button [ngClass]="isEditPage ? 'btn btn-outline-warning' : 'btn btn-outline-success'" [disabled]="form.invalid">
+      {{ isEditPage ? 'Editer' : 'Ajouter' }}
     </button>
   </form>
 </div>

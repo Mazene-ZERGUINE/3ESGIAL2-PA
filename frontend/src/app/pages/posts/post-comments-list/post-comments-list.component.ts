@@ -1,6 +1,8 @@
 import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
-import { PostComment } from '../shared/models/post-comment.interface';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { formatDistanceToNow } from 'date-fns';
+
+import { PostComment } from '../shared/models/post-comment.interface';
 import { ModalFocusConfirmComponent } from '../../../shared/components/modal-focus-confirm/modal-focus-confirm.component';
 import { Path } from '../../../shared/enum/path.enum';
 
@@ -16,6 +18,9 @@ export class PostCommentsListComponent implements OnInit {
   isLoading = false;
   page = 1;
   usersPath = Path.users;
+
+  // TODO remove test date
+  testDate = formatDistanceToNow(new Date('2023-06-26'));
 
   constructor(private readonly modalService: NgbModal) {}
 

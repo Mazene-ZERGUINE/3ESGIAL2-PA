@@ -1,8 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService } from '../../core/services/auth/auth.service';
-import { first, Observable, take } from 'rxjs';
+import { first, Observable } from 'rxjs';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+import { AuthService } from '../../core/services/auth/auth.service';
+
+@UntilDestroy()
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
@@ -12,15 +15,15 @@ export class HeaderComponent {
   readonly isAdmin: Observable<boolean>;
   readonly isAuthenticated: Observable<boolean>;
 
-  backOfficeRoutes: ReadonlyArray<{ path: string; label: string }> = [
-    { path: '/administration/categories', label: 'Catégories' },
-    { path: '/administration/categories/add', label: 'Catégories (ajout)' },
-    { path: '/administration/posts', label: 'Publications' },
-    // { path: '/administration/posts/add', label: 'Publications (ajout)' },
-    { path: '/administration/reported-users', label: 'Signalement utilisateurs' },
-    { path: '/administration/reported-posts/', label: 'Signalement publications' },
-    { path: '/administration/users', label: 'Utilisateurs' },
-    { path: '/administration/users/add', label: 'Utilisateurs (ajout)' },
+  backOfficeRoutes: ReadonlyArray<{ path: string; label: string; queryParams?: { page: number } }> = [
+    { path: '/administration/categories', label: 'Catégories', queryParams: { page: 1 } },
+    // { path: '/administration/categories/add', label: 'Catégories (ajout)' },
+    { path: '/administration/posts', label: 'Publications', queryParams: { page: 1 } },
+    // { path: '/administration/posts/add', label: 'Publications (ajout)', queryParams: {page: 1 },
+    { path: '/administration/reported-posts/', label: 'Signalement publications', queryParams: { page: 1 } },
+    { path: '/administration/reported-users', label: 'Signalement utilisateurs', queryParams: { page: 1 } },
+    { path: '/administration/users', label: 'Utilisateurs', queryParams: { page: 1 } },
+    // { path: '/administration/users/add', label: 'Utilisateurs (ajout)' },
   ];
 
   userRoutes: ReadonlyArray<{ path: string; label: string }> = [
@@ -47,10 +50,10 @@ export class HeaderComponent {
     await this.router.navigate(['login']);
   }
 
-  onLogoutClick() {
+  onLogoutClick(): void {
     this.authService
       .logOut()
-      .pipe(first())
+      .pipe(first(), untilDestroyed(this))
       .subscribe(() => {
         this.authService.deleteToken();
         this.router.navigateByUrl('login');

@@ -1,0 +1,36 @@
+<h1>Administration des catégories</h1>
+
+<div class="table-responsive">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <ng-container *ngFor="let item of $any(items[0]) | keyvalue">
+          <th scope="col">
+            {{ $any(item.key) | titlecase }}
+          </th>
+        </ng-container>
+        <th scope="col">Edition</th>
+        <th scope="col">Suppression</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of items">
+        <ng-container *ngFor="let prop of $any(item) | keyvalue">
+          <td>
+            {{ prop.value }}
+          </td>
+        </ng-container>
+        <td>
+          <button class="btn btn-outline-warning" (click)="onEdit(categoriesPath, $any(item)['categorie_id'])">
+            <i class="bi bi-pencil-fill"></i>
+          </button>
+        </td>
+        <td>
+          <button class="btn btn-outline-danger" disabled (click)="onDelete()">
+            <i class="bi bi-trash-fill"></i>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

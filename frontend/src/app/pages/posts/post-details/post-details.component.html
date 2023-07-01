@@ -33,12 +33,14 @@
       </div>
     </div>
     <span *ngIf="post.utilisateur_id !== currentUserId">
-      <button class="btn btn-outline-info mx-2" (click)="onReport()">
+      <button class="btn btn-outline-info mx-2" (click)="onReport()" *ngIf="!isAuthenticated; else elseButtonBlock">
         <i class="bi bi-exclamation-triangle-fill"></i>
       </button>
-      <button class="btn btn-info mx-2 no-pointer">
-        <i class="bi bi-exclamation-triangle-fill"></i>
-      </button>
+      <ng-template #elseButtonBlock>
+        <button class="btn btn-info mx-2 no-pointer">
+          <i class="bi bi-exclamation-triangle-fill"></i>
+        </button>
+      </ng-template>
     </span>
     <!-- TODO -->
     <button
@@ -61,7 +63,7 @@
       <button class="btn btn-outline-warning mx-2" (click)="onEdit(post.publication_id)">
         <i class="bi bi-pencil-fill"></i>
       </button>
-      <button class="btn btn-outline-danger mx-2" (click)="onDelete()">
+      <button class="btn btn-outline-danger mx-2" disabled (click)="onDelete()">
         <i class="bi bi-trash-fill"></i>
       </button>
     </span>
