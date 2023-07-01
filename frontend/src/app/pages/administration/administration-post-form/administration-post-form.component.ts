@@ -91,7 +91,6 @@ export class AdministrationPostFormComponent {
         untilDestroyed(this),
       )
       .subscribe((data) => {
-        console.log('getPost', data);
         // if (!data) {
         //   this.router.navigate(['posts'], { queryParams: { page: 1 } });
         //   this.toastService.showDanger("Vous n'êtes pas autorisé.");

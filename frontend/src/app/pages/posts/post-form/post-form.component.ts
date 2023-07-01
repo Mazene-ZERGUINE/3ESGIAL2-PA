@@ -14,6 +14,7 @@ import { catchError, map, of } from 'rxjs';
 import { HttpError } from '../../../shared/core/enums/http-error.enums';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Role } from '../../sign-up/shared/enums/role.enum';
+import { onlyLettersRegex } from '../../../shared/utils/regex.utils';
 
 @UntilDestroy()
 @Component({
@@ -29,6 +30,7 @@ export class PostFormComponent implements OnInit {
   files?: File[] = [];
   idParam = 0;
   decodedToken?: any;
+  statuses: ReadonlyArray<Status> = Object.values(Status);
 
   private removedFiles: any[] = [];
 
@@ -109,6 +111,7 @@ export class PostFormComponent implements OnInit {
           description: data?.description,
           images: images,
           categorie: data?.categorie_id,
+          statut: data?.statut,
         });
       });
   }
@@ -135,11 +138,10 @@ export class PostFormComponent implements OnInit {
     this.form = this.fb.group({
       titre: this.fb.control('', [Validators.required]),
       description: this.fb.control(''),
+      statut: this.fb.control('', [Validators.required, Validators.pattern(onlyLettersRegex)]),
       images: this.fb.control([]),
       categorie: this.fb.control(0, [Validators.required, Validators.min(1)]),
     });
-
-    const statut = Status.active;
   }
 
   onDelete(file: File): void {
@@ -182,7 +184,7 @@ export class PostFormComponent implements OnInit {
     const formData = new FormData();
     formData.append('titre', this.form.get('titre')?.value);
     formData.append('description', this.form.get('description')?.value);
-    formData.append('statut', Status.active);
+    formData.append('statut', !this.isEditPage ? Status.active : this.form.get('statut')?.value);
     formData.append('utilisateur_id', String(utilisateur_id));
     formData.append('categorie_id', this.form.get('categorie')?.value);
 
