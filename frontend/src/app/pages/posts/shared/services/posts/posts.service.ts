@@ -25,4 +25,8 @@ export class PostsService extends CoreService {
   emitSelectedPost(post: null | Post) {
     this._selectedPost$.next(post);
   }
+
+  search<T>(path: string, payload: any): Observable<T> {
+    return this.httpClient.post<T>(this.getPath(path), payload);
+  }
 }

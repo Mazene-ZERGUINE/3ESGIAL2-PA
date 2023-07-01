@@ -1,5 +1,17 @@
 import { Component, OnInit } from '@angular/core';
-import { catchError, concatMap, filter, from, Observable, of, switchMap, tap } from 'rxjs';
+import {
+  catchError,
+  concatMap,
+  debounceTime,
+  distinctUntilChanged,
+  filter,
+  from,
+  map,
+  Observable,
+  of,
+  switchMap,
+  tap,
+} from 'rxjs';
 import { ViewportScroller } from '@angular/common';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -10,6 +22,8 @@ import { AuthService } from '../../shared/core/services/auth/auth.service';
 import { PostsService } from './shared/services/posts/posts.service';
 import { Response } from '../../shared/core/models/interfaces/response.interface';
 import { PostLikesService } from '../../shared/core/services/post-likes/post-likes.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { minLengthValidator } from '../../shared/utils/validator.utils';
 
 @UntilDestroy()
 @Component({
@@ -22,14 +36,19 @@ export class PostsComponent implements OnInit {
   readonly likeInfo$?: Observable<{ [key: string]: { count: number; liked: boolean } }>;
   readonly posts$: Observable<null | Post[]>;
 
+  collectionSize = 0;
   currentUserId?: number;
+  form?: FormGroup;
   likeInfo: { [key: number]: { count: number; liked: boolean } } = {};
   selectedPost?: Post;
   pageParam = 1;
-  collectionSize = 0;
+
+  private canGetSearchedPosts = false;
+  private searchTerms: string[] = [];
 
   constructor(
     private readonly authService: AuthService,
+    private readonly fb: FormBuilder,
     private readonly jwtHelper: JwtHelperService,
     private readonly postLikesService: PostLikesService,
     private readonly postsService: PostsService,
@@ -48,8 +67,66 @@ export class PostsComponent implements OnInit {
 
     await this.setCurrentUserId();
     this.getPosts();
+    this.initForm();
 
     this.viewportScroller.scrollToPosition([0, 0]);
+  }
+
+  initForm(): void {
+    this.form = this.fb.group({
+      recherche: this.fb.control('', [Validators.required, minLengthValidator]),
+    });
+
+    this.form
+      .get('recherche')
+      ?.valueChanges.pipe(
+        debounceTime(500),
+        distinctUntilChanged(),
+        filter((search) => {
+          const isInputValid = typeof search === 'string' && Boolean(search.trim());
+          if (!isInputValid) {
+            this.canGetSearchedPosts = false;
+            this.pageParam = 1;
+
+            this.router.navigate(['posts'], { queryParams: { page: this.pageParam } }).then(() => {
+              this.getPosts();
+            });
+          }
+
+          return isInputValid;
+        }),
+        map((search) => String(search).trim().toLowerCase()),
+        tap((term) => {
+          this.searchTerms = term.split(' ');
+          this.canGetSearchedPosts = true;
+          this.pageParam = 1;
+        }),
+        switchMap((term) =>
+          this.postsService.search<Response<{ count: number; rows: Post[] }>>(`publications/search?page=1`, {
+            searches: term.split(' '),
+          }),
+        ),
+        map((res) => res?.data),
+      )
+      .subscribe((data) => {
+        console.log(data);
+        this.collectionSize = data.count;
+        this.postsService.emitPosts(data.rows);
+      });
+  }
+
+  getPostsBySearch(terms: string[]): void {
+    this.postsService
+      .search<Response<{ count: number; rows: Post[] }>>(`publications/search?page=${this.pageParam}`, {
+        searches: terms,
+      })
+      .pipe(
+        map((res) => res?.data),
+        untilDestroyed(this),
+      )
+      .subscribe((data) => {
+        this.postsService.emitPosts(data.rows);
+      });
   }
 
   getPosts(): void {
@@ -108,7 +185,11 @@ export class PostsComponent implements OnInit {
 
   private subscribeToRouter(): void {
     this.router.events.pipe(filter((e) => e instanceof NavigationEnd)).subscribe((_) => {
-      this.getPosts();
+      if (this.canGetSearchedPosts) {
+        this.getPostsBySearch(this.searchTerms);
+      } else {
+        this.getPosts();
+      }
     });
   }
 }

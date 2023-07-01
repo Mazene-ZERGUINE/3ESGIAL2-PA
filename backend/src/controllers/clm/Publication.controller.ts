@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { Op } from 'sequelize';
 import * as fs from 'fs';
 
 import { CoreController } from './Core.controller';
@@ -60,6 +61,53 @@ export class PublicationController extends CoreController {
 				}
 			}
 
+			CoreController.handleError(error, res);
+		}
+	}
+
+	static async search(req: Request, res: Response): Promise<void> {
+		const { page } = req.query;
+		const { searches } = req.body;
+		// TODO check
+		if (!searches || searches.length === 0) {
+			res.status(400).end();
+			return;
+		}
+
+		const providedPage = page ? Number(page) : 1;
+
+		try {
+			const data = await Publication.findAndCountAll({
+				offset: (providedPage - 1) * CoreController.PAGE_SIZE,
+				limit: CoreController.PAGE_SIZE,
+				where: {
+					[Op.or]: [
+						{
+							titre: {
+								[Op.like]: {
+									[Op.any]: searches.map((search: string) => `%${search}%`),
+								},
+							},
+						},
+						{
+							description: {
+								[Op.like]: {
+									[Op.any]: searches.map((search: string) => `%${search}%`),
+								},
+							},
+						},
+					],
+				},
+				include: {
+					all: true,
+					nested: true,
+				},
+				order: [['created_at', 'DESC']],
+				distinct: true,
+			});
+
+			res.status(200).json({ data });
+		} catch (error) {
 			CoreController.handleError(error, res);
 		}
 	}
