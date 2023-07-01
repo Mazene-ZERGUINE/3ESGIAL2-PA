@@ -1,4 +1,23 @@
 <div class="col">
+  <h1 class="my-3">Liste des publications</h1>
+  <div class="row justify-content-center">
+    <form class="col-6 p-3" [formGroup]="form" *ngIf="form">
+      <div class="mb-3">
+        <label class="rounded form-label" for="recherche">Recherche d'annonces</label>
+        <input
+          class="form-control"
+          type="search"
+          id="recherche"
+          name="recherche"
+          placeholder="Rechercher par mot-clé (ex : bonjour le monde)"
+          formControlName="recherche"
+          required
+          autofocus
+        />
+      </div>
+    </form>
+  </div>
+
   <app-posts-list
     [currentUserId]="currentUserId"
     [isAuthenticated]="isAuthenticated$ | async"

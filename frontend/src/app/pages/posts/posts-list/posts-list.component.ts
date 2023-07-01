@@ -11,6 +11,7 @@ import { PostLikesService } from '../../../shared/core/services/post-likes/post-
   selector: 'app-posts-list',
   templateUrl: './posts-list.component.html',
   styleUrls: ['./posts-list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PostsListComponent {
   readonly activeStatus = Status.active;
