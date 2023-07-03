@@ -527,6 +527,38 @@
 							"response": []
 						},
 						{
+							"name": "update password by pseudonyme",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{ADMIN_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"mot_de_passe\": \"aa\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{HOST}}/clm/utilisateurs/a",
+									"host": ["{{HOST}}"],
+									"path": ["clm", "utilisateurs", "a"]
+								}
+							},
+							"response": []
+						},
+						{
 							"name": "delete by id",
 							"request": {
 								"auth": {
