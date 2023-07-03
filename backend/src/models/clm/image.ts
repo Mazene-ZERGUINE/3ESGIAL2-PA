@@ -23,6 +23,7 @@ Image.init(
 				model: 'publication',
 				key: 'publication_id',
 			},
+			onDelete: 'CASCADE',
 		},
 	},
 	{

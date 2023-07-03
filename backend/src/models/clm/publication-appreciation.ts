@@ -8,10 +8,20 @@ PublicationAppreciation.init(
 		publication_id: {
 			type: DataTypes.INTEGER,
 			primaryKey: true,
+			allowNull: true,
+			references: {
+				model: 'publication',
+				key: 'publication_id',
+			},
 		},
 		utilisateur_id: {
 			type: DataTypes.INTEGER,
 			primaryKey: true,
+			allowNull: true,
+			references: {
+				model: 'utilisateur',
+				key: 'utilisateur_id',
+			},
 		},
 	},
 	{

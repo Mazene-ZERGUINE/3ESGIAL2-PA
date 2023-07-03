@@ -65,6 +65,16 @@
 						{
 							"name": "get all",
 							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{ADMIN_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
 								"method": "GET",
 								"header": [],
 								"url": {
@@ -81,9 +91,9 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{HOST}}/clm/categories/1",
+									"raw": "{{HOST}}/clm/categories/5",
 									"host": ["{{HOST}}"],
-									"path": ["clm", "categories", "1"]
+									"path": ["clm", "categories", "5"]
 								}
 							},
 							"response": []
@@ -135,12 +145,22 @@
 						{
 							"name": "delete by id",
 							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{ADMIN_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
 								"method": "DELETE",
 								"header": [],
 								"url": {
-									"raw": "{{HOST}}/clm/categories/1",
+									"raw": "{{HOST}}/clm/categories/6",
 									"host": ["{{HOST}}"],
-									"path": ["clm", "categories", "1"]
+									"path": ["clm", "categories", "6"]
 								}
 							},
 							"response": []
@@ -151,14 +171,37 @@
 					"name": "image",
 					"item": [
 						{
+							"name": "get all",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{HOST}}/clm/images",
+									"host": ["{{HOST}}"],
+									"path": ["clm", "images"]
+								}
+							},
+							"response": []
+						},
+						{
 							"name": "delete by id",
 							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{ADMIN_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
 								"method": "DELETE",
 								"header": [],
 								"url": {
-									"raw": "{{HOST}}/clm/images/1",
+									"raw": "{{HOST}}/clm/images/4",
 									"host": ["{{HOST}}"],
-									"path": ["clm", "images", "1"]
+									"path": ["clm", "images", "4"]
 								}
 							},
 							"response": []
@@ -203,9 +246,9 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{HOST}}/clm/publications/1",
+									"raw": "{{HOST}}/clm/publications/4",
 									"host": ["{{HOST}}"],
-									"path": ["clm", "publications", "1"]
+									"path": ["clm", "publications", "4"]
 								}
 							},
 							"response": []
@@ -262,7 +305,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1dGlsaXNhdGV1cl9pZCI6MSwicHNldWRvbnltZSI6ImEiLCJpYXQiOjE2ODcyNzQ3MDh9.ArxXZ0S-vk5yYQMqINNkIbStatnte5JrXOlKteWAjEg",
+											"value": "{{ADMIN_TOKEN}}",
 											"type": "string"
 										}
 									]
@@ -280,11 +323,55 @@
 					]
 				},
 				{
+					"name": "publication appreciation",
+					"item": [
+						{
+							"name": "get all",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{ADMIN_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{HOST}}/clm/appreciations/publications?page=1",
+									"host": ["{{HOST}}"],
+									"path": ["clm", "appreciations", "publications"],
+									"query": [
+										{
+											"key": "page",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
 					"name": "session",
 					"item": [
 						{
 							"name": "get all",
 							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{ADMIN_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
 								"method": "GET",
 								"header": [],
 								"url": {
@@ -352,6 +439,16 @@
 						{
 							"name": "get publications",
 							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{ADMIN_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
 								"method": "GET",
 								"header": [],
 								"url": {
@@ -432,12 +529,22 @@
 						{
 							"name": "delete by id",
 							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{ADMIN_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
 								"method": "DELETE",
 								"header": [],
 								"url": {
-									"raw": "{{HOST}}/clm/utilisateurs/1",
+									"raw": "{{HOST}}/clm/utilisateurs/2",
 									"host": ["{{HOST}}"],
-									"path": ["clm", "utilisateurs", "1"]
+									"path": ["clm", "utilisateurs", "2"]
 								}
 							},
 							"response": []

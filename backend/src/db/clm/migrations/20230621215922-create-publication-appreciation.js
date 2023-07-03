@@ -6,10 +6,22 @@ module.exports = {
 			publication_id: {
 				type: Sequelize.INTEGER,
 				primaryKey: true,
+				allowNull: true,
+				references: {
+					model: 'publication',
+					key: 'publication_id',
+				},
+				onDelete: 'CASCADE',
 			},
 			utilisateur_id: {
 				type: Sequelize.INTEGER,
 				primaryKey: true,
+				allowNull: true,
+				references: {
+					model: 'publication',
+					key: 'publication_id',
+				},
+				onDelete: 'CASCADE',
 			},
 		});
 	},
