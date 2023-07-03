@@ -17,6 +17,7 @@ router
 	.get('/:pseudonyme/publications/count', isAuthenticated, UtilisateurController.countAllPublications)
 	.post('/', UtilisateurController.create)
 	.put('/:pseudonyme', isAuthenticated, UtilisateurController.updateByPseudonyme)
+	.patch('/:pseudonyme', isAuthenticated, UtilisateurController.updatePassword)
 	.delete('/:id', isAuthenticated, UtilisateurController.coreDeleteById(Utilisateur));
 
 export default router;

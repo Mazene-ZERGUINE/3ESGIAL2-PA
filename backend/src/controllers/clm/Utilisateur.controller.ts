@@ -107,6 +107,33 @@ export class UtilisateurController extends CoreController {
 		}
 	}
 
+	static async updatePassword(req: Request, res: Response): Promise<void> {
+		const { mot_de_passe } = req.body;
+		const { pseudonyme: pseudonymeParam } = req.params;
+		// TODO check
+
+		try {
+			const currentUser = await Utilisateur.findOne({ where: { pseudonyme: pseudonymeParam } });
+			if (!currentUser) {
+				res.status(404).end();
+				return;
+			}
+
+			const shouldChangePassword = !(await Argon2.verify(currentUser?.getDataValue('mot_de_passe'), mot_de_passe));
+			if (!shouldChangePassword) {
+				res.status(400).json({ message: 'Le mot de passe est identique.' });
+				return;
+			}
+
+			currentUser.set({ mot_de_passe: await Argon2.hash(mot_de_passe) });
+			await currentUser.save();
+
+			res.status(200).end();
+		} catch (error) {
+			CoreController.handleError(error, res);
+		}
+	}
+
 	static async updateByPseudonyme(req: Request, res: Response): Promise<void> {
 		const { email, pseudonyme, nom, prenom, departement, ville, role, statut } = req.body;
 		const { pseudonyme: pseudonymeParam } = req.params;
