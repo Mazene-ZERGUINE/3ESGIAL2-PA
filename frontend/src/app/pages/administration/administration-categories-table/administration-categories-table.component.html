@@ -1,5 +1,11 @@
 <h1>Administration des catégories</h1>
 
+<div class="d-flex justify-content-end">
+  <button class="btn btn-outline-success" (click)="onAdd(categoriesPath)">
+    <i class="bi bi-plus-lg"></i>
+  </button>
+</div>
+
 <div class="table-responsive">
   <table class="table table-striped">
     <thead>
@@ -26,7 +32,7 @@
           </button>
         </td>
         <td>
-          <button class="btn btn-outline-danger" disabled (click)="onDelete()">
+          <button class="btn btn-outline-danger" (click)="onDelete(categoriesPath, $any(item)['categorie_id'])">
             <i class="bi bi-trash-fill"></i>
           </button>
         </td>

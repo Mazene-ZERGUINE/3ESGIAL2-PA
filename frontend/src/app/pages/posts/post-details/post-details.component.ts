@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { catchError, map, Observable, of, switchMap } from 'rxjs';
+import { catchError, map, Observable, of, switchMap, tap } from 'rxjs';
 
 import { PostsService } from '../shared/services/posts/posts.service';
 import { Post } from '../shared/models/post.interface';
@@ -22,6 +22,7 @@ export class PostDetailsComponent implements OnInit, OnDestroy {
   readonly postId: number;
   readonly isIdInvalid: boolean;
 
+  canContinue = true;
   currentUserId?: number;
   isAuthenticated: boolean;
   likeInfo?: { count: number; liked: boolean };
@@ -47,19 +48,21 @@ export class PostDetailsComponent implements OnInit, OnDestroy {
     }
 
     this.subscribeToSelectedPost$();
-
-    await this.setCurrentUserId();
-    this.getByPostId(this.postId);
   }
 
-  getByPostId(postId: number): void {
+  getLikesByPostId(postId: number): void {
     this.postLikesService
       .getByPostId<Response<{ count: number; liked: boolean }>>(`appreciations/publications`, postId)
       .pipe(
         map((res) => res?.data),
+        catchError((_) => of(null)),
         untilDestroyed(this),
       )
       .subscribe((data) => {
+        if (!data) {
+          return;
+        }
+
         this.likeInfo = { count: data.count, liked: data.liked };
         this.postLikesService.emitCurrentCountPost(data.count);
       });
@@ -93,7 +96,7 @@ export class PostDetailsComponent implements OnInit, OnDestroy {
       .create(`appreciations/publications/${postId}/count`, { publication_id: postId })
       .pipe(untilDestroyed(this))
       .subscribe((_) => {
-        this.getByPostId(postId);
+        this.getLikesByPostId(postId);
       });
   }
 
@@ -108,7 +111,7 @@ export class PostDetailsComponent implements OnInit, OnDestroy {
       .deleteLike(`appreciations/publications`, postId)
       .pipe(untilDestroyed(this))
       .subscribe((_) => {
-        this.getByPostId(postId);
+        this.getLikesByPostId(postId);
       });
   }
 
@@ -149,13 +152,25 @@ export class PostDetailsComponent implements OnInit, OnDestroy {
           return this.postsService.getOneById<Response<Post>>('publications', this.postId);
         }),
         map((res) => res?.data),
+        tap(async (data) => {
+          if (!data) {
+            return;
+          }
+
+          await this.setCurrentUserId();
+          this.getLikesByPostId(this.postId);
+        }),
         catchError((err) => {
           this.router.navigateByUrl('/not-found', { skipLocationChange: true });
-          return of(err);
+          return of(null);
         }),
         untilDestroyed(this),
       )
       .subscribe((data) => {
+        if (!data) {
+          return;
+        }
+
         this.post = data;
       });
   }

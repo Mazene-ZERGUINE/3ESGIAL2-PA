@@ -1,4 +1,4 @@
-<app-user-table [entityName]="entityName" [items]="posts" [path]="path"></app-user-table>
+<app-user-table [entityName]="entityName" [items]="posts" [path]="path" (deleted)="getPosts()"></app-user-table>
 
 <div class="d-flex justify-content-center mt-5" *ngIf="posts.length >= 1">
   <ngb-pagination

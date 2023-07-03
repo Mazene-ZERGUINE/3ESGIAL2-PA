@@ -18,7 +18,7 @@ export interface PostDTO {
   statut: Status;
   images: Image[];
   utilisateur_id: number;
-  categorie_id: number;
+  categorie_id: null | number;
   created_at: Date;
   updated_at: null | Date;
 }

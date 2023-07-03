@@ -1,6 +1,7 @@
 <app-administration-categories-table
   [entityName]="entityName"
   [items]="categories"
+  (deleted)="getCategories()"
 ></app-administration-categories-table>
 
 <ngb-pagination

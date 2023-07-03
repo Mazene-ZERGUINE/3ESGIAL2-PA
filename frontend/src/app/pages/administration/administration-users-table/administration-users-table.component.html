@@ -50,7 +50,7 @@
           </button>
         </td>
         <td>
-          <button class="btn btn-outline-danger" disabled (click)="onDelete()">
+          <button class="btn btn-outline-danger" (click)="onDelete('utilisateurs', $any(item)['utilisateur_id'])">
             <i class="bi bi-trash-fill"></i>
           </button>
         </td>

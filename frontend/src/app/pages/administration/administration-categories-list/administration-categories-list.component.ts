@@ -34,7 +34,7 @@ export class AdministrationCategoriesListComponent implements OnInit {
     this.getCategories();
   }
 
-  getCategories() {
+  getCategories(): void {
     this.administrationCategoriesService
       .count<Response<number>>('categories/count')
       .pipe(
