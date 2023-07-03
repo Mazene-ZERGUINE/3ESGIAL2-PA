@@ -31,6 +31,7 @@ export class UserProfileComponent {
 
   currentUserId?: number;
   form?: FormGroup;
+  passwordForm?: FormGroup;
   frenchDepartments = [...frenchDepartments] as const;
 
   private decodedToken: any;
@@ -50,6 +51,8 @@ export class UserProfileComponent {
     await this.setDecodeToken();
     this.getUserProfile();
     await this.setCurrentUserId();
+
+    this.initPasswordForm();
   }
 
   getUserProfile() {
@@ -98,6 +101,13 @@ export class UserProfileComponent {
     });
   }
 
+  initPasswordForm(): void {
+    this.passwordForm = this.fb.group({
+      mot_de_passe: this.fb.control('', [Validators.required, Validators.minLength(this.passwordMinLength)]),
+      mot_de_passe_2: this.fb.control('', [Validators.required, Validators.minLength(this.passwordMinLength)]),
+    });
+  }
+
   async onDelete(path: string, id: number): Promise<void> {
     try {
       const hasUserValidated = await this.modalService.open(ModalFocusConfirmComponent).result;
@@ -113,6 +123,31 @@ export class UserProfileComponent {
           this.router.navigateByUrl('signup');
         });
     } catch (e) {}
+  }
+
+  onPasswordSubmit(): void {
+    if (!this.passwordForm) {
+      return;
+    }
+    if (this.passwordForm.invalid) {
+      return;
+    }
+    if (this.passwordForm.get('mot_de_passe')?.value !== this.passwordForm.get('mot_de_passe_2')?.value) {
+      this.toastService.showDanger('Les mot de passe doivent être identiques.');
+      return;
+    }
+
+    const payload = {
+      mot_de_passe: this.passwordForm.get('mot_de_passe')?.value,
+    };
+
+    this.userProfileService
+      .updatePatch('utilisateurs', this.decodedToken.pseudonyme, payload)
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.toastService.showSuccess('Mot de passe modifié !');
+        this.passwordForm?.reset();
+      });
   }
 
   onSubmit(): void {
@@ -132,7 +167,7 @@ export class UserProfileComponent {
     };
 
     this.userProfileService
-      .updateByField('utilisateurs', this.decodedToken.pseudonyme, payload)
+      .updatePutByField('utilisateurs', this.decodedToken.pseudonyme, payload)
       .pipe(untilDestroyed(this))
       .subscribe(() => {
         this.authService.deleteToken();

@@ -42,14 +42,17 @@ export abstract class CoreService {
   //#endregion  GET methods
 
   //#region     UPDATE methods
-  updateByField(path: string, field: string, payload: any): Observable<void> {
+  updatePutByField(path: string, field: string, payload: any): Observable<void> {
     return this.httpClient.put<void>(this.getPath(path, field), payload);
   }
 
-  updateById(path: string, id: number, payload: any): Observable<void> {
+  updatePutById(path: string, id: number, payload: any): Observable<void> {
     return this.httpClient.put<void>(this.getPath(path, id), payload);
   }
 
+  updatePatch(path: string, field: string, payload: any): Observable<void> {
+    return this.httpClient.patch<void>(this.getPath(path, field), payload);
+  }
   //#endregion  UPDATE methods
 
   protected getPath(_path: string, id?: number | string): string {

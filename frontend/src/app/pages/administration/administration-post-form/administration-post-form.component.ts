@@ -186,7 +186,7 @@ export class AdministrationPostFormComponent {
     }
 
     this.administrationPostsService
-      .updateById('publications', this.idParam, formData)
+      .updatePutById('publications', this.idParam, formData)
       .pipe(untilDestroyed(this))
       .subscribe((_) => {
         this.router.navigate(['administration', 'posts'], { queryParams: { page: 1 } });

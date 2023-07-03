@@ -72,7 +72,7 @@ export class AdministrationCategoryFormComponent {
 
     if (this.isEditPage) {
       this.administrationCategoriesService
-        .updateById('categories', this.idParam, this.form.value)
+        .updatePutById('categories', this.idParam, this.form.value)
         .pipe(untilDestroyed(this))
         .subscribe((_) => {
           this.router.navigate(['administration', 'categories'], { queryParams: { page: 1 } });

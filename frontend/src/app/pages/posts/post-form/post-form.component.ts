@@ -201,7 +201,7 @@ export class PostFormComponent implements OnInit {
 
     if (this.isEditPage) {
       this.postsService
-        .updateById('publications', this.idParam, formData)
+        .updatePutById('publications', this.idParam, formData)
         .pipe(untilDestroyed(this))
         .subscribe((_) => {
           this.router.navigateByUrl(`posts/${this.idParam}`);
