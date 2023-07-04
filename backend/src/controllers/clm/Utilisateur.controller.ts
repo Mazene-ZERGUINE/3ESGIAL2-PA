@@ -1,13 +1,16 @@
 import { Request, Response } from 'express';
+import { decode } from 'jsonwebtoken';
+import { hash } from 'argon2';
+import { createTransport } from 'nodemailer';
 
 import { CoreController } from './Core.controller';
 import { Utilisateur } from '../../models/clm/utilisateur';
-
 import { frenchDepartmentsData } from '../../utils/clm/data/french-departments.data';
 import { Argon2 } from '../../utils/clm/argon.utils';
-import { decode } from 'jsonwebtoken';
 import { Publication } from '../../models/clm/publication';
 import { Role } from '../../enum/clm/role.enum';
+import { MailOptions } from 'nodemailer/lib/smtp-transport';
+import { getEmailTemplate } from '../../utils/clm/email-template';
 
 export class UtilisateurController extends CoreController {
 	static async create(req: Request, res: Response): Promise<void> {

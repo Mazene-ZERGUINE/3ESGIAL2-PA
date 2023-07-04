@@ -5,8 +5,11 @@ export abstract class CoreController {
 
 	static coreCreateWithoutTimestamps(model: any, fieldToCheck: string) {
 		return async (req: Request, res: Response) => {
+			const field = req.body[fieldToCheck];
+			// TODO check
+
 			try {
-				if (await model.findOne({ where: { [fieldToCheck]: req.body[fieldToCheck] } })) {
+				if (await model.findOne({ where: { [fieldToCheck]: field } })) {
 					res.status(409).json({ message: 'La catégorie existe déjà.' });
 					return;
 				}
