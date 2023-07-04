@@ -94,6 +94,26 @@ export class UtilisateurController extends CoreController {
 		}
 	}
 
+	static async countAllPublicationsWithoutAuth(req: Request, res: Response): Promise<void> {
+		const { pseudonyme } = req.params;
+
+		try {
+			const utilisateur = await Utilisateur.findOne({ where: { pseudonyme } });
+			if (!utilisateur) {
+				res.status(404).end();
+				return;
+			}
+
+			const { count } = await Publication.findAndCountAll({
+				where: { utilisateur_id: utilisateur.getDataValue('utilisateur_id') },
+			});
+
+			res.status(200).json({ data: count });
+		} catch (error) {
+			CoreController.handleError(error, res);
+		}
+	}
+
 	static async getByPseudonyme(req: Request, res: Response): Promise<void> {
 		const { pseudonyme } = req.params;
 
