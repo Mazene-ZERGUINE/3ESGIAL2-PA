@@ -7,7 +7,7 @@ import { isAuthenticated } from '../../middlewares/clm/auth.middleware';
 // TODO middlewares
 const router = Router();
 router
-	// .get('/', ImageController.coreGetAll(Image))
+	.get('/', ImageController.coreGetAllWithoutInclude(Image, 'image'))
 	// .get('/:id', ImageController.coreGetOneByPk(Image))
 	.delete('/:id', isAuthenticated, ImageController.coreDeleteById(Image)); // todo: might replace the method
 

@@ -29,6 +29,7 @@ import {
 export class UserProfileComponent {
   readonly passwordMinLength = 8;
 
+  currentUserId?: number;
   form?: FormGroup;
   frenchDepartments = [...frenchDepartments] as const;
 
@@ -48,6 +49,7 @@ export class UserProfileComponent {
     this.initForm();
     await this.setDecodeToken();
     this.getUserProfile();
+    await this.setCurrentUserId();
   }
 
   getUserProfile() {
@@ -96,17 +98,21 @@ export class UserProfileComponent {
     });
   }
 
-  async onDelete(): Promise<void> {
-    let hasUserValidated;
+  async onDelete(path: string, id: number): Promise<void> {
     try {
-      hasUserValidated = await this.modalService.open(ModalFocusConfirmComponent).result;
-    } catch (_) {}
+      const hasUserValidated = await this.modalService.open(ModalFocusConfirmComponent).result;
+      if (!hasUserValidated) {
+        return;
+      }
 
-    if (!hasUserValidated) {
-      return;
-    }
-
-    // TODO
+      this.userProfileService
+        .delete(path, id)
+        .pipe(untilDestroyed(this))
+        .subscribe((_) => {
+          this.authService.deleteToken();
+          this.router.navigateByUrl('signup');
+        });
+    } catch (e) {}
   }
 
   onSubmit(): void {
@@ -133,6 +139,10 @@ export class UserProfileComponent {
         this.toastService.showSuccess('Profil modifié !');
         this.router.navigateByUrl('login');
       });
+  }
+
+  private async setCurrentUserId(): Promise<void> {
+    this.currentUserId = await this.authService.getCurrentUserId();
   }
 
   private async setDecodeToken(): Promise<void> {

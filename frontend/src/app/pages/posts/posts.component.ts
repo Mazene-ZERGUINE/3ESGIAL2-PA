@@ -109,7 +109,6 @@ export class PostsComponent implements OnInit {
         map((res) => res?.data),
       )
       .subscribe((data) => {
-        console.log(data);
         this.collectionSize = data.count;
         this.postsService.emitPosts(data.rows);
       });
@@ -148,11 +147,14 @@ export class PostsComponent implements OnInit {
           return from(posts).pipe(
             concatMap((post) => {
               publication_id = post.publication_id;
-              return this.postLikesService.getByPostId('appreciations/publications', post.publication_id);
+              return this.postLikesService.getByPostId<Response<{ count: number; liked: boolean }>>(
+                'appreciations/publications',
+                post.publication_id,
+              );
             }),
           );
         }),
-        tap((data: any) => {
+        tap((data) => {
           this.likeInfo[publication_id] = { count: data.data.count, liked: data.data.liked };
         }),
         catchError((err) => of(err)),

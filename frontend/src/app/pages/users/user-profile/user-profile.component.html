@@ -79,6 +79,8 @@
   </form>
 
   <div class="d-flex justify-content-end mt-4">
-    <button class="btn btn-outline-danger" [disabled]="true" (click)="onDelete()">Supprimer le compte</button>
+    <button class="btn btn-outline-danger" (click)="onDelete('utilisateurs', currentUserId ?? 0)">
+      Supprimer le compte
+    </button>
   </div>
 </div>

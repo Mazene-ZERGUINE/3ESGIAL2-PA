@@ -24,6 +24,7 @@ Publication.init(
 		},
 		categorie_id: {
 			type: DataTypes.INTEGER,
+			allowNull: true,
 			references: {
 				model: 'categorie',
 				key: 'categorie_id',
@@ -48,19 +49,21 @@ Publication.init(
 
 //#region 		publication & utilisateur
 Publication.belongsTo(Utilisateur, { foreignKey: 'utilisateur_id' });
-Utilisateur.hasMany(Publication, { foreignKey: 'utilisateur_id' });
+Utilisateur.hasMany(Publication, { foreignKey: 'utilisateur_id', onDelete: 'CASCADE' });
 //#endregion	publication & utilisateur
 
-//#region 		publication & utilisateur
+//#region 		publication & publication-appreciation
 Publication.belongsToMany(Utilisateur, {
 	through: PublicationAppreciation,
 	foreignKey: 'publication_id',
 	otherKey: 'utilisateur_id',
+	onDelete: 'CASCADE',
 });
 
 Utilisateur.belongsToMany(Publication, {
 	through: PublicationAppreciation,
 	foreignKey: 'utilisateur_id',
 	otherKey: 'publication_id',
+	onDelete: 'CASCADE',
 });
-//#endregion	publication & utilisateur
+//#endregion	publication & publication-appreciation

@@ -24,13 +24,16 @@ module.exports = {
 					model: 'utilisateur',
 					key: 'utilisateur_id',
 				},
+				onDelete: 'CASCADE',
 			},
 			categorie_id: {
 				type: Sequelize.INTEGER,
+				allowNull: true,
 				references: {
 					model: 'categorie',
 					key: 'categorie_id',
 				},
+				onDelete: 'SET NULL',
 			},
 			created_at: {
 				allowNull: false,

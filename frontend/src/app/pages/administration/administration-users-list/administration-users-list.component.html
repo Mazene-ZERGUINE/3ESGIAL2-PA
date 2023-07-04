@@ -1,4 +1,8 @@
-<app-administration-users-table [entityName]="entityName" [items]="users"></app-administration-users-table>
+<app-administration-users-table
+  [entityName]="entityName"
+  [items]="users"
+  (deleted)="getUsers()"
+></app-administration-users-table>
 
 <ngb-pagination
   class="d-flex justify-content-center mt-5"

@@ -30,5 +30,5 @@ Session.init(
 
 //#region 		session & utilisateur
 Session.belongsTo(Utilisateur, { foreignKey: 'utilisateur_id' });
-Utilisateur.hasMany(Session, { foreignKey: 'utilisateur_id' });
+Utilisateur.hasMany(Session, { foreignKey: 'utilisateur_id', onDelete: 'CASCADE' });
 //#endregion 	session & utilisateur

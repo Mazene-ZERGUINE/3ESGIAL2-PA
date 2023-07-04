@@ -1,4 +1,8 @@
-<app-administration-posts-table [entityName]="entityName" [items]="posts"></app-administration-posts-table>
+<app-administration-posts-table
+  [entityName]="entityName"
+  [items]="posts"
+  (deleted)="getPosts()"
+></app-administration-posts-table>
 
 <ngb-pagination
   class="d-flex justify-content-center mt-5"

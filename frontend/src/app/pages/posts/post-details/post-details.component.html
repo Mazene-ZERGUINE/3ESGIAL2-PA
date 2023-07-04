@@ -15,7 +15,10 @@
       </div>
     </div>
     <p>
-      <span class="badge rounded-pill text-bg-secondary">{{ $any(post)['categorie']['libelle'] }}</span>
+      <span
+        class="badge rounded-pill text-bg-secondary"
+        >{{ $any(post)['categorie']?.['libelle'] ?? 'sans catégorie' }}</span
+      >
     </p>
     <p>
       <small class="text-body-secondary">

@@ -60,6 +60,22 @@
         </button>
       </li>
     </ul>
+    <div class="mb-3" *ngIf="isEditPage">
+      <label class="form-label required" for="statut">Statut</label>
+      <select class="form-select" formControlName="statut" id="statut" aria-label="Sélection de statut">
+        <ng-container *ngFor="let status of statuses">
+          <option [value]="status" *ngIf="status !== 'banni'">
+            {{ status }}
+          </option>
+        </ng-container>
+      </select>
+      <small
+        class="text-danger my-2"
+        *ngIf="form.get('statut')?.touched && form.get('statut')?.dirty && form.get('statut')?.getError('pattern')"
+      >
+        Le champ est incorrect.
+      </small>
+    </div>
     <button [ngClass]="isEditPage ? 'btn btn-outline-warning' : 'btn btn-outline-success'" [disabled]="form.invalid">
       {{ isEditPage ? 'Editer' : 'Ajouter' }}
     </button>

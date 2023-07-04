@@ -21,6 +21,7 @@ module.exports = {
 					model: 'publication',
 					key: 'publication_id',
 				},
+				onDelete: 'CASCADE',
 			},
 		});
 	},
