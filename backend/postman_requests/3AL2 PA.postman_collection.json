@@ -505,6 +505,28 @@
 							"response": []
 						},
 						{
+							"name": "send forgotten passwd",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\": \"lzhu3@myges.fr\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{HOST}}/clm/utilisateurs/forgotten-password",
+									"host": ["{{HOST}}"],
+									"path": ["clm", "utilisateurs", "forgotten-password"]
+								}
+							},
+							"response": []
+						},
+						{
 							"name": "update by pseudonyme",
 							"request": {
 								"method": "PUT",
@@ -512,6 +534,38 @@
 								"body": {
 									"mode": "raw",
 									"raw": "{\n    \"email\": \"a@email.fr\",\n    \"mot_de_passe\": \"$argon2id$v=19$m=65536,t=3,p=4$iKwAQzwwpAIkIWamJJS20w$b0q/mug2NNW32HpBbrDbZjnvMSfimiWE78TOoufIIEM\",\n    \"pseudonyme\": \"a\",\n    \"nom\": \"nom a\",\n    \"prenom\": \"prenom\",\n    \"departement\": \"75\",\n    \"ville\": \"paris\",\n    \"role\": \"utilisateur\",\n    \"statut\": \"actif\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{HOST}}/clm/utilisateurs/a",
+									"host": ["{{HOST}}"],
+									"path": ["clm", "utilisateurs", "a"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update password by pseudonyme",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{ADMIN_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"mot_de_passe\": \"aa\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"

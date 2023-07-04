@@ -1,10 +1,13 @@
 import { Request, Response } from 'express';
 import { sign } from 'jsonwebtoken';
+import { createTransport } from 'nodemailer';
+import { MailOptions } from 'nodemailer/lib/smtp-transport';
 
 import { Utilisateur } from '../../models/clm/utilisateur';
 import { Argon2 } from '../../utils/clm/argon.utils';
 import { Session } from '../../models/clm/session';
 import { CoreController } from './Core.controller';
+import { getEmailTemplate } from '../../utils/clm/email-template';
 
 export class AuthController extends CoreController {
 	static async logIn(req: Request, res: Response): Promise<void> {
@@ -64,6 +67,44 @@ export class AuthController extends CoreController {
 				await session.destroy();
 			}
 
+			res.status(200).end();
+		} catch (error) {
+			CoreController.handleError(error, res);
+		}
+	}
+
+	static async sendMailWithPassword(req: Request, res: Response): Promise<void> {
+		const { email } = req.body;
+		// TODO check
+
+		try {
+			const utilisateur = await Utilisateur.findOne({ where: { email } });
+			if (!utilisateur) {
+				res.status(404).end();
+				return;
+			}
+
+			const randomPassword = Math.random().toString(36).substring(2);
+			utilisateur.set({ mot_de_passe: await Argon2.hash(randomPassword) });
+			await utilisateur.save();
+
+			const transporter = createTransport({
+				service: 'gmail',
+				secure: false,
+				auth: {
+					user: 'clm480416@gmail.com',
+					pass: 'wyvigfqonzvghouv',
+				},
+			});
+
+			const mailOptions: MailOptions = {
+				from: 'CLM <clm480416@gmail.com>',
+				to: email,
+				subject: 'Récupération de mot de passe ',
+				html: getEmailTemplate({ prenom: utilisateur.getDataValue('prenom'), mot_de_passe: randomPassword }),
+			};
+
+			await transporter.sendMail(mailOptions);
 			res.status(200).end();
 		} catch (error) {
 			CoreController.handleError(error, res);

@@ -149,7 +149,7 @@ export class AdministrationUserFormComponent {
 
     if (this.isEditPage) {
       this.administrationUsersService
-        .updateByField('utilisateurs', this.usernameParam, payload)
+        .updatePutByField('utilisateurs', this.usernameParam, payload)
         .pipe(untilDestroyed(this))
         .subscribe((_) => {
           this.router.navigate(['administration', 'users'], { queryParams: { page: 1 } });

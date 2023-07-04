@@ -3,9 +3,17 @@ import { Request, Response } from 'express';
 export abstract class CoreController {
 	static readonly PAGE_SIZE = 20;
 
-	static coreCreateWithoutTimestamps(model: any) {
+	static coreCreateWithoutTimestamps(model: any, fieldToCheck: string) {
 		return async (req: Request, res: Response) => {
+			const field = req.body[fieldToCheck];
+			// TODO check
+
 			try {
+				if (await model.findOne({ where: { [fieldToCheck]: field } })) {
+					res.status(409).json({ message: 'La catégorie existe déjà.' });
+					return;
+				}
+
 				await model.create({ ...req.body });
 				res.status(201).end();
 			} catch (error) {

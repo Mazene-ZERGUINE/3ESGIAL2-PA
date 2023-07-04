@@ -1,13 +1,16 @@
 import { Request, Response } from 'express';
+import { decode } from 'jsonwebtoken';
+import { hash } from 'argon2';
+import { createTransport } from 'nodemailer';
 
 import { CoreController } from './Core.controller';
 import { Utilisateur } from '../../models/clm/utilisateur';
-
 import { frenchDepartmentsData } from '../../utils/clm/data/french-departments.data';
 import { Argon2 } from '../../utils/clm/argon.utils';
-import { decode } from 'jsonwebtoken';
 import { Publication } from '../../models/clm/publication';
 import { Role } from '../../enum/clm/role.enum';
+import { MailOptions } from 'nodemailer/lib/smtp-transport';
+import { getEmailTemplate } from '../../utils/clm/email-template';
 
 export class UtilisateurController extends CoreController {
 	static async create(req: Request, res: Response): Promise<void> {
@@ -102,6 +105,33 @@ export class UtilisateurController extends CoreController {
 			}
 
 			res.status(200).json({ data: utilisateur });
+		} catch (error) {
+			CoreController.handleError(error, res);
+		}
+	}
+
+	static async updatePassword(req: Request, res: Response): Promise<void> {
+		const { mot_de_passe } = req.body;
+		const { pseudonyme: pseudonymeParam } = req.params;
+		// TODO check
+
+		try {
+			const currentUser = await Utilisateur.findOne({ where: { pseudonyme: pseudonymeParam } });
+			if (!currentUser) {
+				res.status(404).end();
+				return;
+			}
+
+			const shouldChangePassword = !(await Argon2.verify(currentUser?.getDataValue('mot_de_passe'), mot_de_passe));
+			if (!shouldChangePassword) {
+				res.status(400).json({ message: 'Le mot de passe est identique.' });
+				return;
+			}
+
+			currentUser.set({ mot_de_passe: await Argon2.hash(mot_de_passe) });
+			await currentUser.save();
+
+			res.status(200).end();
 		} catch (error) {
 			CoreController.handleError(error, res);
 		}

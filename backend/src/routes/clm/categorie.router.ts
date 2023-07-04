@@ -9,7 +9,7 @@ router
 	.get('/', [isAuthenticated], CategorieController.coreGetAllWithoutInclude(Categorie, 'categorie'))
 	.get('/count', [isAuthenticated], CategorieController.coreCount(Categorie))
 	.get('/:id', CategorieController.coreGetOneByPk(Categorie))
-	.post('/', [isAuthenticated, isAdministrator], CategorieController.coreCreateWithoutTimestamps(Categorie))
+	.post('/', [isAuthenticated, isAdministrator], CategorieController.coreCreateWithoutTimestamps(Categorie, 'libelle'))
 	.put('/:id', [isAuthenticated, isAdministrator], CategorieController.coreUpdateByIdWithoutTimestamps(Categorie))
 	.delete('/:id', [isAuthenticated, isAdministrator], CategorieController.coreDeleteById(Categorie));
 

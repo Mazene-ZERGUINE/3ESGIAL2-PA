@@ -78,6 +78,61 @@
     <button class="btn btn-outline-warning" [disabled]="form.invalid">Modifier</button>
   </form>
 
+  <form
+    class="border border-secondary border-opacity-50 rounded p-3 my-5"
+    *ngIf="passwordForm"
+    [formGroup]="passwordForm"
+    (ngSubmit)="onPasswordSubmit()"
+  >
+    <div class="mb-3">
+      <label class="form-label required" for="mot_de_passe">
+        Mot de passe (taille minimale : {{ passwordMinLength }})
+      </label>
+      <input
+        class="form-control"
+        type="password"
+        id="mot_de_passe"
+        name="mot_de_passe"
+        placeholder="Nouveau mot de passe"
+        formControlName="mot_de_passe"
+        required
+      />
+      <small
+        class="text-danger my-2"
+        *ngIf="
+          passwordForm.get('mot_de_passe')?.touched &&
+          passwordForm.get('mot_de_passe')?.dirty &&
+          passwordForm.get('mot_de_passe')?.getError('minlength')
+        "
+      >
+        Le mot de passe doit contenir au moins {{ passwordMinLength }} caractères.
+      </small>
+    </div>
+    <div class="mb-3">
+      <label class="form-label required" for="mot_de_passe_2"> Confirmation du mot de passe </label>
+      <input
+        class="form-control"
+        type="password"
+        id="mot_de_passe_2"
+        name="mot_de_passe_2"
+        placeholder="Confirmation du mot de passe"
+        formControlName="mot_de_passe_2"
+        required
+      />
+      <small
+        class="text-danger my-2"
+        *ngIf="
+          passwordForm.get('mot_de_passe_2')?.touched &&
+          passwordForm.get('mot_de_passe_2')?.dirty &&
+          passwordForm.get('mot_de_passe_2')?.getError('minlength')
+        "
+      >
+        Le mot de passe doit contenir au moins {{ passwordMinLength }} caractères.
+      </small>
+    </div>
+    <button class="btn btn-outline-warning" [disabled]="passwordForm.invalid">Modifier</button>
+  </form>
+
   <div class="d-flex justify-content-end mt-4">
     <button class="btn btn-outline-danger" (click)="onDelete('utilisateurs', currentUserId ?? 0)">
       Supprimer le compte

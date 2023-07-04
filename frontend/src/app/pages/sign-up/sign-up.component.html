@@ -51,7 +51,9 @@
       <small
         class="text-danger my-2"
         *ngIf="
-          form.get('password')?.touched && form.get('password')?.dirty && form.get('password')?.getError('minlength')
+          form.get('mot_de_passe')?.touched &&
+          form.get('mot_de_passe')?.dirty &&
+          form.get('mot_de_passe')?.getError('minlength')
         "
       >
         Le mot de passe doit contenir au moins {{ passwordMinLength }} caractères.
