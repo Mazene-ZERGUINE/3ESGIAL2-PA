@@ -10,6 +10,9 @@ const signIn = (req: Request, res: Response) => {
 	const { email, password } = req.body;
 	let isUserFound = false;
 
+	console.log(req.body);
+	//console.log(email , password)
+
 	clientPool.query(signInQuery.countUserByEmail(), [email], (error: Error, results: any) => {
 		if (error) {
 			res.status(500).send('Erreur serveur interne.');

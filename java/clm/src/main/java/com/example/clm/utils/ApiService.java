@@ -45,10 +45,12 @@ public class ApiService {
 	}
 
 	public int postTypeRequestWithResponseCode(String url, JSONObject data) throws IOException {
+		//System.out.println(data);
 		URL requestUrl = new URL(url);
 		HttpURLConnection conn = (HttpURLConnection) requestUrl.openConnection();
 		conn.setRequestMethod("POST");
 		conn.setDoOutput(true);
+		conn.setRequestProperty("Content-Type", "application/json");
 
 		OutputStream outputStream = conn.getOutputStream();
 		outputStream.write(data.toString().getBytes(StandardCharsets.UTF_8));
@@ -67,9 +69,8 @@ public class ApiService {
 		URL requestUrl = new URL(url);
 		HttpURLConnection conn = (HttpURLConnection) requestUrl.openConnection();
 		conn.setRequestMethod("POST");
-
-		// request headers and properties
 		conn.setDoOutput(true);
+		conn.setRequestProperty("Content-Type", "application/json");
 
 		// writing request body
 		OutputStream outputStream = conn.getOutputStream();

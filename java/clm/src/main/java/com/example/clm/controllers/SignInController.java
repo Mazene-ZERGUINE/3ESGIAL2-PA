@@ -62,15 +62,17 @@ public class SignInController {
 			notifierService.notify(NotificationType.ERROR, "Erreur", "Les champs email et mot de passe sont obligatoires.");
 			return;
 		}
+		int responseCode = 0;
 
 		JSONObject data = new JSONObject();
 		data.put("email", email);
 		data.put("password", password);
 
 
-		int responseCode = 0;
 		try {
+
 			responseCode = api.postTypeRequestWithResponseCode(baseUrl + "trello/signin", data);
+			System.out.println(responseCode);
 		}
 		catch (Exception e) {
 			notifierService.notify(NotificationType.ERROR, "Erreur", "Une erreur est apparu. Réessayer plus tard.");
