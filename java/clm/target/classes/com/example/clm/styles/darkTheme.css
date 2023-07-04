@@ -1,0 +1,113 @@
+.nav-bar {
+  -fx-background-color: #333333;
+}
+
+.mainPane {
+  -fx-background-color: #212224;
+}
+
+.inputs {
+  -fx-text-fill: white;
+  -fx-control-inner-background: #333333;
+  -fx-background-color: #333333;
+}
+
+.users-list {
+  -fx-background-color: #333333;
+  -fx-text-fill: white;
+  -fx-border-color: black;
+}
+
+.list-cell:even {
+  -fx-background-color: #212224;
+  -fx-text-fill: white;
+}
+
+.list-cell:odd {
+  -fx-background-color: #333333;
+  -fx-text-fill: white;
+}
+
+.users-list .list-cell:selected {
+  -fx-background-color: #3d0b37;
+  -fx-text-fill: white;
+}
+
+.add-button {
+  -fx-background-color: #bd93f9;
+  -fx-text-fill: #333333;
+  -fx-font-family: "Consolas";
+}
+
+.add-button:hover {
+  -fx-background-color: #ca9eff;
+}
+
+.add-button:pressed {
+  -fx-background-color: #ad7ff7;
+}
+
+.delete-button {
+  -fx-background-color: #ff5555;
+  -fx-text-fill: #333333;
+  -fx-font-family: "Consolas";
+}
+
+.delete-button:hover {
+  -fx-background-color: #ff7777;
+}
+
+.delete-button:pressed {
+  -fx-background-color: #ff3333;
+}
+
+.update-button {
+  -fx-background-color: #f1fa8c;
+  -fx-text-fill: #333333;
+  -fx-font-family: "Consolas";
+}
+
+.update-button:hover {
+  -fx-background-color: #f4fb9f;
+}
+
+.update-button:pressed {
+  -fx-background-color: #e9f78e;
+}
+
+.table-view {
+  -fx-background-color: #282a36;
+}
+
+.table-view .table-row-cell {
+  -fx-background-color: #333333;
+  -fx-text-fill: white;
+}
+
+.table-view .table-row-cell:even {
+  -fx-background-color: #212224;
+  -fx-text-fill: white;
+}
+
+.table-view .table-row-cell:selected {
+  -fx-background-color: #3d0b37;
+  -fx-text-fill: white;
+}
+
+.table-view .column-header {
+  -fx-background-color: #282a36;
+  -fx-text-fill: white;
+}
+
+.table-view .column-header-background {
+  -fx-background-color: #282a36;
+}
+
+.table-view .table-cell {
+  -fx-text-fill: #f8f8f2;
+}
+
+.table-view {
+  -fx-table-cell-border-color: #282a36;
+  -fx-grid-lines-color: #282a36;
+}

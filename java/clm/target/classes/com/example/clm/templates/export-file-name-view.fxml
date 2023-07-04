@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="123.0" prefWidth="503.0" styleClass="mainPane" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.clm.controllers.ExportFileNameController">
+   <children>
+      <TextArea fx:id="fileNameTextArea" layoutX="19.0" layoutY="23.0" prefHeight="26.0" prefWidth="466.0" promptText="Nom du fichier" styleClass="inputs" />
+      <Button fx:id="saveBtn" layoutX="20.0" layoutY="83.0" mnemonicParsing="false" onAction="#onSaveBtnClick" prefHeight="26.0" prefWidth="466.0" styleClass="update-button" text="Sauvgarder" textFill="WHITE" />
+   </children>
+</AnchorPane>

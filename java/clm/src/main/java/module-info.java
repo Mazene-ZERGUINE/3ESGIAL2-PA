@@ -10,7 +10,8 @@ module com.example.clm {
     requires org.yaml.snakeyaml;
 	requires java.desktop;
 
-	opens com.example.clm to javafx.fxml;
+
+    opens com.example.clm to javafx.fxml;
 	opens com.example.clm.models;
 
 	exports com.example.clm;

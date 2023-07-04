@@ -379,4 +379,35 @@ public class CategoriesController extends Application implements Initializable {
 			});
 	}
 
+	@FXML
+	void onTerminalBtnClick(MouseEvent event) throws IOException {
+		openTerminal("clear","java -jar ./console/consoleapp.jar");
+	}
+
+
+	private void openTerminal(String... commands) {
+		try {
+			String[] fullCommands = new String[2 + commands.length];
+			fullCommands[0] = "cd " + System.getProperty("user.dir").replace(" ", "\\ ");
+			System.arraycopy(commands, 0, fullCommands, 1, commands.length);
+
+			String[] cmd = {
+					"osascript",
+					"-e", "tell application \"Terminal\"",
+					"-e", "if not (exists window 1) then",
+					"-e", "do script \"\"",
+					"-e", "end if",
+					"-e", "tell window 1",
+					"-e", "activate",
+					"-e", "do script \"" + String.join(";\n", fullCommands) + "\"",
+					"-e", "end tell",
+					"-e", "end tell"
+			};
+			Runtime.getRuntime().exec(cmd);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+
 }

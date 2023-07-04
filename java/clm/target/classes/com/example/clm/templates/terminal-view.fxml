@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.BorderPane?>
+<?import com.jfoenix.controls.JFXTextArea?>
+
+<BorderPane xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.clm.controllers.TerminalController">
+    <center>
+        <JFXTextArea fx:id="terminal" prefRowCount="24" style="-fx-font-family: monospace;" onKeyPressed="#handleKeyPress" />
+    </center>
+</BorderPane>
