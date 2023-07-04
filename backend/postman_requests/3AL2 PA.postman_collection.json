@@ -505,6 +505,28 @@
 							"response": []
 						},
 						{
+							"name": "send forgotten passwd",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\": \"lzhu3@myges.fr\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{HOST}}/clm/utilisateurs/forgotten-password",
+									"host": ["{{HOST}}"],
+									"path": ["clm", "utilisateurs", "forgotten-password"]
+								}
+							},
+							"response": []
+						},
+						{
 							"name": "update by pseudonyme",
 							"request": {
 								"method": "PUT",
