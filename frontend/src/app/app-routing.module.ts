@@ -19,6 +19,13 @@ const routes: Routes = [
     title: `Administration ${combinedTitle}`,
   },
   {
+    path: 'forgotten-password',
+    canLoad: [UnauthGuard],
+    loadChildren: () =>
+      import('./pages/forgotten-password/forgotten-password.module').then((m) => m.ForgottenPasswordModule),
+    title: `Mot de passe oublié ${combinedTitle}`,
+  },
+  {
     path: 'login',
     canLoad: [UnauthGuard],
     loadChildren: () => import('./pages/log-in/log-in.module').then((m) => m.LogInModule),
