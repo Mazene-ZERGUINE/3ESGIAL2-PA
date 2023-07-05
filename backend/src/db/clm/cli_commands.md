@@ -1,11 +1,5 @@
 # Modeles
 
-## publication-appreciation
-
-```
-sequelize-cli model:generate --name publication-appreciation --attributes publication_id:integer,utilisateur_id:integer
-```
-
 ## categorie
 
 ```
@@ -16,6 +10,12 @@ sequelize-cli model:generate --name categorie --attributes categorie_id:integer,
 
 ```
 sequelize-cli model:generate --name commentaire --attributes
+```
+
+## publication_favori
+
+```
+sequelize-cli model:generate --name publication_favori --attributes publication_id:integer,utilisateur_id:integer
 ```
 
 ## image
@@ -40,6 +40,12 @@ sequelize-cli model:generate --name personne_signalement --attributes
 
 ```
 sequelize-cli model:generate --name publication --attributes publication_id:integer,titre:string,description:text,statut:enum:'{actif,inactif}',utilisateur_id:integer,categorie_id:integer
+```
+
+## publication-appreciation
+
+```
+sequelize-cli model:generate --name publication-appreciation --attributes publication_id:integer,utilisateur_id:integer
 ```
 
 ## publication_signalement
