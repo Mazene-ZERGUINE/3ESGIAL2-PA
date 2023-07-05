@@ -2,12 +2,14 @@ package com.example.clm.controllers;
 
 import com.example.clm.Main;
 import com.example.clm.models.Categorie;
+import com.example.clm.models.Tasks;
 import com.example.clm.models.Users;
 import com.example.clm.utils.*;
 import com.github.tsohr.JSONArray;
 import com.github.tsohr.JSONObject;
 import javafx.animation.PauseTransition;
 import javafx.application.Application;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -17,16 +19,25 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
+import javafx.stage.StageStyle;
 import javafx.util.Duration;
 import tray.notification.NotificationType;
 
@@ -381,33 +392,73 @@ public class CategoriesController extends Application implements Initializable {
 
 	@FXML
 	void onTerminalBtnClick(MouseEvent event) throws IOException {
-		openTerminal("clear","java -jar ./console/consoleapp.jar");
+		sceneService.openTerminal("clear","java -jar ./console/consoleapp.jar");
 	}
 
+	private List<Categorie> createObjectToExport() {
+		return FXCollections.observableList(this.categories);
+	} ;
 
-	private void openTerminal(String... commands) {
-		try {
-			String[] fullCommands = new String[2 + commands.length];
-			fullCommands[0] = "cd " + System.getProperty("user.dir").replace(" ", "\\ ");
-			System.arraycopy(commands, 0, fullCommands, 1, commands.length);
+	@FXML
+	public void onExportBtnClicked(MouseEvent event) throws IOException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
 
-			String[] cmd = {
-					"osascript",
-					"-e", "tell application \"Terminal\"",
-					"-e", "if not (exists window 1) then",
-					"-e", "do script \"\"",
-					"-e", "end if",
-					"-e", "tell window 1",
-					"-e", "activate",
-					"-e", "do script \"" + String.join(";\n", fullCommands) + "\"",
-					"-e", "end tell",
-					"-e", "end tell"
-			};
-			Runtime.getRuntime().exec(cmd);
-		} catch (IOException e) {
-			e.printStackTrace();
+		List <Categorie> data = this.createObjectToExport();
+		if (data.size() == 0) {
+			notifierService.notify(NotificationType.WARNING , "Avertissement" , "pas de donnée à exporter");
+			return;
 		}
+		Stage stage = new Stage();
+
+		Parent tasksRoot = addBtn.getScene().getRoot();
+		tasksRoot.setDisable(true);
+
+		stage.setResizable(false);
+		stage.initStyle(StageStyle.UNDECORATED);
+		stage.centerOnScreen();
+
+		sceneService.switchToNewWindow("export-formats-view.fxml", null, stage);
+
+		stage.setOnHidden(windowEvent -> {
+			tasksRoot.setDisable(false);
+			String selectedExportFormat = StorageService.getInstance().getSelectedExportFormat();
+			String jarFilePath = "../plugins/" + selectedExportFormat + "/" + selectedExportFormat + "Exporter" + ".jar";
+
+			Stage fileNameStage = new Stage();
+
+			fileNameStage.setResizable(false);
+			fileNameStage.initStyle(StageStyle.UNDECORATED);
+			fileNameStage.centerOnScreen();
+			try {
+				sceneService.switchToNewWindow("export-file-name-view.fxml", null, fileNameStage);
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+
+			fileNameStage.setOnHidden(e -> {
+				try {
+					String fileName = StorageService.getInstance().getExportFileName();
+					String filePath = "../exports/" + fileName + "." + selectedExportFormat;
+
+					URLClassLoader classLoader = new URLClassLoader(new URL[]{new URL("file:" + jarFilePath)});
+					String className = selectedExportFormat.substring(0, 1).toUpperCase() + selectedExportFormat.substring(1) + "Exporter" ;
+
+					Class<?> exporterClass = classLoader.loadClass("org.example." + className);
+					Object exporterInstance = exporterClass.getDeclaredConstructor().newInstance();
+
+					Method exportMethod = exporterClass.getMethod("export", List.class , String.class);
+
+					exportMethod.invoke(exporterInstance, createObjectToExport() , filePath);
+
+					notifierService.notify(NotificationType.SUCCESS , "Fichier sauvgarder" , "Fichier " + fileName + " est sauvarder dans " + filePath );
+					Desktop.getDesktop().open(new File(filePath));
+
+					classLoader.close();
+				} catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException |
+						 ClassNotFoundException | IOException ex) {
+					throw new RuntimeException(ex);
+				}
+			});
+			tasksRoot.setDisable(false);
+		});
 	}
-
-
 }

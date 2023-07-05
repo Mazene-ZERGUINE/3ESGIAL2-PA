@@ -184,6 +184,11 @@ public class TicketsController implements Initializable {
 	}
 
 	@FXML
+	void onTerminalBtnClick(MouseEvent event) throws IOException {
+		sceneService.openTerminal("clear","java -jar ./console/consoleapp.jar");
+	}
+
+	@FXML
 	void onThemeBtnClicked(MouseEvent event) throws IOException {
 		Stage stage = new Stage();
 		sceneService.switchToNewWindow("themes-view.fxml" , null , stage);
