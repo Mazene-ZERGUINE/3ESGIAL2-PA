@@ -8,7 +8,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 export class PostFavoritesService extends CoreService {
   private readonly _starInfo$ = new BehaviorSubject<{ [key: string]: { starred: boolean } }>({});
 
-  get starInfo$(): Observable<{ [p: string]: { starred: boolean } }> {
+  get starInfo$(): Observable<{ [key: string]: { starred: boolean } }> {
     return this._starInfo$.asObservable();
   }
 

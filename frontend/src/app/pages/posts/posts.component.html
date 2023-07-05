@@ -22,10 +22,13 @@
     [currentUserId]="currentUserId"
     [isAuthenticated]="isAuthenticated$ | async"
     [likeInfo]="likeInfo$ | async"
+    [starInfo]="starInfo$ | async"
     [posts]="posts$ | async"
     (selected)="selectPost($event)"
     (liked)="getPosts()"
     (disliked)="getPosts()"
+    (starred)="getPosts()"
+    (unstarred)="getPosts()"
   ></app-posts-list>
   <div class="d-flex justify-content-center mt-5" *ngIf="posts$ | async">
     <ngb-pagination

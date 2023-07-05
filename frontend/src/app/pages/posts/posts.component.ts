@@ -5,12 +5,15 @@ import {
   debounceTime,
   distinctUntilChanged,
   filter,
+  forkJoin,
   from,
   map,
+  mergeMap,
   Observable,
   of,
   switchMap,
   tap,
+  zip,
 } from 'rxjs';
 import { ViewportScroller } from '@angular/common';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
@@ -24,6 +27,7 @@ import { Response } from '../../shared/core/models/interfaces/response.interface
 import { PostLikesService } from '../../shared/core/services/post-likes/post-likes.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { minLengthValidator } from '../../shared/utils/validator.utils';
+import { PostFavoritesService } from '../../shared/core/services/post-favorites/post-favorites.service';
 
 @UntilDestroy()
 @Component({
@@ -35,11 +39,13 @@ export class PostsComponent implements OnInit {
   readonly isAuthenticated$: Observable<boolean>;
   readonly likeInfo$?: Observable<{ [key: string]: { count: number; liked: boolean } }>;
   readonly posts$: Observable<null | Post[]>;
+  readonly starInfo$?: Observable<{ [key: string]: { starred: boolean } }>;
 
   collectionSize = 0;
   currentUserId?: number;
   form?: FormGroup;
   likeInfo: { [key: number]: { count: number; liked: boolean } } = {};
+  starInfo: { [key: string]: { starred: boolean } } = {};
   selectedPost?: Post;
   pageParam = 1;
 
@@ -50,6 +56,7 @@ export class PostsComponent implements OnInit {
     private readonly authService: AuthService,
     private readonly fb: FormBuilder,
     private readonly jwtHelper: JwtHelperService,
+    private readonly postFavoritesService: PostFavoritesService,
     private readonly postLikesService: PostLikesService,
     private readonly postsService: PostsService,
     private readonly route: ActivatedRoute,
@@ -59,6 +66,7 @@ export class PostsComponent implements OnInit {
     this.isAuthenticated$ = this.authService.isAuthenticated$;
     this.posts$ = this.postsService.posts$;
     this.likeInfo$ = this.postLikesService.likeInfo$;
+    this.starInfo$ = this.postFavoritesService.starInfo$;
   }
 
   async ngOnInit(): Promise<void> {
@@ -129,8 +137,6 @@ export class PostsComponent implements OnInit {
   }
 
   getPosts(): void {
-    let publication_id: number;
-
     this.postsService
       .count<Response<number>>('publications/count/all')
       .pipe(
@@ -141,28 +147,92 @@ export class PostsComponent implements OnInit {
         tap((res) => {
           this.postsService.emitPosts(res.data);
         }),
-        concatMap((res) => {
+        // concatMap((res) => {
+        //   const posts = res?.data || [];
+        //
+        //   return from(posts).pipe(
+        //     concatMap((post) => {
+        //       publication_id = post.publication_id;
+        //       return this.postLikesService.getByPostId<Response<{ count: number; liked: boolean }>>(
+        //         'appreciations/publications',
+        //         post.publication_id,
+        //       );
+        //     }),
+        //   );
+        // }),
+        // tap((data) => {
+        //   this.likeInfo[publication_id] = { count: data.data.count, liked: data.data.liked };
+        // }),
+        // concatMap((res) => {
+        //   const posts = res?.data || [];
+        //
+        //   const observables = posts.map((post) => {
+        //     publication_id = post.publication_id;
+        //
+        //     const postLikesRequest = this.postLikesService.getByPostId<Response<{ count: number; liked: boolean }>>(
+        //       'appreciations/publications',
+        //       publication_id,
+        //     );
+        //     const postFavoriteRequest = this.postFavoritesService.getOneById<Response<{ starred: boolean }>>(
+        //       'favoris/publications',
+        //       publication_id,
+        //     );
+        //
+        //     return forkJoin([postLikesRequest, postFavoriteRequest]).pipe(
+        //       tap(([likeInfos, favoriteInfos]) => {
+        //         console.log(likeInfos, publication_id);
+        //         this.likeInfo[publication_id] = {
+        //           count: likeInfos.data.count,
+        //           liked: likeInfos.data.liked,
+        //         };
+        //
+        //         this.starInfo[publication_id] = {
+        //           starred: favoriteInfos.data.starred,
+        //         };
+        //       }),
+        //       untilDestroyed(this)
+        //     );
+        //   });
+        //
+        //   return forkJoin(observables);
+        // }),
+        mergeMap((res) => {
           const posts = res?.data || [];
 
-          return from(posts).pipe(
-            concatMap((post) => {
-              publication_id = post.publication_id;
-              return this.postLikesService.getByPostId<Response<{ count: number; liked: boolean }>>(
+          const observables = posts.map((post) => {
+            return zip(
+              this.postLikesService.getByPostId<Response<{ count: number; liked: boolean }>>(
                 'appreciations/publications',
                 post.publication_id,
-              );
-            }),
-          );
-        }),
-        tap((data) => {
-          this.likeInfo[publication_id] = { count: data.data.count, liked: data.data.liked };
+              ),
+              this.postFavoritesService.getOneById<Response<{ starred: boolean }>>(
+                'favoris/publications',
+                post.publication_id,
+              ),
+            ).pipe(
+              tap(([likeInfo, favoriteInfos]) => {
+                const publicationId = post.publication_id;
+                this.likeInfo[publicationId] = {
+                  count: likeInfo.data.count,
+                  liked: likeInfo.data.liked,
+                };
+
+                this.starInfo[publicationId] = {
+                  starred: favoriteInfos.data.starred,
+                };
+              }),
+              untilDestroyed(this),
+            );
+          });
+
+          return forkJoin(observables);
         }),
         catchError((err) => of(err)),
         untilDestroyed(this),
       )
       .subscribe((_) => {
-        console.log('sub', _);
         this.postLikesService.emitLikeInfo(this.likeInfo);
+        this.postFavoritesService.emitStarInfo(this.starInfo);
       });
   }
 
