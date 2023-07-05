@@ -76,8 +76,15 @@ export class PostsListComponent {
     // TODO
   }
 
-  onStar(e: MouseEvent): void {
+  async onStar(e: MouseEvent, userId?: number): Promise<void> {
     this.stopPropagation(e);
+
+    const isUnauthenticated = !this.isAuthenticated || !userId;
+    if (isUnauthenticated) {
+      await this.router.navigateByUrl('/login');
+      return;
+    }
+
     // TODO
   }
 

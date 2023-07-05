@@ -33,14 +33,19 @@
                 <div class="d-flex justify-content-between">
                   <h5 class="card-title">{{ post.titre }}</h5>
                   <!-- TODO -->
-                  <span *ngIf="isAuthenticated">
+                  <ng-container *ngIf="!isAuthenticated; else elseStarButtonBlock">
+                    <button title="Aimer." class="btn btn-outline-warning" (click)="onStar($event, currentUserId)">
+                      <i class="bi bi-star"></i>
+                    </button>
+                  </ng-container>
+                  <ng-template #elseStarButtonBlock>
                     <button title="Aimer." class="btn btn-outline-warning" (click)="onUnstar($event)">
                       <i class="bi bi-star-fill"></i>
                     </button>
-                    <button title="Aimer." class="btn btn-outline-warning" (click)="onStar($event)">
+                    <button title="Aimer." class="btn btn-outline-warning" (click)="onStar($event, currentUserId)">
                       <i class="bi bi-star"></i>
                     </button>
-                  </span>
+                  </ng-template>
                 </div>
                 <p class="card-text">
                   <small class="text-body-secondary">
@@ -48,9 +53,9 @@
                   </small>
                 </p>
                 <p class="card-text">
-                  <small class="text-body-secondary"
-                    >Le : {{ post.created_at | date | date : 'dd MMMM yyyy' : '' : 'fr' }}</small
-                  >
+                  <small class="text-body-secondary">
+                    Le : {{ post.created_at | date | date : 'dd MMMM yyyy' : '' : 'fr' }}
+                  </small>
                 </p>
               </div>
             </div>

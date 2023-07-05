@@ -161,6 +161,7 @@ export class PostsComponent implements OnInit {
         untilDestroyed(this),
       )
       .subscribe((_) => {
+        console.log('sub', _);
         this.postLikesService.emitLikeInfo(this.likeInfo);
       });
   }
