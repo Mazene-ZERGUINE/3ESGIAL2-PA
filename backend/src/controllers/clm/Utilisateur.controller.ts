@@ -11,6 +11,7 @@ import { Publication } from '../../models/clm/publication';
 import { Role } from '../../enum/clm/role.enum';
 import { MailOptions } from 'nodemailer/lib/smtp-transport';
 import { getEmailTemplate } from '../../utils/clm/email-template';
+import { PublicationFavori } from '../../models/clm/publication_favori';
 
 export class UtilisateurController extends CoreController {
 	static async create(req: Request, res: Response): Promise<void> {
@@ -33,6 +34,42 @@ export class UtilisateurController extends CoreController {
 
 			await Utilisateur.create({ ...req.body, mot_de_passe: await Argon2.hash(mot_de_passe) });
 			res.status(201).end();
+		} catch (error) {
+			CoreController.handleError(error, res);
+		}
+	}
+
+	static async getAllFavoris(req: Request, res: Response): Promise<void> {
+		const { page } = req.query;
+		const providedPage = page ? Number(page) : 1;
+		const { pseudonyme: pseudonymeParam } = req.params;
+
+		const token = decode(req.headers?.authorization?.split(' ')[1] as any);
+		const utilisateur_id = (token as any)?.utilisateur_id;
+		const pseudonyme = (token as any)?.pseudonyme;
+		const role = (token as any)?.role;
+
+		const isSameUser = pseudonyme === pseudonymeParam && Boolean(utilisateur_id);
+		const isAuthorised = isSameUser || role === Role.administrator;
+		if (!isAuthorised) {
+			res.status(401).end();
+			return;
+		}
+
+		try {
+			const items = await PublicationFavori.findAll({
+				offset: (providedPage - 1) * CoreController.PAGE_SIZE,
+				limit: CoreController.PAGE_SIZE,
+				where: { utilisateur_id },
+				// include: {
+				// 	all: true,
+				// 	nested: true,
+				// },
+				include: [Publication],
+				// order: [['created_at', 'DESC']],
+			});
+
+			res.status(200).json({ data: items });
 		} catch (error) {
 			CoreController.handleError(error, res);
 		}

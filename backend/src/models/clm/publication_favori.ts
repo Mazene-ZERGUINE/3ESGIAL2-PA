@@ -23,6 +23,14 @@ PublicationFavori.init(
 				key: 'utilisateur_id',
 			},
 		},
+		created_at: {
+			allowNull: false,
+			type: DataTypes.DATE,
+		},
+		updated_at: {
+			allowNull: true,
+			type: DataTypes.DATE,
+		},
 	},
 	{
 		sequelize,

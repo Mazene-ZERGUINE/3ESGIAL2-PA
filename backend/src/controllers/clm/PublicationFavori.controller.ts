@@ -8,12 +8,12 @@ import { PublicationFavori } from '../../models/clm/publication_favori';
 
 export class PublicationFavoriController extends CoreController {
 	static async addStar(req: Request, res: Response) {
-		const { publication_id } = req.body;
+		const { publicationId } = req.params;
 		const token = decode(req.headers?.authorization!.split(' ')[1]);
 		const utilisateur_id = (token as any)?.utilisateur_id;
 
 		try {
-			if (!(await Publication.findByPk(publication_id))) {
+			if (!(await Publication.findByPk(publicationId))) {
 				res.status(400).json({ message: 'La publication est incorrecte.' });
 				return;
 			}
@@ -21,12 +21,12 @@ export class PublicationFavoriController extends CoreController {
 				res.status(400).json({ message: "L'utilisateur est incorrect." });
 				return;
 			}
-			if (await PublicationFavori.findOne({ where: { publication_id, utilisateur_id } })) {
+			if (await PublicationFavori.findOne({ where: { publication_id: publicationId, utilisateur_id } })) {
 				res.status(409).json({ message: 'Publication déjà en favori.' });
 				return;
 			}
 
-			await PublicationFavori.create({ publication_id, utilisateur_id });
+			await PublicationFavori.create({ publication_id: publicationId, utilisateur_id, created_at: new Date() });
 			res.status(201).end();
 		} catch (error) {
 			CoreController.handleError(error, res);
@@ -80,9 +80,9 @@ export class PublicationFavoriController extends CoreController {
 				res.status(400).json({ message: 'La publication est incorrecte.' });
 			}
 
-			const publicationFavoris = await PublicationFavori.findAll({
-				where: { publication_id: publicationId },
-			});
+			// const publicationFavoris = await PublicationFavori.findAll({
+			// 	where: { publication_id: publicationId },
+			// });
 			// if (publicationFavoris.length === 0) {
 			// 	res.status(404).end();
 			// 	return;
@@ -94,8 +94,7 @@ export class PublicationFavoriController extends CoreController {
 			if (!utilisateur_id) {
 				res.status(200).json({
 					data: {
-						count: publicationFavoris.length,
-						liked: false,
+						starred: false,
 					},
 				});
 
@@ -108,8 +107,7 @@ export class PublicationFavoriController extends CoreController {
 
 			res.status(200).json({
 				data: {
-					count: publicationFavoris.length,
-					liked: publicationFavori != null,
+					starred: publicationFavori != null,
 				},
 			});
 		} catch (error) {
