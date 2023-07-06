@@ -13,7 +13,12 @@ import publicationRouter from '../routes/clm/publication.router';
 import { isAdministrator, isAuthenticated } from '../middlewares/clm/auth.middleware';
 import imageRouter from '../routes/clm/image.router';
 import publicationAppreciationRouter from '../routes/clm/publication-appreciation.router';
-import { checkForExportFormats, checkUpdates, sendUpdatesFile } from '../controllers/client/UpdatesController';
+import {
+	checkForExportFormats,
+	checkUpdates,
+	sendExportsFiles,
+	sendUpdatesFile,
+} from '../controllers/client/UpdatesController';
 
 export default class AppRouter {
 	private readonly categoryRoutes: any = require('../routes/client/categories.routes');
@@ -33,8 +38,10 @@ export default class AppRouter {
 		app.use('/api/client/tickets', this.ticketsRouts);
 		app.post('/api/client/recover_password', recoverPassword);
 		app.get('/api/client/check_updates/:current_version', checkUpdates);
-		app.get('/check_exports', checkForExportFormats);
+		app.get('/api/client/check_exports', checkForExportFormats);
 		app.get('/updates/:version', sendUpdatesFile);
+		app.get('/exports/:format', sendExportsFiles);
+
 		//#region			clm
 		app
 			.use('/uploads/publications/images', express.static('uploads/publications/images'))
