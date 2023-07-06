@@ -70,22 +70,22 @@ public class ConsoleApp {
     }
 
 
-    private static void installFormat(String exportFormat) {
+    private static void installFormat(String exportFormat) throws IOException {
         String formatToDownload =  "http://localhost:3000/exports/" + exportFormat;
         String savePath = "../plugins/" + exportFormat + ".zip";
         try {
             downloadFile(formatToDownload, savePath);
-            String dest = "../plugins/" + exportFormat ;
-            unzip(savePath , dest);
-            File zipFile = new File(savePath);
-            zipFile.delete();
         } catch (IOException e) {
-            System.out.println("An error occurred while downloading the file: " + e.getMessage());
-            System.out.println(e.getCause() + " " + e.getMessage());
+            System.out.println("\u001B[31m" +  "format " + exportFormat + "n'existe pas tappez <clm check-export-formats> pour regarder tous les formats disponibles" + "\u001B[0m");
+            return;
         }
-        System.out.println("Téléchargement du format "  +  exportFormat);
+        String dest = "../plugins/" + exportFormat ;
+        unzip(savePath , dest);
+        File zipFile = new File(savePath);
+        zipFile.delete();
+        System.out.println( "\u001B[32m" +  "Téléchargement du format "  +  exportFormat  + "\u001B[0m");
         progressBar();
-        System.out.println("Téléchargement terminer");
+        System.out.println(  "\u001B[32m" + "Téléchargement terminer"  + "\u001B[0m");
     }
 
     private static void checkExportsFormat() {
@@ -122,8 +122,7 @@ public class ConsoleApp {
             System.out.println("Error reading from the file: " + e.getMessage());
         }
 
-
-        System.out.println(" > CLM verssion: " + data.getString("version"));
+        System.out.println( "\u001B[32m" + " > CLM verssion: " + data.getString("version")  + "\u001B[0m");
         System.out.println(" > equipe: " + data.getString("author"));
         System.out.println(" > date de sortie:" + data.getString("release_date"));
         System.out.println();
@@ -173,7 +172,8 @@ public class ConsoleApp {
                     }
                     System.out.println("Téléchargement des mis à jours");
                     progressBar();
-                    System.out.println("Téléchargement terminer");
+
+                    System.out.println( "\u001B[32m" + "Téléchargement terminer" + "\u001B[0m");
                     // replacing older jar file withe the updates jar file //
                     String sourceFilePath = "./tmp/clm.jar";
                     String destinationFilePath = "./clm.jar";
@@ -183,7 +183,6 @@ public class ConsoleApp {
 
                     try {
                         Files.copy(sourceFile.toPath(), destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                        System.out.println("File replaced successfully.");
                     } catch (IOException e) {
                         System.out.println("An error occurred while replacing the file: " + e.getMessage());
                     }
@@ -191,7 +190,7 @@ public class ConsoleApp {
 
                     System.out.println("Instalation des mis à jour");
                     progressBar();
-                    System.out.println("Instalation Terminé");
+                    System.out.println("\u001B[32m" +  "Instalation Terminé" + "\u001B[0m");
 
                     System.out.println("Redamarage de CLM");
                     Thread.sleep(100);
