@@ -43,6 +43,8 @@ public class ConsoleApp {
                 System.out.println("clm check-updates: verifier les mis a jour de  CLM");
                 System.out.println("clm check-export-formats: verifier les nouveau format d'export disponible");
                 System.out.println("clm install-export-format <format> : install le nouveau d'export" );
+                System.out.println("clm check-themes : verifier  les nouveau themes de l'application" );
+                System.out.println("clm install-theme <theme> : install le nouveau d'export" );
                 System.out.println();
             } else if (input.equals("clm --version")) {
                 getAppVersion();
@@ -63,12 +65,34 @@ public class ConsoleApp {
                 installFormat(exportFormat);
                 System.out.println();
             }
+            else if(input.equals("clm check-themes")) {
+                checkThemes();
+                System.out.println();
+            }
             else {
                 System.out.println("\u001B[31m" +  "wrong input Tapez la commande help pour voir la liste des commandes du CLI" + "\u001B[0m");
             }
         }
     }
 
+
+    private static void checkThemes() {
+        try {
+            ApiService api = new ApiService();
+            JSONObject response = new JSONObject(api.getTypeRequest(baseUrl + "check_themes").toString());
+            if (response.getInt("status_code") == 200) {
+                JSONArray formatsList = response.getJSONArray("themes");
+                for (int i= 0 ; i< formatsList.length() ; i++) {
+                    System.out.println(" > " + formatsList.getString(i));
+                }
+            } else {
+                System.out.println("error ocured while sending http request");
+            }
+        } catch (Exception e) {
+            System.out.println(" > pas de nouveau theme disponible");
+            System.out.println(e.getCause() + " " + e.getMessage());
+        }
+    }
 
     private static void installFormat(String exportFormat) throws IOException {
         String formatToDownload =  "http://localhost:3000/exports/" + exportFormat;
@@ -121,7 +145,6 @@ public class ConsoleApp {
         } catch (IOException e) {
             System.out.println("Error reading from the file: " + e.getMessage());
         }
-
         System.out.println( "\u001B[32m" + " > CLM verssion: " + data.getString("version")  + "\u001B[0m");
         System.out.println(" > equipe: " + data.getString("author"));
         System.out.println(" > date de sortie:" + data.getString("release_date"));
