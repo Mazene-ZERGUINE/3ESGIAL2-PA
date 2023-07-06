@@ -7,6 +7,7 @@ import com.github.tsohr.JSONObject;
 import java.io.*;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Scanner;
@@ -34,9 +35,14 @@ public class ConsoleApp {
             input = scanner.nextLine();
             System.out.println();
 
-            String formatPattern = "clm install-export-format \\w+";
+            String formatPattern = "clm install-export-format\\s\\w+";
             Pattern pattern = Pattern.compile(formatPattern);
             Matcher matcher = pattern.matcher(input);
+
+            String formatPattern2 = "clm install-theme\\s\\w+";
+            Pattern pattern2 = Pattern.compile(formatPattern2);
+            Matcher matcher2 = pattern2.matcher(input);
+
 
             if (input.equals("--help")) {
                 System.out.println("clm --version: verifier la version de  CLM");
@@ -68,6 +74,10 @@ public class ConsoleApp {
             else if(input.equals("clm check-themes")) {
                 checkThemes();
                 System.out.println();
+            } else if (matcher2.matches()) {
+                String theme = input.split(" ")[2];
+                installTheme(theme);
+                System.out.println();
             }
             else {
                 System.out.println("\u001B[31m" +  "wrong input Tapez la commande help pour voir la liste des commandes du CLI" + "\u001B[0m");
@@ -76,6 +86,25 @@ public class ConsoleApp {
     }
 
 
+    private static void installTheme(String theme) throws IOException {
+        System.out.println("télechargement et installation de theme " + theme);
+        String themeToDowload =  "http://localhost:3000/themes/" + theme + ".css";
+        String savePath = "../themes/" + theme + ".css";
+        try {
+            downloadFile(themeToDowload, savePath);
+        } catch (IOException e) {
+            System.out.println("\u001B[31m" +  "format " + theme + " n'existe pas tappez <clm check-export-formats> pour regarder tous les formats disponibles" + "\u001B[0m");
+            return;
+        }
+        Path source = Path.of(savePath);
+        String targetFolderPath = "src/main/resources/com/example/clm/styles/";
+        Path target = Path.of(targetFolderPath + theme + ".css");
+
+        Files.move(source, target, StandardCopyOption.REPLACE_EXISTING);
+        progressBar();
+
+        System.out.println(  "\u001B[32m" + "Téléchargement terminer"  + "\u001B[0m");
+    }
     private static void checkThemes() {
         try {
             ApiService api = new ApiService();
