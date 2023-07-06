@@ -8,6 +8,7 @@ import { UserProfileDetailsComponent } from './user-profile-details/user-profile
 import { applicationTitle } from '../../shared/utils/app-title';
 import { UserChatsListComponent } from './user-chats-list/user-chats-list.component';
 import { UserChatComponent } from './user-chat/user-chat.component';
+import { UserFavoritesListComponent } from './user-favorites-list/user-favorites-list.component';
 
 let combinedTitle = `| ${applicationTitle}`;
 const routes: Routes = [
@@ -24,6 +25,11 @@ const routes: Routes = [
         path: 'chats/:id',
         component: UserChatComponent,
         title: `Une conversation ${combinedTitle}`,
+      },
+      {
+        path: 'favorites',
+        component: UserFavoritesListComponent,
+        title: `Mes favoris ${combinedTitle}`,
       },
       {
         path: 'posts',

@@ -2,6 +2,7 @@ import { DataTypes, Model } from 'sequelize';
 import { sequelize } from '../../db/clm/db_connection';
 import { Utilisateur } from './utilisateur';
 import { PublicationAppreciation } from './publication-appreciation';
+import { PublicationFavori } from './publication_favori';
 
 export class Publication extends Model {}
 
@@ -52,7 +53,7 @@ Publication.belongsTo(Utilisateur, { foreignKey: 'utilisateur_id' });
 Utilisateur.hasMany(Publication, { foreignKey: 'utilisateur_id', onDelete: 'CASCADE' });
 //#endregion	publication & utilisateur
 
-//#region 		publication & publication-appreciation
+//#region 		publication & publication-appreciation & utilisateur
 Publication.belongsToMany(Utilisateur, {
 	through: PublicationAppreciation,
 	foreignKey: 'publication_id',
@@ -66,4 +67,39 @@ Utilisateur.belongsToMany(Publication, {
 	otherKey: 'publication_id',
 	onDelete: 'CASCADE',
 });
-//#endregion	publication & publication-appreciation
+//#endregion	publication & publication-appreciation & utilisateur
+
+//#region 		publication & publication_favori & utilisateur
+Publication.belongsToMany(Utilisateur, {
+	through: PublicationFavori,
+	foreignKey: 'publication_id',
+	otherKey: 'utilisateur_id',
+	onDelete: 'CASCADE',
+});
+
+Utilisateur.belongsToMany(Publication, {
+	through: PublicationFavori,
+	foreignKey: 'utilisateur_id',
+	otherKey: 'publication_id',
+	onDelete: 'CASCADE',
+});
+//#endregion	publication & publication_favori & utilisateur
+
+//#region publication & PublicationFavori
+// Publication.belongsToMany(PublicationFavori, {
+// 	through: 'publication_favori',
+// 	foreignKey: 'publication_id',
+// 	otherKey: 'utilisateur_id',
+// 	onDelete: 'CASCADE',
+// });
+//
+// PublicationFavori.belongsToMany(Publication, {
+// 	through: 'publication_favori',
+// 	foreignKey: 'utilisateur_id',
+// 	otherKey: 'publication_id',
+// 	onDelete: 'NO ACTION',
+// });
+
+Publication.hasMany(PublicationFavori, { foreignKey: 'utilisateur_id', onDelete: 'CASCADE' });
+PublicationFavori.belongsTo(Publication, { foreignKey: 'publication_id', onDelete: 'NO ACTION' });
+//#endregion

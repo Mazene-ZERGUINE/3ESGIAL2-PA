@@ -11,6 +11,7 @@ import { ModalReportComponent } from '../../../shared/components/modal-report/mo
 import { Response } from '../../../shared/core/models/interfaces/response.interface';
 import { AuthService } from '../../../shared/core/services/auth/auth.service';
 import { PostLikesService } from '../../../shared/core/services/post-likes/post-likes.service';
+import { PostFavoritesService } from '../../../shared/core/services/post-favorites/post-favorites.service';
 
 @UntilDestroy()
 @Component({
@@ -27,11 +28,13 @@ export class PostDetailsComponent implements OnInit, OnDestroy {
   isAuthenticated: boolean;
   likeInfo?: { count: number; liked: boolean };
   post?: Post;
+  starInfo?: { starred: boolean } = { starred: false };
 
   constructor(
     private readonly authService: AuthService,
     private readonly route: ActivatedRoute,
     private readonly modalService: NgbModal,
+    private readonly postFavoritesService: PostFavoritesService,
     private readonly postLikesService: PostLikesService,
     private readonly postsService: PostsService,
     private readonly router: Router,
@@ -68,17 +71,37 @@ export class PostDetailsComponent implements OnInit, OnDestroy {
       });
   }
 
-  async onDelete(): Promise<void> {
-    let hasUserValidated;
+  getFavoriteByPostId(postId: number): void {
+    this.postFavoritesService
+      .getOneById<Response<{ starred: boolean }>>('favoris/publications', postId)
+      .pipe(
+        map((res) => res?.data),
+        catchError((_) => of(null)),
+        untilDestroyed(this),
+      )
+      .subscribe((data) => {
+        if (!data) {
+          return;
+        }
+
+        this.starInfo = { starred: data.starred };
+      });
+  }
+
+  async onDelete(path: string, postId: number): Promise<void> {
     try {
-      hasUserValidated = await this.modalService.open(ModalFocusConfirmComponent).result;
-    } catch (_) {}
+      const hasUserValidated = await this.modalService.open(ModalFocusConfirmComponent).result;
+      if (!hasUserValidated) {
+        return;
+      }
 
-    if (!hasUserValidated) {
-      return;
-    }
-
-    // TODO
+      this.postsService
+        .delete(path, postId)
+        .pipe(untilDestroyed(this))
+        .subscribe((_) => {
+          this.router.navigateByUrl('posts');
+        });
+    } catch (e) {}
   }
 
   async onEdit(id: number): Promise<void> {
@@ -128,12 +151,39 @@ export class PostDetailsComponent implements OnInit, OnDestroy {
     } catch (_) {}
   }
 
-  onStar(): void {
-    // TODO
+  async onStar(e: MouseEvent, postId: number, userId?: number): Promise<void> {
+    const isUnauthenticated = !this.isAuthenticated || !userId;
+    if (isUnauthenticated) {
+      await this.router.navigateByUrl('/login');
+      return;
+    }
+    // this.postLikesService
+    //   .create(`appreciations/publications/${postId}/count`, { publication_id: postId })
+    //   .pipe(untilDestroyed(this))
+    //   .subscribe((_) => {
+    //     this.getLikesByPostId(postId);
+    //   });
+    this.postFavoritesService
+      .create(`favoris/publications/${postId}`, null)
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.getFavoriteByPostId(postId);
+      });
   }
 
-  onUnstar(): void {
-    // TODO
+  async onUnstar(e: MouseEvent, postId: number, userId?: number): Promise<void> {
+    const isUnauthenticated = !this.isAuthenticated || !userId;
+    if (isUnauthenticated) {
+      await this.router.navigateByUrl('/login');
+      return;
+    }
+
+    this.postFavoritesService
+      .delete('favoris/publications', postId)
+      .pipe(untilDestroyed(this))
+      .subscribe((_) => {
+        this.getFavoriteByPostId(postId);
+      });
   }
 
   private subscribeToSelectedPost$(): void {
@@ -159,6 +209,7 @@ export class PostDetailsComponent implements OnInit, OnDestroy {
 
           await this.setCurrentUserId();
           this.getLikesByPostId(this.postId);
+          this.getFavoriteByPostId(this.postId);
         }),
         catchError((err) => {
           this.router.navigateByUrl('/not-found', { skipLocationChange: true });

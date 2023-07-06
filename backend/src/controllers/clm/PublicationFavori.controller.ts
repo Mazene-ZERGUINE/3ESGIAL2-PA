@@ -1,18 +1,19 @@
 import { Request, Response } from 'express';
-import { Publication } from '../../models/clm/publication';
-import { Utilisateur } from '../../models/clm/utilisateur';
-import { CoreController } from './Core.controller';
-import { PublicationAppreciation } from '../../models/clm/publication-appreciation';
 import { decode } from 'jsonwebtoken';
 
-export class PublicationAppreciationController extends CoreController {
-	static async addLike(req: Request, res: Response) {
-		const { publication_id } = req.body;
+import { CoreController } from './Core.controller';
+import { Publication } from '../../models/clm/publication';
+import { Utilisateur } from '../../models/clm/utilisateur';
+import { PublicationFavori } from '../../models/clm/publication_favori';
+
+export class PublicationFavoriController extends CoreController {
+	static async addStar(req: Request, res: Response) {
+		const { publicationId } = req.params;
 		const token = decode(req.headers?.authorization!.split(' ')[1]);
 		const utilisateur_id = (token as any)?.utilisateur_id;
 
 		try {
-			if (!(await Publication.findByPk(publication_id))) {
+			if (!(await Publication.findByPk(publicationId))) {
 				res.status(400).json({ message: 'La publication est incorrecte.' });
 				return;
 			}
@@ -20,19 +21,19 @@ export class PublicationAppreciationController extends CoreController {
 				res.status(400).json({ message: "L'utilisateur est incorrect." });
 				return;
 			}
-			if (await PublicationAppreciation.findOne({ where: { publication_id, utilisateur_id } })) {
-				res.status(409).json({ message: 'Publication déjà aimée.' });
+			if (await PublicationFavori.findOne({ where: { publication_id: publicationId, utilisateur_id } })) {
+				res.status(409).json({ message: 'Publication déjà en favori.' });
 				return;
 			}
 
-			await PublicationAppreciation.create({ publication_id, utilisateur_id });
+			await PublicationFavori.create({ publication_id: publicationId, utilisateur_id, created_at: new Date() });
 			res.status(201).end();
 		} catch (error) {
 			CoreController.handleError(error, res);
 		}
 	}
 
-	static async deleteLike(req: Request, res: Response) {
+	static async deleteStar(req: Request, res: Response) {
 		const { publicationId } = req.params;
 		// TODO check
 
@@ -52,18 +53,18 @@ export class PublicationAppreciationController extends CoreController {
 				return;
 			}
 
-			const publicationAppreciation = await PublicationAppreciation.findOne({
+			const publicationFavori = await PublicationFavori.findOne({
 				where: {
 					publication_id: publicationId,
 					utilisateur_id,
 				},
 			});
-			if (!publicationAppreciation) {
-				res.status(400).json({ message: 'Publication déjà pas aimée.' });
+			if (!publicationFavori) {
+				res.status(400).json({ message: 'Publication déjà pas en favori.' });
 				return;
 			}
 
-			await publicationAppreciation.destroy();
+			await publicationFavori.destroy();
 			res.status(200).end();
 		} catch (error) {
 			CoreController.handleError(error, res);
@@ -79,10 +80,10 @@ export class PublicationAppreciationController extends CoreController {
 				res.status(400).json({ message: 'La publication est incorrecte.' });
 			}
 
-			const publicationAppreciations = await PublicationAppreciation.findAll({
-				where: { publication_id: publicationId },
-			});
-			// if (publicationAppreciations.length === 0) {
+			// const publicationFavoris = await PublicationFavori.findAll({
+			// 	where: { publication_id: publicationId },
+			// });
+			// if (publicationFavoris.length === 0) {
 			// 	res.status(404).end();
 			// 	return;
 			// }
@@ -93,43 +94,22 @@ export class PublicationAppreciationController extends CoreController {
 			if (!utilisateur_id) {
 				res.status(200).json({
 					data: {
-						count: publicationAppreciations.length,
-						liked: false,
+						starred: false,
 					},
 				});
 
 				return;
 			}
 
-			const publicationAppreciation = await PublicationAppreciation.findOne({
+			const publicationFavori = await PublicationFavori.findOne({
 				where: { publication_id: publicationId, utilisateur_id },
 			});
 
 			res.status(200).json({
 				data: {
-					count: publicationAppreciations.length,
-					liked: publicationAppreciation != null,
+					starred: publicationFavori != null,
 				},
 			});
-		} catch (error) {
-			CoreController.handleError(error, res);
-		}
-	}
-
-	static async getByIds(req: Request, res: Response) {
-		const { publication_id, utilisateur_id } = req.body;
-
-		try {
-			const publicationAppreciation = await PublicationAppreciation.findOne({
-				where: { publication_id, utilisateur_id },
-			});
-
-			if (!publicationAppreciation) {
-				res.status(400).end();
-				return;
-			}
-
-			res.status(200).json({ data: publicationAppreciation });
 		} catch (error) {
 			CoreController.handleError(error, res);
 		}

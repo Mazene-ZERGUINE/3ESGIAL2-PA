@@ -28,6 +28,7 @@ export class HeaderComponent {
 
   userRoutes: ReadonlyArray<{ path: string; label: string }> = [
     { path: '/users/chats', label: 'Messagerie' },
+    { path: '/users/favorites', label: 'Favoris' },
     { path: '/users/profile/me', label: 'Profil' },
     { path: '/users/posts', label: 'Publications' },
   ];
