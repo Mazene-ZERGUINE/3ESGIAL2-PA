@@ -1,13 +1,19 @@
 package com.example.clm;
 
 import com.example.clm.utils.ApiService;
+import com.github.tsohr.JSONArray;
 import com.github.tsohr.JSONObject;
 
 import java.io.*;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 public class ConsoleApp {
     private static final String baseUrl = "http://localhost:3000/api/client/" ;
@@ -27,6 +33,11 @@ public class ConsoleApp {
             Scanner scanner = new Scanner(System.in);
             input = scanner.nextLine();
             System.out.println();
+
+            String formatPattern = "clm install-export-format \\w+";
+            Pattern pattern = Pattern.compile(formatPattern);
+            Matcher matcher = pattern.matcher(input);
+
             if (input.equals("--help")) {
                 System.out.println("clm --version: verifier la version de  CLM");
                 System.out.println("clm check-updates: verifier les mis a jour de  CLM");
@@ -39,24 +50,56 @@ public class ConsoleApp {
             } else if (input.equals("clm check-updates")) {
                 checkForUpdates();
                 System.out.println();
+            }else if(input.equals("")) {
+                continue;
             } else if (input.equals("clm check-export-formats")) {
                 checkExportsFormat();
                 System.out.println();
             } else if (input.equals("exit")) {
                 System.exit(1);
-            } else {
+            }
+            else if (matcher.matches()) {
+                String exportFormat = input.split(" ")[2];
+                installFormat(exportFormat);
+                System.out.println();
+            }
+            else {
                 System.out.println("\u001B[31m" +  "wrong input Tapez la commande help pour voir la liste des commandes du CLI" + "\u001B[0m");
             }
-
         }
     }
 
+
+    private static void installFormat(String exportFormat) {
+        String formatToDownload =  "http://localhost:3000/exports/" + exportFormat;
+        String savePath = "../plugins/" + exportFormat + ".zip";
+        try {
+            downloadFile(formatToDownload, savePath);
+            String dest = "../plugins/" + exportFormat ;
+            unzip(savePath , dest);
+            File zipFile = new File(savePath);
+            zipFile.delete();
+        } catch (IOException e) {
+            System.out.println("An error occurred while downloading the file: " + e.getMessage());
+            System.out.println(e.getCause() + " " + e.getMessage());
+        }
+        System.out.println("Téléchargement du format "  +  exportFormat);
+        progressBar();
+        System.out.println("Téléchargement terminer");
+    }
 
     private static void checkExportsFormat() {
         try {
             ApiService api = new ApiService();
             JSONObject response = new JSONObject(api.getTypeRequest(baseUrl + "check_exports").toString());
-            System.out.println(response);
+            if (response.getInt("status_code") == 200) {
+                JSONArray formatsList = response.getJSONArray("exports");
+                for (int i= 0 ; i< formatsList.length() ; i++) {
+                    System.out.println(" > " + formatsList.getString(i));
+                }
+            } else {
+                System.out.println("error ocured while sending http request");
+            }
         } catch (Exception e) {
             System.out.println(" > pas de format d'export disponible");
             System.out.println(e.getCause() + " " + e.getMessage());
@@ -213,6 +256,41 @@ public class ConsoleApp {
         }
 
         System.out.println();
+    }
+
+    public static void unzip(String zipFilePath, String destDirectory) throws IOException {
+        File destDir = new File(destDirectory);
+        if (!destDir.exists()) {
+            destDir.mkdir();
+        }
+
+        try (ZipInputStream zipIn = new ZipInputStream(new FileInputStream(zipFilePath))) {
+            ZipEntry entry = zipIn.getNextEntry();
+
+            while (entry != null) {
+                String filePath = destDirectory + File.separator + entry.getName();
+                if (!entry.isDirectory()) {
+                    extractFile(zipIn, filePath);
+                } else {
+                    File dir = new File(filePath);
+                    dir.mkdir();
+                }
+
+                zipIn.closeEntry();
+                entry = zipIn.getNextEntry();
+            }
+        }
+    }
+
+    private static void extractFile(ZipInputStream zipIn, String filePath) throws IOException {
+        try (FileOutputStream fos = new FileOutputStream(filePath)) {
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+
+            while ((bytesRead = zipIn.read(buffer)) != -1) {
+                fos.write(buffer, 0, bytesRead);
+            }
+        }
     }
 }
 
