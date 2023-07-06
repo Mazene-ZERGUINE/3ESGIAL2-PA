@@ -15,8 +15,10 @@ import imageRouter from '../routes/clm/image.router';
 import publicationAppreciationRouter from '../routes/clm/publication-appreciation.router';
 import {
 	checkForExportFormats,
+	checkThemes,
 	checkUpdates,
 	sendExportsFiles,
+	sendThemeFileName,
 	sendUpdatesFile,
 } from '../controllers/client/UpdatesController';
 
@@ -41,6 +43,8 @@ export default class AppRouter {
 		app.get('/api/client/check_exports', checkForExportFormats);
 		app.get('/updates/:version', sendUpdatesFile);
 		app.get('/exports/:format', sendExportsFiles);
+		app.get('/themes/:theme', sendThemeFileName);
+		app.get('/api/client/check_themes', checkThemes);
 
 		//#region			clm
 		app
