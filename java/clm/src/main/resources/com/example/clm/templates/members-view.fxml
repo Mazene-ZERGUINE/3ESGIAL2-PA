@@ -7,13 +7,13 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.image.Image?>
 <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="650.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.clm.controllers.MembersController">
    <children>
       <AnchorPane prefHeight="650.0" prefWidth="1100.0" styleClass="mainPane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -52,15 +52,20 @@
 													 <Image url="@../images/theme_21581.png" />
 												 </image>
 											 </ImageView>
+                        <ImageView fitHeight="48.0" fitWidth="69.0" layoutX="67.0" layoutY="4.0" onMouseClicked="#onTerminalBtnClick" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../images/Alecive-Flatwoken-Apps-Terminal-Pc-104.512.png" />
+                           </image>
+                        </ImageView>
                      </children>
                   </AnchorPane>
                </center>
             </BorderPane>
             <AnchorPane layoutX="641.0" layoutY="62.0" prefHeight="588.0" prefWidth="471.0">
                <children>
-                  <Button fx:id="addBtn" layoutX="21.0" layoutY="52.0" mnemonicParsing="false" onAction="#onAddBtnClick" prefHeight="40.0" prefWidth="127.0" styleClass="add-button" text="Ajouter" />
-                  <Button fx:id="deleteBtn" layoutX="172.0" layoutY="52.0" mnemonicParsing="false" onAction="#onDeleteBtnClick" prefHeight="40.0" prefWidth="127.0" styleClass="delete-button" text="Effacer" />
-                  <Button fx:id="updateBtn" layoutX="320.0" layoutY="52.0" mnemonicParsing="false" onAction="#onUpdateBtnClick" prefHeight="40.0" prefWidth="127.0" styleClass="update-button" text="Modifier" />
+                  <Button fx:id="addBtn" layoutX="118.0" layoutY="52.0" mnemonicParsing="false" onAction="#onAddBtnClick" prefHeight="40.0" prefWidth="98.0" styleClass="add-button" text="Ajouter" />
+                  <Button fx:id="deleteBtn" layoutX="236.0" layoutY="52.0" mnemonicParsing="false" onAction="#onDeleteBtnClick" prefHeight="40.0" prefWidth="98.0" styleClass="delete-button" text="Effacer" />
+                  <Button fx:id="updateBtn" layoutX="349.0" layoutY="52.0" mnemonicParsing="false" onAction="#onUpdateBtnClick" prefHeight="40.0" prefWidth="98.0" styleClass="update-button" text="Modifier" />
                   <TextField fx:id="lastNameField" layoutX="32.0" layoutY="155.0" prefHeight="26.0" prefWidth="384.0" styleClass="inputs" />
                   <Text layoutX="26.0" layoutY="143.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Nom" wrappingWidth="77.04687118530273" />
                   <TextField fx:id="firstNameField" layoutX="32.0" layoutY="222.0" prefHeight="26.0" prefWidth="384.0" styleClass="inputs" />
@@ -71,6 +76,11 @@
                   <Text layoutX="31.0" layoutY="349.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Mot de passe " wrappingWidth="143.04687118530273" />
                   <Text layoutX="31.0" layoutY="410.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Role" wrappingWidth="143.04687118530273" />
                   <ComboBox fx:id="roleCombo" editable="true" layoutX="32.0" layoutY="421.0" prefHeight="26.0" prefWidth="384.0" styleClass="inputs" visibleRowCount="2" />
+                  <ImageView fx:id="exportBtn" fitHeight="57.0" fitWidth="115.0" layoutX="38.0" layoutY="44.0" onMouseClicked="#onExportBtnClicked" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../images/Polysoude-export-icon.png" />
+                     </image>
+                  </ImageView>
                </children>
             </AnchorPane>
             <TableView fx:id="tableView" layoutX="39.0" layoutY="111.0" onMouseClicked="#onTableViewSelected" prefHeight="491.0" prefWidth="589.0">

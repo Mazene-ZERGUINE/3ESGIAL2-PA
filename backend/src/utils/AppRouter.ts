@@ -13,8 +13,19 @@ import publicationRouter from '../routes/clm/publication.router';
 import { isAdministrator, isAuthenticated } from '../middlewares/clm/auth.middleware';
 import imageRouter from '../routes/clm/image.router';
 import publicationAppreciationRouter from '../routes/clm/publication-appreciation.router';
+
+import {
+	checkForExportFormats,
+	checkThemes,
+	checkUpdates,
+	sendExportsFiles,
+	sendThemeFileName,
+	sendUpdatesFile,
+} from '../controllers/client/UpdatesController';
+
 import { checkForExportFormats, checkUpdates, sendUpdatesFile } from '../controllers/client/UpdatesController';
 import publicationFavoriRouter from '../routes/clm/publication-favori.router';
+
 
 export default class AppRouter {
 	private readonly categoryRoutes: any = require('../routes/client/categories.routes');
@@ -34,8 +45,12 @@ export default class AppRouter {
 		app.use('/api/client/tickets', this.ticketsRouts);
 		app.post('/api/client/recover_password', recoverPassword);
 		app.get('/api/client/check_updates/:current_version', checkUpdates);
-		app.get('/check_exports', checkForExportFormats);
+		app.get('/api/client/check_exports', checkForExportFormats);
 		app.get('/updates/:version', sendUpdatesFile);
+		app.get('/exports/:format', sendExportsFiles);
+		app.get('/themes/:theme', sendThemeFileName);
+		app.get('/api/client/check_themes', checkThemes);
+
 		//#region			clm
 		app
 			.use('/uploads/publications/images', express.static('uploads/publications/images'))

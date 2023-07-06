@@ -1,13 +1,20 @@
 package com.example.clm;
 
 import com.example.clm.utils.ApiService;
+import com.github.tsohr.JSONArray;
 import com.github.tsohr.JSONObject;
 
 import java.io.*;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 public class ConsoleApp {
     private static final String baseUrl = "http://localhost:3000/api/client/" ;
@@ -27,11 +34,23 @@ public class ConsoleApp {
             Scanner scanner = new Scanner(System.in);
             input = scanner.nextLine();
             System.out.println();
+
+            String formatPattern = "clm install-export-format\\s\\w+";
+            Pattern pattern = Pattern.compile(formatPattern);
+            Matcher matcher = pattern.matcher(input);
+
+            String formatPattern2 = "clm install-theme\\s\\w+";
+            Pattern pattern2 = Pattern.compile(formatPattern2);
+            Matcher matcher2 = pattern2.matcher(input);
+
+
             if (input.equals("--help")) {
                 System.out.println("clm --version: verifier la version de  CLM");
                 System.out.println("clm check-updates: verifier les mis a jour de  CLM");
                 System.out.println("clm check-export-formats: verifier les nouveau format d'export disponible");
                 System.out.println("clm install-export-format <format> : install le nouveau d'export" );
+                System.out.println("clm check-themes : verifier  les nouveau themes de l'application" );
+                System.out.println("clm install-theme <theme> : install le nouveau d'export" );
                 System.out.println();
             } else if (input.equals("clm --version")) {
                 getAppVersion();
@@ -39,24 +58,101 @@ public class ConsoleApp {
             } else if (input.equals("clm check-updates")) {
                 checkForUpdates();
                 System.out.println();
+            }else if(input.equals("")) {
+                continue;
             } else if (input.equals("clm check-export-formats")) {
                 checkExportsFormat();
                 System.out.println();
             } else if (input.equals("exit")) {
                 System.exit(1);
-            } else {
+            }
+            else if (matcher.matches()) {
+                String exportFormat = input.split(" ")[2];
+                installFormat(exportFormat);
+                System.out.println();
+            }
+            else if(input.equals("clm check-themes")) {
+                checkThemes();
+                System.out.println();
+            } else if (matcher2.matches()) {
+                String theme = input.split(" ")[2];
+                installTheme(theme);
+                System.out.println();
+            }
+            else {
                 System.out.println("\u001B[31m" +  "wrong input Tapez la commande help pour voir la liste des commandes du CLI" + "\u001B[0m");
             }
-
         }
     }
 
+
+    private static void installTheme(String theme) throws IOException {
+        System.out.println("télechargement et installation de theme " + theme);
+        String themeToDowload =  "http://localhost:3000/themes/" + theme + ".css";
+        String savePath = "../themes/" + theme + ".css";
+        try {
+            downloadFile(themeToDowload, savePath);
+        } catch (IOException e) {
+            System.out.println("\u001B[31m" +  "format " + theme + " n'existe pas tappez <clm check-export-formats> pour regarder tous les formats disponibles" + "\u001B[0m");
+            return;
+        }
+        Path source = Path.of(savePath);
+        String targetFolderPath = "src/main/resources/com/example/clm/styles/";
+        Path target = Path.of(targetFolderPath + theme + ".css");
+
+        Files.move(source, target, StandardCopyOption.REPLACE_EXISTING);
+        progressBar();
+
+        System.out.println(  "\u001B[32m" + "Téléchargement terminer"  + "\u001B[0m");
+    }
+    private static void checkThemes() {
+        try {
+            ApiService api = new ApiService();
+            JSONObject response = new JSONObject(api.getTypeRequest(baseUrl + "check_themes").toString());
+            if (response.getInt("status_code") == 200) {
+                JSONArray formatsList = response.getJSONArray("themes");
+                for (int i= 0 ; i< formatsList.length() ; i++) {
+                    System.out.println(" > " + formatsList.getString(i));
+                }
+            } else {
+                System.out.println("error ocured while sending http request");
+            }
+        } catch (Exception e) {
+            System.out.println(" > pas de nouveau theme disponible");
+            System.out.println(e.getCause() + " " + e.getMessage());
+        }
+    }
+
+    private static void installFormat(String exportFormat) throws IOException {
+        String formatToDownload =  "http://localhost:3000/exports/" + exportFormat;
+        String savePath = "../plugins/" + exportFormat + ".zip";
+        try {
+            downloadFile(formatToDownload, savePath);
+        } catch (IOException e) {
+            System.out.println("\u001B[31m" +  "format " + exportFormat + "n'existe pas tappez <clm check-export-formats> pour regarder tous les formats disponibles" + "\u001B[0m");
+            return;
+        }
+        String dest = "../plugins/" + exportFormat ;
+        unzip(savePath , dest);
+        File zipFile = new File(savePath);
+        zipFile.delete();
+        System.out.println( "\u001B[32m" +  "Téléchargement du format "  +  exportFormat  + "\u001B[0m");
+        progressBar();
+        System.out.println(  "\u001B[32m" + "Téléchargement terminer"  + "\u001B[0m");
+    }
 
     private static void checkExportsFormat() {
         try {
             ApiService api = new ApiService();
             JSONObject response = new JSONObject(api.getTypeRequest(baseUrl + "check_exports").toString());
-            System.out.println(response);
+            if (response.getInt("status_code") == 200) {
+                JSONArray formatsList = response.getJSONArray("exports");
+                for (int i= 0 ; i< formatsList.length() ; i++) {
+                    System.out.println(" > " + formatsList.getString(i));
+                }
+            } else {
+                System.out.println("error ocured while sending http request");
+            }
         } catch (Exception e) {
             System.out.println(" > pas de format d'export disponible");
             System.out.println(e.getCause() + " " + e.getMessage());
@@ -78,9 +174,7 @@ public class ConsoleApp {
         } catch (IOException e) {
             System.out.println("Error reading from the file: " + e.getMessage());
         }
-
-
-        System.out.println(" > CLM verssion: " + data.getString("version"));
+        System.out.println( "\u001B[32m" + " > CLM verssion: " + data.getString("version")  + "\u001B[0m");
         System.out.println(" > equipe: " + data.getString("author"));
         System.out.println(" > date de sortie:" + data.getString("release_date"));
         System.out.println();
@@ -130,7 +224,8 @@ public class ConsoleApp {
                     }
                     System.out.println("Téléchargement des mis à jours");
                     progressBar();
-                    System.out.println("Téléchargement terminer");
+
+                    System.out.println( "\u001B[32m" + "Téléchargement terminer" + "\u001B[0m");
                     // replacing older jar file withe the updates jar file //
                     String sourceFilePath = "./tmp/clm.jar";
                     String destinationFilePath = "./clm.jar";
@@ -140,7 +235,6 @@ public class ConsoleApp {
 
                     try {
                         Files.copy(sourceFile.toPath(), destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                        System.out.println("File replaced successfully.");
                     } catch (IOException e) {
                         System.out.println("An error occurred while replacing the file: " + e.getMessage());
                     }
@@ -148,7 +242,7 @@ public class ConsoleApp {
 
                     System.out.println("Instalation des mis à jour");
                     progressBar();
-                    System.out.println("Instalation Terminé");
+                    System.out.println("\u001B[32m" +  "Instalation Terminé" + "\u001B[0m");
 
                     System.out.println("Redamarage de CLM");
                     Thread.sleep(100);
@@ -213,6 +307,41 @@ public class ConsoleApp {
         }
 
         System.out.println();
+    }
+
+    public static void unzip(String zipFilePath, String destDirectory) throws IOException {
+        File destDir = new File(destDirectory);
+        if (!destDir.exists()) {
+            destDir.mkdir();
+        }
+
+        try (ZipInputStream zipIn = new ZipInputStream(new FileInputStream(zipFilePath))) {
+            ZipEntry entry = zipIn.getNextEntry();
+
+            while (entry != null) {
+                String filePath = destDirectory + File.separator + entry.getName();
+                if (!entry.isDirectory()) {
+                    extractFile(zipIn, filePath);
+                } else {
+                    File dir = new File(filePath);
+                    dir.mkdir();
+                }
+
+                zipIn.closeEntry();
+                entry = zipIn.getNextEntry();
+            }
+        }
+    }
+
+    private static void extractFile(ZipInputStream zipIn, String filePath) throws IOException {
+        try (FileOutputStream fos = new FileOutputStream(filePath)) {
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+
+            while ((bytesRead = zipIn.read(buffer)) != -1) {
+                fos.write(buffer, 0, bytesRead);
+            }
+        }
     }
 }
 

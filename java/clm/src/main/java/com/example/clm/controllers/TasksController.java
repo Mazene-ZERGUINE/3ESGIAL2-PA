@@ -172,6 +172,11 @@ public class TasksController implements Initializable {
 	}
 
 	@FXML
+	void onTerminalBtnClick(MouseEvent event) throws IOException {
+		sceneService.openTerminal("clear","java -jar ./console/consoleapp.jar");
+	}
+
+	@FXML
 	void onDeleteBtnClick(ActionEvent event) throws IOException {
 		int selectedID = tasksTable.getSelectionModel().getSelectedItems().get(0).getId();
 		StringBuilder response = api.deleteTypeRequest(baseUrl + "tasks/" + selectedID);
@@ -199,9 +204,6 @@ public class TasksController implements Initializable {
 		stage.setResizable(false);
 		stage.initStyle(StageStyle.UNDECORATED);
 		stage.centerOnScreen();
-
-
-
 		sceneService.switchToNewWindow("export-formats-view.fxml", null, stage);
 
 
@@ -209,9 +211,7 @@ public class TasksController implements Initializable {
 			tasksRoot.setDisable(false);
 			String selectedExportFormat = StorageService.getInstance().getSelectedExportFormat();
 			String jarFilePath = "../plugins/" + selectedExportFormat + "/" + selectedExportFormat + "Exporter" + ".jar";
-
 				Stage fileNameStage = new Stage();
-
 				fileNameStage.setResizable(false);
 				fileNameStage.initStyle(StageStyle.UNDECORATED);
 				fileNameStage.centerOnScreen();
@@ -246,7 +246,6 @@ public class TasksController implements Initializable {
 					}
 				});
 				tasksRoot.setDisable(false);
-
 		});
 	}
 
