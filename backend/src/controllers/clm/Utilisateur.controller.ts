@@ -1,7 +1,5 @@
 import { Request, Response } from 'express';
 import { decode } from 'jsonwebtoken';
-import { hash } from 'argon2';
-import { createTransport } from 'nodemailer';
 
 import { CoreController } from './Core.controller';
 import { Utilisateur } from '../../models/clm/utilisateur';
@@ -9,8 +7,6 @@ import { frenchDepartmentsData } from '../../utils/clm/data/french-departments.d
 import { Argon2 } from '../../utils/clm/argon.utils';
 import { Publication } from '../../models/clm/publication';
 import { Role } from '../../enum/clm/role.enum';
-import { MailOptions } from 'nodemailer/lib/smtp-transport';
-import { getEmailTemplate } from '../../utils/clm/email-template';
 import { PublicationFavori } from '../../models/clm/publication_favori';
 
 export class UtilisateurController extends CoreController {
@@ -57,19 +53,22 @@ export class UtilisateurController extends CoreController {
 		}
 
 		try {
-			const items = await PublicationFavori.findAll({
+			const data = await PublicationFavori.findAndCountAll({
 				offset: (providedPage - 1) * CoreController.PAGE_SIZE,
 				limit: CoreController.PAGE_SIZE,
 				where: { utilisateur_id },
-				// include: {
-				// 	all: true,
-				// 	nested: true,
-				// },
-				include: [Publication],
-				// order: [['created_at', 'DESC']],
+				include: [
+					{
+						model: Publication,
+						all: true,
+						nested: true,
+					},
+				],
+				order: [['created_at', 'DESC']],
+				distinct: true,
 			});
 
-			res.status(200).json({ data: items });
+			res.status(200).json({ data });
 		} catch (error) {
 			CoreController.handleError(error, res);
 		}

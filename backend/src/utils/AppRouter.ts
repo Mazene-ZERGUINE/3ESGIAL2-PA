@@ -43,8 +43,8 @@ export default class AppRouter {
 			.use('/api/clm/categories', categorieRouter)
 			.use('/api/clm/images', imageRouter)
 			.use('/api/clm/publications', publicationRouter)
-			.use('/api/clm/appreciations/publications', publicationAppreciationRouter)
 			.use('/api/clm/favoris/publications', publicationFavoriRouter)
+			.use('/api/clm/appreciations/publications', publicationAppreciationRouter)
 			.use('/api/clm/sessions', [isAuthenticated, isAdministrator], sessionRouter)
 			.use('/api/clm/utilisateurs', utilisateurRouter);
 		//#endregion	clm

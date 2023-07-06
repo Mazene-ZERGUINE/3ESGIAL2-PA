@@ -13,7 +13,7 @@ router
 	)
 	.get('/count/all', [isAuthenticated, isAdministrator], UtilisateurController.coreCount(Utilisateur))
 	.get('/:pseudonyme', UtilisateurController.getByPseudonyme)
-	.get('/:pseudonyme/favoris', isAuthenticated, UtilisateurController.getAllFavoris)
+	.get('/:pseudonyme/favoris', UtilisateurController.getAllFavoris)
 	.get('/:pseudonyme/publications', isAuthenticated, UtilisateurController.getAllPublications)
 	.get('/:pseudonyme/publications/count', isAuthenticated, UtilisateurController.countAllPublications)
 	.get('/:pseudonyme/publications/count/public', UtilisateurController.countAllPublicationsWithoutAuth)
