@@ -1,17 +1,26 @@
 <div class="row">
   <!-- TODO -->
   <div class="col my-3" *ngIf="post">
-    <!--    <p *ngFor="categorie in post.categories">-->
     <div class="d-flex justify-content-between">
       <h1 class="my-3">{{ post.titre }}</h1>
-      <!-- TODO -->
       <div>
-        <button title="Aimer." class="btn btn-outline-warning" (click)="onUnstar()">
-          <i class="bi bi-star-fill"></i>
-        </button>
-        <button title="Aimer." class="btn btn-outline-warning" (click)="onStar()">
+        <button
+          title="Ajouter aux favoris."
+          class="btn btn-outline-warning"
+          (click)="onStar($event, post.publication_id, currentUserId)"
+          *ngIf="!starInfo?.starred; else elseUnstarButtonBlock"
+        >
           <i class="bi bi-star"></i>
         </button>
+        <ng-template #elseUnstarButtonBlock>
+          <button
+            title="Supprimer des favoris."
+            class="btn btn-outline-warning"
+            (click)="onUnstar($event, post.publication_id, currentUserId)"
+          >
+            <i class="bi bi-star-fill"></i>
+          </button>
+        </ng-template>
       </div>
     </div>
     <p>
@@ -66,7 +75,7 @@
       <button class="btn btn-outline-warning mx-2" (click)="onEdit(post.publication_id)">
         <i class="bi bi-pencil-fill"></i>
       </button>
-      <button class="btn btn-outline-danger mx-2" disabled (click)="onDelete()">
+      <button class="btn btn-outline-danger mx-2" (click)="onDelete('publications', postId)">
         <i class="bi bi-trash-fill"></i>
       </button>
     </span>

@@ -1,13 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 import { ModalReportComponent } from '../../../shared/components/modal-report/modal-report.component';
 import { UserProfileService } from '../shared/services/user-profile/user-profile.service';
 import { User } from '../../../shared/core/models/interfaces/user.interface';
-import { map } from 'rxjs';
+import { catchError, map, of, switchMap, tap } from 'rxjs';
 import { Response } from '../../../shared/core/models/interfaces/response.interface';
+import { JwtHelperService } from '@auth0/angular-jwt';
+import { UserPostsService } from '../shared/services/user-posts/user-posts.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @UntilDestroy()
 @Component({
@@ -18,16 +21,20 @@ import { Response } from '../../../shared/core/models/interfaces/response.interf
 export class UserProfileDetailsComponent implements OnInit {
   usernameParam: string;
   user?: User;
+  postsCount = 0;
 
   constructor(
+    private readonly jwtHelper: JwtHelperService,
     private readonly modalService: NgbModal,
     private readonly route: ActivatedRoute,
+    private readonly router: Router,
+    private readonly userPostsService: UserPostsService,
     private readonly userProfileService: UserProfileService,
   ) {
     this.usernameParam = this.route.snapshot.paramMap.get('username') || '';
   }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     // TODO utilisateur inexistant
     this.getUser();
   }
@@ -41,14 +48,21 @@ export class UserProfileDetailsComponent implements OnInit {
   }
 
   getUser() {
-    this.userProfileService
-      .getOneByField<Response<User>>('utilisateurs', this.usernameParam)
+    this.userPostsService
+      .count<Response<number>>(`utilisateurs/${this.usernameParam}/publications/count/public`)
       .pipe(
+        tap((res) => (this.postsCount = res.data)),
+        switchMap((_) => this.userProfileService.getOneByField<Response<User>>('utilisateurs', this.usernameParam)),
         map((res) => res?.data),
+        catchError((err) => of(err)),
         untilDestroyed(this),
       )
       .subscribe((data) => {
-        console.log('sub getuser', data);
+        if (data instanceof HttpErrorResponse) {
+          this.router.navigateByUrl('/not-found', { skipLocationChange: true });
+          return;
+        }
+
         this.user = data;
       });
   }

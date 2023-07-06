@@ -1,7 +1,5 @@
 import { Request, Response } from 'express';
 import { decode } from 'jsonwebtoken';
-import { hash } from 'argon2';
-import { createTransport } from 'nodemailer';
 
 import { CoreController } from './Core.controller';
 import { Utilisateur } from '../../models/clm/utilisateur';
@@ -9,8 +7,7 @@ import { frenchDepartmentsData } from '../../utils/clm/data/french-departments.d
 import { Argon2 } from '../../utils/clm/argon.utils';
 import { Publication } from '../../models/clm/publication';
 import { Role } from '../../enum/clm/role.enum';
-import { MailOptions } from 'nodemailer/lib/smtp-transport';
-import { getEmailTemplate } from '../../utils/clm/email-template';
+import { PublicationFavori } from '../../models/clm/publication_favori';
 
 export class UtilisateurController extends CoreController {
 	static async create(req: Request, res: Response): Promise<void> {
@@ -33,6 +30,45 @@ export class UtilisateurController extends CoreController {
 
 			await Utilisateur.create({ ...req.body, mot_de_passe: await Argon2.hash(mot_de_passe) });
 			res.status(201).end();
+		} catch (error) {
+			CoreController.handleError(error, res);
+		}
+	}
+
+	static async getAllFavoris(req: Request, res: Response): Promise<void> {
+		const { page } = req.query;
+		const providedPage = page ? Number(page) : 1;
+		const { pseudonyme: pseudonymeParam } = req.params;
+
+		const token = decode(req.headers?.authorization?.split(' ')[1] as any);
+		const utilisateur_id = (token as any)?.utilisateur_id;
+		const pseudonyme = (token as any)?.pseudonyme;
+		const role = (token as any)?.role;
+
+		const isSameUser = pseudonyme === pseudonymeParam && Boolean(utilisateur_id);
+		const isAuthorised = isSameUser || role === Role.administrator;
+		if (!isAuthorised) {
+			res.status(401).end();
+			return;
+		}
+
+		try {
+			const data = await PublicationFavori.findAndCountAll({
+				offset: (providedPage - 1) * CoreController.PAGE_SIZE,
+				limit: CoreController.PAGE_SIZE,
+				where: { utilisateur_id },
+				include: [
+					{
+						model: Publication,
+						all: true,
+						nested: true,
+					},
+				],
+				order: [['created_at', 'DESC']],
+				distinct: true,
+			});
+
+			res.status(200).json({ data });
 		} catch (error) {
 			CoreController.handleError(error, res);
 		}
@@ -88,6 +124,26 @@ export class UtilisateurController extends CoreController {
 
 		try {
 			const { count } = await Publication.findAndCountAll({ where: { utilisateur_id } });
+			res.status(200).json({ data: count });
+		} catch (error) {
+			CoreController.handleError(error, res);
+		}
+	}
+
+	static async countAllPublicationsWithoutAuth(req: Request, res: Response): Promise<void> {
+		const { pseudonyme } = req.params;
+
+		try {
+			const utilisateur = await Utilisateur.findOne({ where: { pseudonyme } });
+			if (!utilisateur) {
+				res.status(404).end();
+				return;
+			}
+
+			const { count } = await Publication.findAndCountAll({
+				where: { utilisateur_id: utilisateur.getDataValue('utilisateur_id') },
+			});
+
 			res.status(200).json({ data: count });
 		} catch (error) {
 			CoreController.handleError(error, res);

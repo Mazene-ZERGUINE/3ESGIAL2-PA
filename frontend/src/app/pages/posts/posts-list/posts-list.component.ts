@@ -5,6 +5,8 @@ import { Status } from '../../sign-up/shared/enums/status.enum';
 import { DomSanitizer } from '@angular/platform-browser';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { PostLikesService } from '../../../shared/core/services/post-likes/post-likes.service';
+import { PostFavoritesService } from '../../../shared/core/services/post-favorites/post-favorites.service';
+import { Observable } from 'rxjs';
 
 @UntilDestroy()
 @Component({
@@ -19,13 +21,17 @@ export class PostsListComponent {
   @Input() isAuthenticated: null | boolean = false;
   @Input() likeInfo: any = {};
   @Input() posts: null | Post[] = [];
+  @Input() starInfo: any = {};
 
   @Output() selected = new EventEmitter<Post>();
   @Output() liked = new EventEmitter<void>();
   @Output() disliked = new EventEmitter<void>();
+  @Output() starred = new EventEmitter<void>();
+  @Output() unstarred = new EventEmitter<void>();
 
   constructor(
     public readonly sanitizer: DomSanitizer,
+    private readonly postFavoritesService: PostFavoritesService,
     private readonly postLikesService: PostLikesService,
     private readonly router: Router,
   ) {}
@@ -76,14 +82,38 @@ export class PostsListComponent {
     // TODO
   }
 
-  onStar(e: MouseEvent): void {
+  async onStar(e: MouseEvent, postId: number, userId?: number): Promise<void> {
     this.stopPropagation(e);
-    // TODO
+
+    const isUnauthenticated = !this.isAuthenticated || !userId;
+    if (isUnauthenticated) {
+      await this.router.navigateByUrl('/login');
+      return;
+    }
+
+    this.postFavoritesService
+      .create(`favoris/publications/${postId}`, null)
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.starred.emit();
+      });
   }
 
-  onUnstar(e: MouseEvent): void {
+  async onUnstar(e: MouseEvent, postId: number, userId?: number): Promise<void> {
     this.stopPropagation(e);
-    // TODO
+
+    const isUnauthenticated = !this.isAuthenticated || !userId;
+    if (isUnauthenticated) {
+      await this.router.navigateByUrl('/login');
+      return;
+    }
+
+    this.postFavoritesService
+      .delete('favoris/publications', postId)
+      .pipe(untilDestroyed(this))
+      .subscribe((_) => {
+        this.unstarred.emit();
+      });
   }
 
   selectPost(post: Post): void {

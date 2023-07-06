@@ -12,6 +12,7 @@ import { ComponentsModule } from '../../shared/components/components.module';
 import { UserTableComponent } from './user-table/user-table.component';
 import { UserChatsListComponent } from './user-chats-list/user-chats-list.component';
 import { UserChatComponent } from './user-chat/user-chat.component';
+import { UserFavoritesListComponent } from './user-favorites-list/user-favorites-list.component';
 
 @NgModule({
   declarations: [
@@ -22,6 +23,7 @@ import { UserChatComponent } from './user-chat/user-chat.component';
     UserTableComponent,
     UserChatsListComponent,
     UserChatComponent,
+    UserFavoritesListComponent,
   ],
   imports: [CommonModule, UsersRoutingModule, NgbPagination, ReactiveFormsModule, ComponentsModule, FormsModule],
 })
