@@ -104,3 +104,30 @@ export function sendExportsFiles(req: Request, res: Response): void {
 		});
 	});
 }
+
+export function sendThemeFileName(req: Request, res: Response): void {
+	const theme: string = req.params.theme;
+	const filePath = path.join(__dirname, '../../../themes', theme);
+	if (fs.existsSync(filePath)) {
+		res.sendFile(filePath);
+	} else {
+		res.status(404).send('Updates file not found.');
+	}
+}
+
+export function checkThemes(req: Request, res: Response): void {
+	const exportPaths = path.join(__dirname, '../../../themes');
+	fs.readdir(exportPaths, { withFileTypes: true }, (err, files) => {
+		if (err) {
+			console.error('Error reading directory:', err);
+			res.status(400).send('no updates found in updates folder');
+			return;
+		}
+		const folders: string[] = [];
+		files.filter((file) => {
+			folders.push(file.name.split('.')[0]);
+		});
+
+		res.send({ status_code: 200, themes: folders });
+	});
+}
