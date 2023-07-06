@@ -246,9 +246,9 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{HOST}}/clm/publications/4",
+									"raw": "{{HOST}}/clm/publications/1",
 									"host": ["{{HOST}}"],
-									"path": ["clm", "publications", "4"]
+									"path": ["clm", "publications", "1"]
 								}
 							},
 							"response": []
@@ -357,6 +357,53 @@
 					]
 				},
 				{
+					"name": "publication favori",
+					"item": [
+						{
+							"name": "get all",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{ADMIN_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{HOST}}/clm/favoris/publications?page=1",
+									"host": ["{{HOST}}"],
+									"path": ["clm", "favoris", "publications"],
+									"query": [
+										{
+											"key": "page",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get by Publication id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{HOST}}/clm/favoris/publications/1",
+									"host": ["{{HOST}}"],
+									"path": ["clm", "favoris", "publications", "1"]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
 					"name": "session",
 					"item": [
 						{
@@ -432,6 +479,29 @@
 									"raw": "{{HOST}}/clm/utilisateurs/a",
 									"host": ["{{HOST}}"],
 									"path": ["clm", "utilisateurs", "a"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get favoris by pseudonyme",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{ADMIN_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{HOST}}/clm/utilisateurs/a/favoris",
+									"host": ["{{HOST}}"],
+									"path": ["clm", "utilisateurs", "a", "favoris"]
 								}
 							},
 							"response": []
