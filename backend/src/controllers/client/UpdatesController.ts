@@ -79,9 +79,13 @@ export function sendExportsFiles(req: Request, res: Response): void {
 	const format: any = req.params.format;
 	const folderPath = path.join(__dirname, '../../../exports', format);
 
-	// Create a zip archive
+	if (!fs.existsSync(folderPath)) {
+		res.send(403).send("format doesn't exist");
+		return;
+	}
+
 	const archive = archiver('zip', {
-		zlib: { level: 9 }, // Set compression level (optional)
+		zlib: { level: 9 }, //
 	});
 
 	res.attachment(format + '.zip');
