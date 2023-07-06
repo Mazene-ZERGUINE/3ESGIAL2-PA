@@ -88,17 +88,20 @@ export class PostDetailsComponent implements OnInit, OnDestroy {
       });
   }
 
-  async onDelete(): Promise<void> {
-    let hasUserValidated;
+  async onDelete(path: string, postId: number): Promise<void> {
     try {
-      hasUserValidated = await this.modalService.open(ModalFocusConfirmComponent).result;
-    } catch (_) {}
+      const hasUserValidated = await this.modalService.open(ModalFocusConfirmComponent).result;
+      if (!hasUserValidated) {
+        return;
+      }
 
-    if (!hasUserValidated) {
-      return;
-    }
-
-    // TODO
+      this.postsService
+        .delete(path, postId)
+        .pipe(untilDestroyed(this))
+        .subscribe((_) => {
+          this.router.navigateByUrl('posts');
+        });
+    } catch (e) {}
   }
 
   async onEdit(id: number): Promise<void> {
