@@ -1,8 +1,0 @@
-{
-  "name": "CLM",
-  "version": "1.0.0",
-  "author": "Team_5",
-  "description": "Team manegement javafx application",
-  "release_date": "2023-06-01",
-  "main_class": "com.example.clm.Launcher"
-}
