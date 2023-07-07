@@ -20,7 +20,7 @@ import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { JwtHelperService } from '@auth0/angular-jwt';
 
-import { Post } from './shared/models/post.interface';
+import { Categorie, Post } from './shared/models/post.interface';
 import { AuthService } from '../../shared/core/services/auth/auth.service';
 import { PostsService } from './shared/services/posts/posts.service';
 import { Response } from '../../shared/core/models/interfaces/response.interface';
@@ -41,8 +41,10 @@ export class PostsComponent implements OnInit {
   readonly posts$: Observable<null | Post[]>;
   readonly starInfo$?: Observable<{ [key: string]: { starred: boolean } }>;
 
+  categories: Categorie[] = [];
   collectionSize = 0;
   currentUserId?: number;
+  filterForm?: FormGroup;
   form?: FormGroup;
   likeInfo: { [key: number]: { count: number; liked: boolean } } = {};
   starInfo: { [key: string]: { starred: boolean } } = {};
@@ -75,9 +77,49 @@ export class PostsComponent implements OnInit {
 
     await this.setCurrentUserId();
     this.getPosts();
+
+    this.getCategories();
     this.initForm();
+    this.initFilterForm();
 
     this.viewportScroller.scrollToPosition([0, 0]);
+  }
+
+  getCategories() {
+    this.postsService
+      .getAll<Response<Categorie[]>>('categories')
+      .pipe(untilDestroyed(this))
+      .subscribe((res) => {
+        this.categories = res.data;
+      });
+  }
+
+  onFilterSubmit() {
+    if (this.filterForm?.invalid) {
+      return;
+    }
+    if (!this.filterForm || this.filterForm?.invalid) {
+      return;
+    }
+
+    this.postsService
+      .search<Response<{ count: number; rows: Post[] }>>(`publications/search?page=1`, {
+        categorie_id: this.filterForm.get('categorie')?.value,
+      })
+      .pipe(
+        map((res) => res?.data),
+        untilDestroyed(this),
+      )
+      .subscribe((data) => {
+        this.collectionSize = data.count;
+        this.postsService.emitPosts(data.rows);
+      });
+  }
+
+  initFilterForm(): void {
+    this.filterForm = this.fb.group({
+      categorie: this.fb.control(0, [Validators.required, Validators.min(1)]),
+    });
   }
 
   initForm(): void {
