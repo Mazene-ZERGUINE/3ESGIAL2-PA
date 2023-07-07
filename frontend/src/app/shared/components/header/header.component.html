@@ -71,7 +71,7 @@
                   [routerLink]="userRoute.path"
                   routerLinkActive="active"
                   [routerLinkActiveOptions]="{ exact: true }"
-                  [queryParams]="userRoute.label !== 'Publications' ? null : { page: 1 }"
+                  [queryParams]="userRoute.queryParams"
                 >
                   {{ userRoute.label }}
                 </a>

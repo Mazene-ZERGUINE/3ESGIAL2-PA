@@ -21,7 +21,7 @@ export class HeaderComponent implements OnInit {
     const token = await this.jwtHelper.tokenGetter();
     const decodedToken = this.jwtHelper.decodeToken(token);
 
-    this.username = decodedToken.pseudonyme;
+    this.username = decodedToken?.pseudonyme;
   }
 
   readonly isAdmin: Observable<boolean>;
@@ -38,11 +38,11 @@ export class HeaderComponent implements OnInit {
     // { path: '/administration/users/add', label: 'Utilisateurs (ajout)' },
   ];
 
-  userRoutes: ReadonlyArray<{ path: string; label: string }> = [
+  userRoutes: ReadonlyArray<{ path: string; label: string; queryParams?: { page: number } }> = [
     { path: '/users/chats', label: 'Messagerie' },
-    { path: '/users/favorites', label: 'Favoris' },
+    { path: '/users/favorites', label: 'Favoris', queryParams: { page: 1 } },
     { path: '/users/profile/me', label: 'Profil' },
-    { path: '/users/posts', label: 'Publications' },
+    { path: '/users/posts', label: 'Publications', queryParams: { page: 1 } },
   ];
 
   visitorRoutes: ReadonlyArray<{ path: string; label: string }> = [

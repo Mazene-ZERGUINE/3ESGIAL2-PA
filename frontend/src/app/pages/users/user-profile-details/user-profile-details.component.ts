@@ -21,11 +21,13 @@ import { UserReputationsService } from '../shared/services/user-reputations/user
   styleUrls: ['./user-profile-details.component.scss'],
 })
 export class UserProfileDetailsComponent implements OnInit {
+  currentUsername?: string;
   isAuthenticated: boolean;
   postsCount = 0;
   reputation = 0;
   usernameParam: string;
   user?: User;
+  vote?: { vote?: number } | undefined;
 
   constructor(
     private readonly authService: AuthService,
@@ -44,7 +46,15 @@ export class UserProfileDetailsComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     // TODO utilisateur inexistant
     this.getUserByPseudonyme();
+    this.getVote();
     this.getUserReputation();
+
+    await this.setCurrentUsername();
+  }
+
+  async setCurrentUsername(): Promise<any> {
+    const token = await this.jwtHelper.tokenGetter();
+    this.currentUsername = this.jwtHelper.decodeToken(token)?.pseudonyme;
   }
 
   async onReport(): Promise<void> {
@@ -59,6 +69,19 @@ export class UserProfileDetailsComponent implements OnInit {
       console.log(description);
       // TODO
     } catch (_) {}
+  }
+
+  getVote(): void {
+    this.userReputationsService
+      .getOneByField<Response<{ vote?: number }>>('reputations', `${this.usernameParam}/vote`)
+      .pipe(
+        map((res) => res?.data),
+        untilDestroyed(this),
+      )
+      .subscribe((data) => {
+        console.log(data);
+        this.vote = data;
+      });
   }
 
   getUserReputation(): void {
@@ -100,17 +123,25 @@ export class UserProfileDetailsComponent implements OnInit {
       });
   }
 
-  async onVote(value: number): Promise<void> {
+  async onVote(value: number, type?: 'upVote' | 'downVote'): Promise<void> {
     const isUnauthenticated = !this.isAuthenticated || !(await this.authService.getCurrentUserId());
     if (isUnauthenticated) {
       await this.router.navigateByUrl('/login');
       return;
     }
 
+    let vote = value;
+    if (this.vote && type === 'downVote' && this.vote >= 1 && value === -1) {
+      vote = value - 1;
+    } else if (this.vote && type === 'upVote' && this.vote <= 1 && value === 1) {
+      vote = value + 1;
+    }
+
     this.userReputationsService
-      .upsert(`reputations/${this.usernameParam}`, { vote: value })
+      .upsert(`reputations/${this.usernameParam}`, { vote })
       .pipe(untilDestroyed(this))
       .subscribe((_) => {
+        this.getVote();
         this.getUserReputation();
       });
   }

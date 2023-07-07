@@ -7,6 +7,7 @@ import { Path } from '../../../shared/enum/path.enum';
 import { AdministrationUsersService } from '../shared/services/administration-users/administration-users.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ModalFocusConfirmComponent } from '../../../shared/components/modal-focus-confirm/modal-focus-confirm.component';
+import { AuthService } from 'src/app/shared/core/services/auth/auth.service';
 
 @UntilDestroy()
 @Component({
@@ -24,6 +25,7 @@ export class AdministrationUsersTableComponent {
 
   constructor(
     private readonly administrationUsersService: AdministrationUsersService,
+    private readonly authService: AuthService,
     private readonly modalService: NgbModal,
     private readonly route: ActivatedRoute,
     private readonly router: Router,
@@ -44,10 +46,19 @@ export class AdministrationUsersTableComponent {
         return;
       }
 
+      const isMyself = (await this.authService.getCurrentUserId()) === id;
+
       this.administrationUsersService
         .delete(path, id)
         .pipe(untilDestroyed(this))
         .subscribe((_) => {
+          if (isMyself) {
+            this.authService.deleteToken();
+            // this.router.navigateByUrl('signup');
+            location.href = '/signup';
+            return;
+          }
+
           this.deleted.emit();
         });
     } catch (e) {}
