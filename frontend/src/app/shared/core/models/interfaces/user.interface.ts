@@ -6,8 +6,9 @@ export interface UserDTO {
   pseudonyme: string;
   ville: string;
   departement: number;
-  statut: string;
+  reputation: number;
   role: string;
+  statut: string;
 }
 
 export interface User extends UserDTO {
