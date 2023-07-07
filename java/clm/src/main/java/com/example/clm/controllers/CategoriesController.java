@@ -420,17 +420,38 @@ public class CategoriesController extends Application implements Initializable {
 		}
 	}
 
+
 	@FXML
-	void switchToPlanificationPage(MouseEvent event) throws IOException {
-			Stage stage = (Stage)this.mainPane.getScene().getWindow();
-			sceneService.switchScene(stage , "gantt-view.fxml" , null);
+	void switchToTicketPage(MouseEvent __) throws IOException {
+		if(!StorageService.getInstance().isOffline()) {
+			if (auth.checkUserRole()) {
+				Stage stage = (Stage) this.addBtn.getScene().getWindow();
+				sceneService.switchScene(stage, "ticket-view.fxml", null);
+			} else {
+				Stage stage = (Stage) this.categoriesListView.getScene().getWindow();
+				sceneService.switchScene(stage, "ticket-view.fxml", null);
+			}
+		} else {
+			notifierService.notify(NotificationType.WARNING , "Attention" , "Cette fonctionlité n'est pas disponible offline");
+		}
 	}
 
 	@FXML
-	void switchToTicketPage(MouseEvent event) throws IOException {
-		Stage stage = (Stage)this.mainPane.getScene().getWindow();
-		sceneService.switchScene(stage , "tickets-view.fxml" , null);
+	void switchToPlanificationPage(MouseEvent event) throws IOException {
+		if(!StorageService.getInstance().isOffline()) {
+			if (auth.checkUserRole()) {
+				Stage stage = (Stage) this.addBtn.getScene().getWindow();
+				sceneService.switchScene(stage, "gantt-view.fxml", null);
+			} else {
+				Stage stage = (Stage) this.categoriesListView.getScene().getWindow();
+				sceneService.switchScene(stage, "gantt-view.fxml", null);
+			}
+		} else {
+			notifierService.notify(NotificationType.WARNING , "Attention" , "Cette fonctionlité n'est pas disponible offline");
+		}
 	}
+
+
 
 	private void getAllUsers() throws IOException {
 

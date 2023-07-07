@@ -328,14 +328,33 @@ public class MembersController  implements Initializable {
 	}
 
 	@FXML
-	void switchToPlanificationPage(MouseEvent event) throws IOException {
-		if (auth.checkUserRole()) {
-			Stage stage = (Stage) this.addBtn.getScene().getWindow();
-			sceneService.switchScene(stage, "gantt-view.fxml", null);
+	void swithToTicketPage(MouseEvent __) throws IOException {
+		if(!StorageService.getInstance().isOffline()) {
+			if (auth.checkUserRole()) {
+				Stage stage = (Stage) this.addBtn.getScene().getWindow();
+				sceneService.switchScene(stage, "ticket-view.fxml", null);
+			} else {
+				Stage stage = (Stage) this.tableView.getScene().getWindow();
+				sceneService.switchScene(stage, "ticket-view.fxml", null);
+			}
 		} else {
-			Stage stage = (Stage) this.tableView.getScene().getWindow();
-			sceneService.switchScene(stage, "gantt-view.fxml", null);
+			notifierService.notify(NotificationType.WARNING , "Attention" , "Cette fonctionlité n'est pas disponible offline");
 		}
+	}
+
+	@FXML
+	void switchToPlanificationPage(MouseEvent event) throws IOException {
+			if(!StorageService.getInstance().isOffline()) {
+				if (auth.checkUserRole()) {
+					Stage stage = (Stage) this.addBtn.getScene().getWindow();
+					sceneService.switchScene(stage, "gantt-view.fxml", null);
+				} else {
+					Stage stage = (Stage) this.tableView.getScene().getWindow();
+					sceneService.switchScene(stage, "gantt-view.fxml", null);
+				}
+			} else {
+				notifierService.notify(NotificationType.WARNING , "Attention" , "Cette fonctionlité n'est pas disponible offline");
+			}
 	}
 
 	private void getAllMembers() {
