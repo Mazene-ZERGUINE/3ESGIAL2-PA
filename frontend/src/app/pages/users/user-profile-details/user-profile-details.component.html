@@ -13,9 +13,14 @@
     </div>
     <!-- TODO -->
     <section>
-      <p>Publications : {{ postsCount }}</p>
       <p>Statut : {{ user.statut }}</p>
-      <!--    <p>Réputation : {{ user.reputation }}</p>-->
+      <p>
+        Réputation :
+        <span [ngClass]="{ '': reputation === 0, 'text-success': reputation >= 1, 'text-danger': reputation <= -1 }">
+          {{ reputation <= 0 ? '' : '+' }}{{ reputation }}
+        </span>
+      </p>
+      <p>Publications : {{ postsCount }}</p>
       <p>Nom : {{ user.nom }}</p>
       <p>Prénom : {{ user.prenom }}</p>
       <p>Département : {{ user.departement }}</p>
@@ -23,13 +28,13 @@
     </section>
 
     <div class="d-flex justify-content-center">
-      <button class="btn btn-outline-success" title="+1">
+      <button class="btn btn-outline-success" title="+1" (click)="onVote(1)">
         <i class="bi bi-person-up icon-large"></i>
       </button>
       <!--    <button class="btn btn-outline-success">-->
       <!--      <i class="bi bi-person-fill-up icon-large"></i>-->
       <!--    </button>-->
-      <button class="btn btn-outline-danger ms-5" title="-1">
+      <button class="btn btn-outline-danger ms-5" title="-1" (click)="onVote(-1)">
         <i class="bi bi-person-down icon-large"></i>
       </button>
       <!--    <button class="btn btn-outline-danger ms-5">-->

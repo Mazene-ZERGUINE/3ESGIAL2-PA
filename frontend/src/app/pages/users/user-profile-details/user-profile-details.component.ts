@@ -11,6 +11,8 @@ import { Response } from '../../../shared/core/models/interfaces/response.interf
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { UserPostsService } from '../shared/services/user-posts/user-posts.service';
 import { HttpErrorResponse } from '@angular/common/http';
+import { AuthService } from '../../../shared/core/services/auth/auth.service';
+import { UserReputationsService } from '../shared/services/user-reputations/user-reputations.service';
 
 @UntilDestroy()
 @Component({
@@ -19,27 +21,39 @@ import { HttpErrorResponse } from '@angular/common/http';
   styleUrls: ['./user-profile-details.component.scss'],
 })
 export class UserProfileDetailsComponent implements OnInit {
+  isAuthenticated: boolean;
+  postsCount = 0;
+  reputation = 0;
   usernameParam: string;
   user?: User;
-  postsCount = 0;
 
   constructor(
+    private readonly authService: AuthService,
     private readonly jwtHelper: JwtHelperService,
     private readonly modalService: NgbModal,
     private readonly route: ActivatedRoute,
     private readonly router: Router,
     private readonly userPostsService: UserPostsService,
     private readonly userProfileService: UserProfileService,
+    private readonly userReputationsService: UserReputationsService,
   ) {
     this.usernameParam = this.route.snapshot.paramMap.get('username') || '';
+    this.isAuthenticated = this.authService.isAuthenticated;
   }
 
   async ngOnInit(): Promise<void> {
     // TODO utilisateur inexistant
-    this.getUser();
+    this.getUserByPseudonyme();
+    this.getUserReputation();
   }
 
   async onReport(): Promise<void> {
+    const isUnauthenticated = !this.isAuthenticated || !(await this.authService.getCurrentUserId());
+    if (isUnauthenticated) {
+      await this.router.navigateByUrl('/login');
+      return;
+    }
+
     try {
       const description = await this.modalService.open(ModalReportComponent).result;
       console.log(description);
@@ -47,11 +61,30 @@ export class UserProfileDetailsComponent implements OnInit {
     } catch (_) {}
   }
 
-  getUser() {
+  getUserReputation(): void {
+    this.userReputationsService
+      .getOneByField<Response<{ reputation: number }>>('reputations', this.usernameParam)
+      .pipe(
+        map((res) => res?.data),
+        untilDestroyed(this),
+      )
+      .subscribe((data) => (this.reputation = data.reputation));
+  }
+
+  getUserByPseudonyme(): void {
     this.userPostsService
       .count<Response<number>>(`utilisateurs/${this.usernameParam}/publications/count/public`)
       .pipe(
         tap((res) => (this.postsCount = res.data)),
+        switchMap(() =>
+          this.userReputationsService.getOneByField<Response<{ reputation: number }>>(
+            'reputations',
+            this.usernameParam,
+          ),
+        ),
+        tap((res) => {
+          this.reputation = res.data.reputation;
+        }),
         switchMap((_) => this.userProfileService.getOneByField<Response<User>>('utilisateurs', this.usernameParam)),
         map((res) => res?.data),
         catchError((err) => of(err)),
@@ -64,6 +97,21 @@ export class UserProfileDetailsComponent implements OnInit {
         }
 
         this.user = data;
+      });
+  }
+
+  async onVote(value: number): Promise<void> {
+    const isUnauthenticated = !this.isAuthenticated || !(await this.authService.getCurrentUserId());
+    if (isUnauthenticated) {
+      await this.router.navigateByUrl('/login');
+      return;
+    }
+
+    this.userReputationsService
+      .upsert(`reputations/${this.usernameParam}`, { vote: value })
+      .pipe(untilDestroyed(this))
+      .subscribe((_) => {
+        this.getUserReputation();
       });
   }
 }
