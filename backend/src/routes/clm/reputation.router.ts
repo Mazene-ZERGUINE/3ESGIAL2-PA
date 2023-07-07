@@ -7,6 +7,7 @@ const router = Router();
 router
 	.get('/', ReputationController.coreGetAll(Reputation))
 	.get('/:pseudonyme', ReputationController.getByPseudonyme)
+	.get('/:pseudonyme/vote', isAuthenticated, ReputationController.getVote)
 	.post('/:pseudonyme', isAuthenticated, ReputationController.vote);
 
 export default router;

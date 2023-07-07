@@ -5,6 +5,7 @@ import { CoreController } from './Core.controller';
 import { Utilisateur } from '../../models/clm/utilisateur';
 import { Reputation } from '../../models/clm/reputation';
 import { sequelize } from '../../db/clm/db_connection';
+import { where } from 'sequelize';
 
 export class ReputationController extends CoreController {
 	static async getByPseudonyme(req: Request, res: Response) {
@@ -24,6 +25,37 @@ export class ReputationController extends CoreController {
 
 			let value = reputation?.getDataValue('reputation');
 			res.status(200).json({ data: { reputation: value == null ? 0 : +value } });
+		} catch (err) {
+			CoreController.handleError(err, res);
+		}
+	}
+
+	static async getVote(req: Request, res: Response) {
+		const { pseudonyme, utilisateurId } = req.params;
+		const token = decode(req.headers?.authorization!.split(' ')[1]);
+		const utilisateur_id = (token as any)?.utilisateur_id;
+
+		try {
+			const votedUtilisateur = await Utilisateur.findOne({ where: { pseudonyme } });
+			if (!votedUtilisateur) {
+				res.status(400).json({ message: "L'utilisateur évalué est incorrect." });
+				return;
+			}
+
+			const currentUtilisateur = await Utilisateur.findOne({ where: { utilisateur_id } });
+			if (!currentUtilisateur) {
+				res.status(401).end();
+				return;
+			}
+
+			const reputation = await Reputation.findOne({
+				where: {
+					evaluateur_id: currentUtilisateur.getDataValue('utilisateur_id'),
+					evalue_id: votedUtilisateur.getDataValue('utilisateur_id'),
+				},
+			});
+
+			res.status(200).json({ data: reputation?.getDataValue('note') });
 		} catch (err) {
 			CoreController.handleError(err, res);
 		}
@@ -59,16 +91,22 @@ export class ReputationController extends CoreController {
 				},
 			});
 
-			if (vote <= -1) {
-				vote = reputation?.getDataValue('note') <= -1 ? 0 : -1;
-			} else if (vote >= 1) {
-				vote = reputation?.getDataValue('note') >= 1 ? 0 : 1;
-			}
+			let note = reputation?.getDataValue('note');
+			note = note === undefined ? vote : note + vote;
+			// if (vote <= -1) {
+			// 	// vote = note <= -1 ? 0 : -1;
+			// 	// note--
+			// 	note = !note ? -1 : note--;
+			// } else if (vote >= 1) {
+			// 	// vote = note >= 1 ? 0 : 1;
+			// 	// note++
+			// 	note = !note ? 1 : note++;
+			// }
 
 			await Reputation.upsert({
 				evaluateur_id: utilisateur_id,
 				evalue_id: utilisateur.getDataValue('utilisateur_id'),
-				note: vote,
+				note,
 			});
 
 			res.status(200).end();
