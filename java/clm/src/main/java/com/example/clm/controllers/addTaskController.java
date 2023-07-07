@@ -1,6 +1,7 @@
 package com.example.clm.controllers;
 
 import com.example.clm.Main;
+import com.example.clm.models.Tasks;
 import com.example.clm.models.Users;
 import com.example.clm.utils.ApiService;
 import com.example.clm.utils.NotifierService;
@@ -35,6 +36,8 @@ public class addTaskController implements Initializable {
 
 	@FXML
 	private DatePicker startDate;
+
+	private String categoryTitle;
 	@FXML
 	private DatePicker deadline;
 	private final static SceneService sceneService = new SceneService();
@@ -67,6 +70,7 @@ public class addTaskController implements Initializable {
 			response = api.getTypeRequest(baseUrl + "categories/project/" + categoryId);
 		} catch (IOException ex) {
 			System.out.println(ex.getCause());
+			System.out.println("ok");
 		}
 		JSONObject jsonResponse = new JSONObject(response.toString());
 		JSONArray dataArray = jsonResponse.getJSONArray("projects") ;
@@ -86,6 +90,10 @@ public class addTaskController implements Initializable {
 			usersList.getItems().add( dataArray.getJSONObject(i).getString("first_name")) ;
 		}
 		usersList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE); ;
+	}
+
+	public void setBackData(String title) {
+		categoryTitle = title;
 	}
 
 	@FXML
@@ -124,24 +132,46 @@ public class addTaskController implements Initializable {
 		json.put("startDate" , creationDate.toString());
 		JSONArray members = new JSONArray(selectedItems);  // creating a json array of the list to add it to the request body
 		json.put("members" , members) ;
-		StringBuilder response = api.postTypeRequest(baseUrl + "tasks" , json) ;
-		JSONObject jsonResponse = new JSONObject(response.toString());
-		// if the request is a success notifying the user and adding clearing the filds
-		if (jsonResponse.getInt("status_code") == 200) {
-			FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("templates/tasks-view.fxml"));
-			root = fxmlLoader.load() ;
-			TasksController controller = fxmlLoader.getController();
-			controller.refreshList();
-			notifierService.notify(NotificationType.SUCCESS , "Succès" , "Tâche ajoutée.");
-			this.title.clear();
-			this.deadline.setValue(null);
-			this.description.clear();
-			this.startDate.setValue(null);
+		try {
+			StringBuilder response = api.postTypeRequest(baseUrl + "tasks" , json) ;
+			JSONObject jsonResponse = new JSONObject(response.toString());
+			// if the request is a success notifying the user and adding clearing the filds
+			if (jsonResponse.getInt("status_code") == 200) {
+				FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("templates/tasks-view.fxml"));
+				root = fxmlLoader.load() ;
+				TasksController controller = fxmlLoader.getController();
+				controller.refreshList();
+				notifierService.notify(NotificationType.SUCCESS , "Succès" , "Tâche ajoutée.");
+				this.title.clear();
+				this.deadline.setValue(null);
+				this.description.clear();
+				this.startDate.setValue(null);
 
-		} else {
-			notifierService.notify(NotificationType.ERROR , "Erreur" , "Une erreur est survenu lors de l'ajout.");
+			} else {
+				notifierService.notify(NotificationType.ERROR , "Erreur" , "Une erreur est survenu lors de l'ajout.");
+			}
+		} catch (Exception e) {
+			Tasks task = new Tasks(
+					0,
+					taskTitle,
+					taskDescription,
+					creationDate.toString(),
+					taskDeadline.toString(),
+					"A FAIRE",
+					" ",
+					creationDate.toString()
+			);
+
+			if (StorageService.getInstance().getProjectTasksDict().containsKey(this.categoryTitle)) {
+				List<Tasks> tasks = StorageService.getInstance().getProjectTasksDict().get(this.categoryTitle);
+				tasks.add(task);
+			} else {
+				List<Tasks> tasks = new ArrayList<>();
+				tasks.add(task);
+				StorageService.getInstance().getProjectTasksDict().put(this.categoryTitle , tasks);
+			}
+
 		}
-
 	}
 	@FXML
 	void onQuitBtnClick(ActionEvent event) {

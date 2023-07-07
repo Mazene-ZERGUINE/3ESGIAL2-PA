@@ -20,6 +20,9 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
+import javafx.scene.shape.Circle;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -70,7 +73,11 @@ public class TasksController implements Initializable {
 	@FXML
 	private TableColumn<Tasks, String> dealineCol;
 
+	@FXML
+	private Circle conectionCircle;
 
+	@FXML
+	private Label connectionStatus;
 	@FXML
 	private TableColumn<Tasks, String> descriptionCol;
 
@@ -108,7 +115,13 @@ public class TasksController implements Initializable {
 		try {
 			root = fxmlLoader.load();
 			addTaskController controller = fxmlLoader.getController();
-			controller.setData(categoryId);
+
+			if (StorageService.getInstance().isOffline()) {
+				controller.setBackData(this.categoryTitle);
+			} else {
+				controller.setData(categoryId);
+			}
+
 			Stage stage = new Stage();
 
 			Parent tasksRoot = addBtn.getScene().getRoot();
@@ -145,6 +158,17 @@ public class TasksController implements Initializable {
 				Scene scene = addBtn.getScene();
 
 				StorageService.getInstance().setSelectedTheme(scene);
+				if (StorageService.getInstance().isOffline()) {
+					Paint offlineColor = Color.RED;
+					this.conectionCircle.setFill(offlineColor);
+					this.connectionStatus.setText("Offline");
+					connectionStatus.setTextFill(offlineColor);
+				} else {
+					Paint onlineColor = Color.GREEN;
+					this.conectionCircle.setFill(onlineColor);
+					this.connectionStatus.setText("Online");
+					connectionStatus.setTextFill(onlineColor);
+				}
 			}
 		});
 	}
@@ -178,12 +202,21 @@ public class TasksController implements Initializable {
 
 	@FXML
 	void onDeleteBtnClick(ActionEvent event) throws IOException {
-		int selectedID = tasksTable.getSelectionModel().getSelectedItems().get(0).getId();
-		StringBuilder response = api.deleteTypeRequest(baseUrl + "tasks/" + selectedID);
-		JSONObject jsonResponse = new JSONObject(response.toString()) ;
-		if (jsonResponse.getInt("status_code") == 200) {
+		try {
+			int selectedID = tasksTable.getSelectionModel().getSelectedItems().get(0).getId();
+			StringBuilder response = api.deleteTypeRequest(baseUrl + "tasks/" + selectedID);
+			JSONObject jsonResponse = new JSONObject(response.toString());
+			if (jsonResponse.getInt("status_code") == 200) {
+				refreshList();
+				notifierService.notify(NotificationType.SUCCESS, "SUCCESS", "tache supprimer");
+			}
+		} catch (Exception e) {
+			String selectedTask = tasksTable.getSelectionModel().getSelectedItems().get(0).getLabel();
+			System.out.println("selected " + selectedTask);
+			StorageService.getInstance().getProjectTasksDict().get(this.categoryTitle).removeIf(task -> task.getLabel().equals(selectedTask));
+			tasksTable.getItems().clear();
 			refreshList();
-			notifierService.notify(NotificationType.SUCCESS , "SUCCESS" , "tache supprimer");
+
 		}
 	}
 
@@ -258,34 +291,52 @@ public class TasksController implements Initializable {
 		getAllTasks(categoryId);
 	}
 	public void getAllTasks(int categoryId) throws IOException {
-		StringBuilder response = api.getTypeRequest(baseUrl + "tasks/" + categoryId);
-		JSONObject jsonResponse = new JSONObject(response.toString());
-		System.out.println(jsonResponse);
-		if (jsonResponse.getInt("status_code") == 200) {
-			JSONArray dataArray = jsonResponse.getJSONArray("tasks");
-			for (int i = 0; i < dataArray.length(); i++) {
-				Tasks task = new Tasks(
-					dataArray.getJSONObject(i).getInt("taskid"),
-					dataArray.getJSONObject(i).getString("label"),
-					dataArray.getJSONObject(i).getString("description"),
-					dataArray.getJSONObject(i).getString("start_at"),
-					dataArray.getJSONObject(i).getString("deadline"),
-					dataArray.getJSONObject(i).getString("status"),
-					dataArray.getJSONObject(i).getString("members"),
-					dataArray.getJSONObject(i).getString("created_at")
-				);
-				tasksList.add(task);
-			}
-			tasksTable.setItems(tasksList);
-			statusCol.setCellValueFactory(new PropertyValueFactory<>("status"));
-			taskCol.setCellValueFactory(new PropertyValueFactory<>("label"));
-			dealineCol.setCellValueFactory(new PropertyValueFactory<>("deadline"));
-			descriptionCol.setCellValueFactory(new PropertyValueFactory<>("description"));
-			creationCol.setCellValueFactory(new PropertyValueFactory<>("created_at"));
-			membersCol.setCellValueFactory(new PropertyValueFactory<>("members"));
+		try {
+			StringBuilder response = api.getTypeRequest(baseUrl + "tasks/" + categoryId);
+			JSONObject jsonResponse = new JSONObject(response.toString());
+			System.out.println(jsonResponse);
+			if (jsonResponse.getInt("status_code") == 200) {
+				JSONArray dataArray = jsonResponse.getJSONArray("tasks");
+				for (int i = 0; i < dataArray.length(); i++) {
+					Tasks task = new Tasks(
+							dataArray.getJSONObject(i).getInt("taskid"),
+							dataArray.getJSONObject(i).getString("label"),
+							dataArray.getJSONObject(i).getString("description"),
+							dataArray.getJSONObject(i).getString("start_at"),
+							dataArray.getJSONObject(i).getString("deadline"),
+							dataArray.getJSONObject(i).getString("status"),
+							dataArray.getJSONObject(i).getString("members"),
+							dataArray.getJSONObject(i).getString("created_at")
+					);
+					tasksList.add(task);
+				}
+				tasksTable.setItems(tasksList);
+				statusCol.setCellValueFactory(new PropertyValueFactory<>("status"));
+				taskCol.setCellValueFactory(new PropertyValueFactory<>("label"));
+				dealineCol.setCellValueFactory(new PropertyValueFactory<>("deadline"));
+				descriptionCol.setCellValueFactory(new PropertyValueFactory<>("description"));
+				creationCol.setCellValueFactory(new PropertyValueFactory<>("created_at"));
+				membersCol.setCellValueFactory(new PropertyValueFactory<>("members"));
 
-			datesVerifications();
+				datesVerifications();
+			}
+		} catch (Exception e) {
+			System.out.println("ok");
+			List<Tasks> dataArray = StorageService.getInstance().getProjectTasksDict().get(this.categoryTitle);
+			if (dataArray != null) {
+				tasksTable.setItems(FXCollections.observableList(dataArray));
+
+				statusCol.setCellValueFactory(new PropertyValueFactory<>("status"));
+				taskCol.setCellValueFactory(new PropertyValueFactory<>("label"));
+				dealineCol.setCellValueFactory(new PropertyValueFactory<>("deadline"));
+				descriptionCol.setCellValueFactory(new PropertyValueFactory<>("description"));
+				creationCol.setCellValueFactory(new PropertyValueFactory<>("created_at"));
+				membersCol.setCellValueFactory(new PropertyValueFactory<>("members"));
+
+				//datesVerifications();
+			}
 		}
+
 	}
 
 	public void datesVerifications() {

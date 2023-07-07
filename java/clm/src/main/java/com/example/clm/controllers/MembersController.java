@@ -20,6 +20,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import tray.notification.NotificationType;
@@ -49,6 +51,11 @@ public class MembersController  implements Initializable {
 
 	private List<Users> users = new ArrayList<>();
 
+	@FXML
+	private Circle conectionCircle;
+
+	@FXML
+	private Label connectionStatus;
 	@FXML
 	private TableView<Users> tableView;
 
@@ -132,6 +139,19 @@ public class MembersController  implements Initializable {
 				Scene scene = tableView.getScene();
 
 				StorageService.getInstance().setSelectedTheme(scene);
+
+				StorageService.getInstance().setSelectedTheme(scene);
+				if (StorageService.getInstance().isOffline()) {
+					javafx.scene.paint.Paint offlineColor = javafx.scene.paint.Color.RED;
+					this.conectionCircle.setFill(offlineColor);
+					this.connectionStatus.setText("Offline");
+					connectionStatus.setTextFill(offlineColor);
+				} else {
+					javafx.scene.paint.Paint onlineColor = Color.GREEN;
+					this.conectionCircle.setFill(onlineColor);
+					this.connectionStatus.setText("Online");
+					connectionStatus.setTextFill(onlineColor);
+				}
 			}
 		});
 	}
