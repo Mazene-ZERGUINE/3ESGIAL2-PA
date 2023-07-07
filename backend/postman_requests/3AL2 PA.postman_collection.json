@@ -404,6 +404,47 @@
 					]
 				},
 				{
+					"name": "reputation",
+					"item": [
+						{
+							"name": "get all",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{HOST}}/clm/reputations",
+									"host": ["{{HOST}}"],
+									"path": ["clm", "reputations"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get by evalue_id",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{ADMIN_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{HOST}}/clm/reputations/c",
+									"host": ["{{HOST}}"],
+									"path": ["clm", "reputations", "c"]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
 					"name": "session",
 					"item": [
 						{
