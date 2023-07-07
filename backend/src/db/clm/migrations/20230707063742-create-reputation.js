@@ -4,7 +4,7 @@ module.exports = {
 	async up(queryInterface, Sequelize) {
 		await queryInterface.createTable('reputation', {
 			evaluateur_id: {
-				type: DataTypes.INTEGER,
+				type: Sequelize.INTEGER,
 				primaryKey: true,
 				allowNull: true,
 				references: {
@@ -14,7 +14,7 @@ module.exports = {
 				onDelete: 'CASCADE',
 			},
 			evalue_id: {
-				type: DataTypes.INTEGER,
+				type: Sequelize.INTEGER,
 				primaryKey: true,
 				allowNull: true,
 				references: {

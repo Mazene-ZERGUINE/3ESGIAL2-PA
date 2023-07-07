@@ -17,6 +17,7 @@ export class PublicationFavoriController extends CoreController {
 				res.status(400).json({ message: 'La publication est incorrecte.' });
 				return;
 			}
+			// TODO might be removed:
 			if (!(await Utilisateur.findByPk(utilisateur_id))) {
 				res.status(400).json({ message: "L'utilisateur est incorrect." });
 				return;

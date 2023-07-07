@@ -80,7 +80,7 @@ export class AuthController extends CoreController {
 		try {
 			const utilisateur = await Utilisateur.findOne({ where: { email } });
 			if (!utilisateur) {
-				res.status(404).end();
+				res.status(400).end();
 				return;
 			}
 

@@ -10,7 +10,7 @@ export abstract class CoreController {
 
 			try {
 				if (await model.findOne({ where: { [fieldToCheck]: field } })) {
-					res.status(409).json({ message: 'La catégorie existe déjà.' });
+					res.status(409).json({ message: 'La ressource existe déjà.' });
 					return;
 				}
 

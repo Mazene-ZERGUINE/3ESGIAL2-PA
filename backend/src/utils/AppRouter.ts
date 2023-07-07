@@ -21,6 +21,8 @@ import {
 	sendThemeFileName,
 	sendUpdatesFile,
 } from '../controllers/client/UpdatesController';
+import publicationFavoriRouter from '../routes/clm/publication-favori.router';
+import reputationRouter from '../routes/clm/reputation.router';
 
 export default class AppRouter {
 	private readonly categoryRoutes: any = require('../routes/client/categories.routes');
@@ -54,6 +56,8 @@ export default class AppRouter {
 			.use('/api/clm/images', imageRouter)
 			.use('/api/clm/publications', publicationRouter)
 			.use('/api/clm/appreciations/publications', publicationAppreciationRouter)
+			.use('/api/clm/favoris/publications', publicationFavoriRouter)
+			.use('/api/clm/reputations/', reputationRouter)
 			.use('/api/clm/sessions', [isAuthenticated, isAdministrator], sessionRouter)
 			.use('/api/clm/utilisateurs', utilisateurRouter);
 		//#endregion	clm
