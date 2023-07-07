@@ -9,6 +9,7 @@ import { applicationTitle } from '../../shared/utils/app-title';
 import { UserChatsListComponent } from './user-chats-list/user-chats-list.component';
 import { UserChatComponent } from './user-chat/user-chat.component';
 import { UserFavoritesListComponent } from './user-favorites-list/user-favorites-list.component';
+import { AuthGuard } from '../../shared/core/guards/auth/auth.guard';
 
 let combinedTitle = `| ${applicationTitle}`;
 const routes: Routes = [
@@ -18,26 +19,31 @@ const routes: Routes = [
     children: [
       {
         path: 'chats',
+        canLoad: [AuthGuard],
         component: UserChatsListComponent,
         title: `Mes conversations ${combinedTitle}`,
       },
       {
         path: 'chats/:id',
+        canLoad: [AuthGuard],
         component: UserChatComponent,
         title: `Une conversation ${combinedTitle}`,
       },
       {
         path: 'favorites',
+        canLoad: [AuthGuard],
         component: UserFavoritesListComponent,
         title: `Mes favoris ${combinedTitle}`,
       },
       {
         path: 'posts',
+        canLoad: [AuthGuard],
         component: UserPostsListComponent,
         title: `Mes publications ${combinedTitle}`,
       },
       {
         path: 'profile/me',
+        canLoad: [AuthGuard],
         component: UserProfileComponent,
         title: `Mon profil ${combinedTitle}`,
       },

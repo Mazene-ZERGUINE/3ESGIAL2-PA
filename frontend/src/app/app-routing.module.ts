@@ -47,7 +47,6 @@ const routes: Routes = [
   },
   {
     path: 'users',
-    canLoad: [AuthGuard],
     loadChildren: () => import('./pages/users/users.module').then((m) => m.UsersModule),
     title: `Utilisateurs ${combinedTitle}`,
   },

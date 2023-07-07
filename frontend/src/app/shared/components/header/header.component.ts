@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { first, Observable } from 'rxjs';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 import { AuthService } from '../../core/services/auth/auth.service';
+import { JwtHelperService } from '@auth0/angular-jwt';
 
 @UntilDestroy()
 @Component({
@@ -11,7 +12,18 @@ import { AuthService } from '../../core/services/auth/auth.service';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
 })
-export class HeaderComponent {
+export class HeaderComponent implements OnInit {
+  async ngOnInit(): Promise<void> {
+    await this.setUsername();
+  }
+
+  async setUsername() {
+    const token = await this.jwtHelper.tokenGetter();
+    const decodedToken = this.jwtHelper.decodeToken(token);
+
+    this.username = decodedToken?.pseudonyme;
+  }
+
   readonly isAdmin: Observable<boolean>;
   readonly isAuthenticated: Observable<boolean>;
 
@@ -26,11 +38,11 @@ export class HeaderComponent {
     // { path: '/administration/users/add', label: 'Utilisateurs (ajout)' },
   ];
 
-  userRoutes: ReadonlyArray<{ path: string; label: string }> = [
+  userRoutes: ReadonlyArray<{ path: string; label: string; queryParams?: { page: number } }> = [
     { path: '/users/chats', label: 'Messagerie' },
-    { path: '/users/favorites', label: 'Favoris' },
+    { path: '/users/favorites', label: 'Favoris', queryParams: { page: 1 } },
     { path: '/users/profile/me', label: 'Profil' },
-    { path: '/users/posts', label: 'Publications' },
+    { path: '/users/posts', label: 'Publications', queryParams: { page: 1 } },
   ];
 
   visitorRoutes: ReadonlyArray<{ path: string; label: string }> = [
@@ -38,7 +50,13 @@ export class HeaderComponent {
     { path: '/signup', label: "S'inscrire" },
   ];
 
-  constructor(private readonly authService: AuthService, private readonly router: Router) {
+  username = '';
+
+  constructor(
+    private readonly authService: AuthService,
+    private readonly jwtHelper: JwtHelperService,
+    private readonly router: Router,
+  ) {
     this.isAdmin = this.authService.isAdmin$;
     this.isAuthenticated = this.authService.isAuthenticated$;
   }

@@ -53,6 +53,10 @@ export abstract class CoreService {
   updatePatch(path: string, field: string, payload: any): Observable<void> {
     return this.httpClient.patch<void>(this.getPath(path, field), payload);
   }
+
+  upsert(path: string, payload: any): Observable<void> {
+    return this.httpClient.post<void>(this.getPath(path), payload);
+  }
   //#endregion  UPDATE methods
 
   protected getPath(_path: string, id?: number | string): string {

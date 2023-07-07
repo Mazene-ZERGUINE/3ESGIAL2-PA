@@ -54,6 +54,12 @@ sequelize-cli model:generate --name publication-appreciation --attributes public
 sequelize-cli model:generate --name publication_signalement --attributes
 ```
 
+## reputation
+
+```
+sequelize-cli model:generate --name reputation --attributes evaluateur_id:integer,evalue_id:integer,note:integer
+```
+
 ## session
 
 ```

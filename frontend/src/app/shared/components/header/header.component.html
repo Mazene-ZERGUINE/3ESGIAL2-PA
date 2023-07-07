@@ -61,7 +61,7 @@
           </li>
           <li class="nav-item dropdown" *ngIf="isAuthenticated | async">
             <a class="nav-link p-2 m-2 dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              Mon espace
+              Mon espace ({{ username }})
             </a>
             <ul class="dropdown-menu">
               <li>
@@ -71,7 +71,7 @@
                   [routerLink]="userRoute.path"
                   routerLinkActive="active"
                   [routerLinkActiveOptions]="{ exact: true }"
-                  [queryParams]="userRoute.label !== 'Publications' ? null : { page: 1 }"
+                  [queryParams]="userRoute.queryParams"
                 >
                   {{ userRoute.label }}
                 </a>
