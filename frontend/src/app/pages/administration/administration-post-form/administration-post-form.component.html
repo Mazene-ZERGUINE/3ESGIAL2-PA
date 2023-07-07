@@ -30,11 +30,7 @@
       </select>
       <small
         class="text-danger my-2"
-        *ngIf="
-          form.get('departement')?.touched &&
-          form.get('departement')?.dirty &&
-          form.get('departement')?.getError('pattern')
-        "
+        *ngIf="form.get('categorie')?.touched && form.get('categorie')?.dirty && form.get('categorie')?.getError('min')"
       >
         Le champ est incorrect.
       </small>
@@ -55,7 +51,7 @@
     <ul class="list-group mb-3">
       <li class="list-group-item d-flex justify-content-between" *ngFor="let image of $any(images)">
         {{ image.name }}
-        <button class="btn btn-outline-danger" disabled (click)="onDelete(image)">
+        <button class="btn btn-outline-danger" (click)="onDelete(image)">
           <i class="bi bi-trash-fill"></i>
         </button>
       </li>

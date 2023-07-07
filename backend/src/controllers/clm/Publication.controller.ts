@@ -67,17 +67,35 @@ export class PublicationController extends CoreController {
 
 	static async search(req: Request, res: Response): Promise<void> {
 		const { page } = req.query;
-		const { searches } = req.body;
+		const { categorie_id, searches } = req.body;
 		// TODO check
-		if (!searches || searches.length === 0) {
-			res.status(400).end();
-			return;
-		}
+		// if (!searches || searches.length === 0) {
+		// 	res.status(400).end();
+		// 	return;
+		// }
 
 		const providedPage = page ? Number(page) : 1;
 
 		try {
-			const data = await Publication.findAndCountAll({
+			let data;
+			if (categorie_id) {
+				data = await Publication.findAndCountAll({
+					offset: (providedPage - 1) * CoreController.PAGE_SIZE,
+					limit: CoreController.PAGE_SIZE,
+					where: { categorie_id },
+					include: {
+						all: true,
+						nested: true,
+					},
+					order: [['created_at', 'DESC']],
+					distinct: true,
+				});
+
+				res.status(200).json({ data });
+				return;
+			}
+
+			data = await Publication.findAndCountAll({
 				offset: (providedPage - 1) * CoreController.PAGE_SIZE,
 				limit: CoreController.PAGE_SIZE,
 				where: {
