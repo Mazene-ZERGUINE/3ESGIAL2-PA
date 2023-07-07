@@ -11,6 +11,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
+<?import javafx.scene.shape.Circle?>
 <AnchorPane prefHeight="650.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.clm.controllers.TasksController">
 	<children>
 		<AnchorPane prefHeight="650.0" prefWidth="1100.0" styleClass="mainPane">
@@ -54,6 +55,8 @@
 										<Image url="@../images/Alecive-Flatwoken-Apps-Terminal-Pc-104.512.png" />
 									</image>
 								</ImageView>
+								<Circle fx:id="conectionCircle" fill="DODGERBLUE" layoutX="137.0" layoutY="29.0" radius="13.0" stroke="BLACK" strokeType="INSIDE" />
+								<Label fx:id="connectionStatus" layoutX="157.0" layoutY="20.0" text="Label" />
 							</children>
 						</AnchorPane>
 					</top>
