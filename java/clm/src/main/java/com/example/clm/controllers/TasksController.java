@@ -20,6 +20,9 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
+import javafx.scene.shape.Circle;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -64,13 +67,19 @@ public class TasksController implements Initializable {
 	@FXML
 	private TableView<Tasks> tasksTable;
 
+	private final ObservableList<Tasks> backupList = FXCollections.observableArrayList();
+
 	@FXML
 	private TableColumn<Tasks, String> creationCol;
 
 	@FXML
 	private TableColumn<Tasks, String> dealineCol;
 
+	@FXML
+	private Circle conectionCircle;
 
+	@FXML
+	private Label connectionStatus;
 	@FXML
 	private TableColumn<Tasks, String> descriptionCol;
 
@@ -108,7 +117,13 @@ public class TasksController implements Initializable {
 		try {
 			root = fxmlLoader.load();
 			addTaskController controller = fxmlLoader.getController();
-			controller.setData(categoryId);
+
+			if (StorageService.getInstance().isOffline()) {
+				controller.setBackData(this.categoryTitle);
+			} else {
+				controller.setData(categoryId);
+			}
+
 			Stage stage = new Stage();
 
 			Parent tasksRoot = addBtn.getScene().getRoot();
@@ -145,6 +160,17 @@ public class TasksController implements Initializable {
 				Scene scene = addBtn.getScene();
 
 				StorageService.getInstance().setSelectedTheme(scene);
+				if (StorageService.getInstance().isOffline()) {
+					Paint offlineColor = Color.RED;
+					this.conectionCircle.setFill(offlineColor);
+					this.connectionStatus.setText("Offline");
+					connectionStatus.setTextFill(offlineColor);
+				} else {
+					Paint onlineColor = Color.GREEN;
+					this.conectionCircle.setFill(onlineColor);
+					this.connectionStatus.setText("Online");
+					connectionStatus.setTextFill(onlineColor);
+				}
 			}
 		});
 	}
@@ -178,19 +204,34 @@ public class TasksController implements Initializable {
 
 	@FXML
 	void onDeleteBtnClick(ActionEvent event) throws IOException {
-		int selectedID = tasksTable.getSelectionModel().getSelectedItems().get(0).getId();
-		StringBuilder response = api.deleteTypeRequest(baseUrl + "tasks/" + selectedID);
-		JSONObject jsonResponse = new JSONObject(response.toString()) ;
-		if (jsonResponse.getInt("status_code") == 200) {
-			refreshList();
-			notifierService.notify(NotificationType.SUCCESS , "SUCCESS" , "tache supprimer");
+		try {
+			int selectedID = tasksTable.getSelectionModel().getSelectedItems().get(0).getId();
+			StringBuilder response = api.deleteTypeRequest(baseUrl + "tasks/" + selectedID);
+			JSONObject jsonResponse = new JSONObject(response.toString());
+			if (jsonResponse.getInt("status_code") == 200) {
+				refreshList();
+				notifierService.notify(NotificationType.SUCCESS, "SUCCESS", "Tache supprimée");
+			}
+		} catch (Exception e) {
+			if (StorageService.getInstance().isOffline()) {
+				String selectedTask = tasksTable.getSelectionModel().getSelectedItems().get(0).getLabel();
+				List<Tasks> tasks = StorageService.getInstance().getProjectTasksDict().get(this.categoryTitle);
+				tasks.removeIf(task -> task.getLabel().equals(selectedTask));
+				refreshList();
+			}
 		}
 	}
+
 
 
 	@FXML
 	public void onExportBtnClicked(MouseEvent event) throws IOException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
 
+		if (StorageService.getInstance().isOffline()) {
+			notifierService.notify(NotificationType.WARNING , "Attention" , "cette fonctionnalité n'est pas disponible offline");
+			return;
+		}
+		
 		List <Tasks> data = this.createObjectToExport();
 		if (data.size() == 0) {
 			notifierService.notify(NotificationType.WARNING , "Avertissement" , "pas de donnée à exporter");
@@ -258,34 +299,55 @@ public class TasksController implements Initializable {
 		getAllTasks(categoryId);
 	}
 	public void getAllTasks(int categoryId) throws IOException {
-		StringBuilder response = api.getTypeRequest(baseUrl + "tasks/" + categoryId);
-		JSONObject jsonResponse = new JSONObject(response.toString());
-		System.out.println(jsonResponse);
-		if (jsonResponse.getInt("status_code") == 200) {
-			JSONArray dataArray = jsonResponse.getJSONArray("tasks");
-			for (int i = 0; i < dataArray.length(); i++) {
-				Tasks task = new Tasks(
-					dataArray.getJSONObject(i).getInt("taskid"),
-					dataArray.getJSONObject(i).getString("label"),
-					dataArray.getJSONObject(i).getString("description"),
-					dataArray.getJSONObject(i).getString("start_at"),
-					dataArray.getJSONObject(i).getString("deadline"),
-					dataArray.getJSONObject(i).getString("status"),
-					dataArray.getJSONObject(i).getString("members"),
-					dataArray.getJSONObject(i).getString("created_at")
-				);
-				tasksList.add(task);
-			}
-			tasksTable.setItems(tasksList);
-			statusCol.setCellValueFactory(new PropertyValueFactory<>("status"));
-			taskCol.setCellValueFactory(new PropertyValueFactory<>("label"));
-			dealineCol.setCellValueFactory(new PropertyValueFactory<>("deadline"));
-			descriptionCol.setCellValueFactory(new PropertyValueFactory<>("description"));
-			creationCol.setCellValueFactory(new PropertyValueFactory<>("created_at"));
-			membersCol.setCellValueFactory(new PropertyValueFactory<>("members"));
+		try {
+			StringBuilder response = api.getTypeRequest(baseUrl + "tasks/" + categoryId);
+			JSONObject jsonResponse = new JSONObject(response.toString());
+			System.out.println(jsonResponse);
+			if (jsonResponse.getInt("status_code") == 200) {
+				JSONArray dataArray = jsonResponse.getJSONArray("tasks");
+				for (int i = 0; i < dataArray.length(); i++) {
+					Tasks task = new Tasks(
+							dataArray.getJSONObject(i).getInt("taskid"),
+							dataArray.getJSONObject(i).getString("label"),
+							dataArray.getJSONObject(i).getString("description"),
+							dataArray.getJSONObject(i).getString("start_at"),
+							dataArray.getJSONObject(i).getString("deadline"),
+							dataArray.getJSONObject(i).getString("status"),
+							dataArray.getJSONObject(i).getString("members"),
+							dataArray.getJSONObject(i).getString("created_at")
+					);
+					tasksList.add(task);
+				}
+				tasksTable.setItems(tasksList);
+				statusCol.setCellValueFactory(new PropertyValueFactory<>("status"));
+				taskCol.setCellValueFactory(new PropertyValueFactory<>("label"));
+				dealineCol.setCellValueFactory(new PropertyValueFactory<>("deadline"));
+				descriptionCol.setCellValueFactory(new PropertyValueFactory<>("description"));
+				creationCol.setCellValueFactory(new PropertyValueFactory<>("created_at"));
+				membersCol.setCellValueFactory(new PropertyValueFactory<>("members"));
 
-			datesVerifications();
+				datesVerifications();
+			}
+		} catch (Exception e) {
+			if (StorageService.getInstance().isOffline()){
+				List<Tasks> dataArray = StorageService.getInstance().getProjectTasksDict().get(this.categoryTitle);
+				if (dataArray != null) {
+					backupList.addAll(dataArray);
+
+					tasksTable.setItems(this.backupList);
+					statusCol.setCellValueFactory(new PropertyValueFactory<>("status"));
+					taskCol.setCellValueFactory(new PropertyValueFactory<>("label"));
+					dealineCol.setCellValueFactory(new PropertyValueFactory<>("deadline"));
+					descriptionCol.setCellValueFactory(new PropertyValueFactory<>("description"));
+					creationCol.setCellValueFactory(new PropertyValueFactory<>("created_at"));
+					membersCol.setCellValueFactory(new PropertyValueFactory<>("members"));
+
+					//datesVerifications();
+			}
+
+			}
 		}
+
 	}
 
 	public void datesVerifications() {
@@ -354,12 +416,19 @@ public class TasksController implements Initializable {
 			int row = pos.getRow();
 			int col = pos.getColumn();
 			int  taskId = tasksTable.getItems().get(row).getId();
+			String taskLabel = tasksTable.getItems().get(row).getLabel();
 			// opening the status update modal window
 				FXMLLoader loader = new FXMLLoader(Main.class.getResource("templates/status-pop-up.fxml"));
 				Stage statusPopUp = new Stage();
 				Scene scene = new Scene(loader.load());
 				StatusPopUpController controller = loader.getController();
-				controller.setData(taskId);
+
+				if (StorageService.getInstance().isOffline()) {
+					controller.setLabelName(taskLabel , this.categoryTitle);
+				} else {
+					controller.setData(taskId);
+				}
+
 				statusPopUp.setScene(scene);
 				statusPopUp.setResizable(false);
 				statusPopUp.initStyle(StageStyle.UNDECORATED);

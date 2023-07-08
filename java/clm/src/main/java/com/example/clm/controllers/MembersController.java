@@ -2,11 +2,13 @@ package com.example.clm.controllers;
 
 import com.example.clm.Main;
 import com.example.clm.models.Categorie;
+import com.example.clm.models.Tasks;
 import com.example.clm.models.Users;
 import com.example.clm.utils.*;
 import com.github.tsohr.JSONObject;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableArray;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -20,6 +22,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import tray.notification.NotificationType;
@@ -31,10 +35,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Objects;
-import java.util.ResourceBundle;
 
 import static javafx.collections.FXCollections.observableArrayList;
 
@@ -49,6 +51,11 @@ public class MembersController  implements Initializable {
 
 	private List<Users> users = new ArrayList<>();
 
+	@FXML
+	private Circle conectionCircle;
+
+	@FXML
+	private Label connectionStatus;
 	@FXML
 	private TableView<Users> tableView;
 
@@ -93,6 +100,8 @@ public class MembersController  implements Initializable {
 
 	private final  static AuthService auth = new AuthService();
 
+	private ObservableList<Users> backupList$ = observableArrayList();
+
 
 	@Override
 	public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -132,6 +141,19 @@ public class MembersController  implements Initializable {
 				Scene scene = tableView.getScene();
 
 				StorageService.getInstance().setSelectedTheme(scene);
+
+				StorageService.getInstance().setSelectedTheme(scene);
+				if (StorageService.getInstance().isOffline()) {
+					javafx.scene.paint.Paint offlineColor = javafx.scene.paint.Color.RED;
+					this.conectionCircle.setFill(offlineColor);
+					this.connectionStatus.setText("Offline");
+					connectionStatus.setTextFill(offlineColor);
+				} else {
+					javafx.scene.paint.Paint onlineColor = Color.GREEN;
+					this.conectionCircle.setFill(onlineColor);
+					this.connectionStatus.setText("Online");
+					connectionStatus.setTextFill(onlineColor);
+				}
 			}
 		});
 	}
@@ -180,7 +202,18 @@ public class MembersController  implements Initializable {
 
 			notifierService.notify(NotificationType.SUCCESS, "Success", "Utilisateur ajouté.");
 		} catch (IOException e) {
-			notifierService.notify(NotificationType.ERROR, "Error", "Une erreur est survenue lors de l'ajout d'un utilisateur.");
+			Users user = new Users(
+					0,
+					firstName,
+					lastName,
+					email,
+					password,
+					new Date().toString(),
+					role
+			);
+
+			StorageService.getInstance().getUsersList().add(user);
+			getAllMembers();
 		}
 	}
 
@@ -240,29 +273,43 @@ public class MembersController  implements Initializable {
 
 			notifierService.notify(NotificationType.SUCCESS, "Success", "Utilisateur mis à jour.");
 		} catch (IOException e) {
-			notifierService.notify(NotificationType.ERROR, "Error", "Une erreur est survenue lors de l'ajout de l'utilisateur.");
+			StorageService.getInstance().getUsersList()
+					.stream()
+					.filter(u -> Objects.equals(u.getEmail(), selectedUser.getEmail()))
+					.findFirst()
+					.ifPresent(item -> {
+						item.setFirstName(firstName);
+						item.setPassword(password);
+						item.setEmail(email);
+						item.setLastName(lastName);
+					});
 		}
+		getAllMembers();
+		clearFields();
 	}
 
 	@FXML
 	void onDeleteBtnClick(ActionEvent __) {
 		var selectedUser = this.tableView.getSelectionModel().getSelectedItems().get(0);
-		List<Users> selectedUsers = this.users
-			.stream()
-			.filter(user -> Objects.equals(user.getEmail(), selectedUser.getEmail()))
-			.toList();
 
 		try {
-			for (var user : selectedUsers) {
-				api.deleteTypeRequest(baseUrl + "users/" + user.getEmail());
+				Users user = this.users
+						.stream()
+						.filter(u -> Objects.equals(u.getEmail(), selectedUser.getEmail()))
+						.toList().get(0) ;
 
+				api.deleteTypeRequest(baseUrl + "users/" + user.getEmail());
 				this.tableView.getItems().remove(selectedUser);
 				getAllMembers();
-
 				notifierService.notify(NotificationType.SUCCESS, "Success", "Utilisateur supprimé.");
-			}
-		} catch (IOException e) {
-			notifierService.notify(NotificationType.ERROR, "Error", "Une erreur est survenu lors de la suppression de l'utilisateur.");
+
+		} catch (Exception e) {
+			System.out.println("ok");
+			List<Users> users = StorageService.getInstance().getUsersList();
+			users.removeIf(u -> u.getEmail().equals(selectedUser.getEmail()));
+			users.forEach(s -> System.out.println(s.getEmail()));
+			this.backupList$.setAll(users);
+			tableView.setItems(backupList$);
 		}
 	}
 
@@ -282,17 +329,25 @@ public class MembersController  implements Initializable {
 	void onTableViewSelected(MouseEvent __) {
 		this.tableView.setOnMouseClicked(___ -> {
 			var selectedUser = this.tableView.getSelectionModel().getSelectedItems().get(0);
-			List<Users> selectedUsers = this.users
-				.stream()
-				.filter(user -> Objects.equals(user.getEmail(), selectedUser.getEmail()))
-				.toList();
 
-			for (var user : selectedUsers) {
+			Users user;
+			if (StorageService.getInstance().isOffline()) {
+				user = StorageService.getInstance().getUsersList()
+						.stream()
+						.filter(u -> Objects.equals(u.getEmail(), selectedUser.getEmail()))
+						.toList().get(0);
+			} else {
+				 user = this.users
+						.stream()
+						.filter(u -> Objects.equals(u.getEmail(), selectedUser.getEmail()))
+						.toList().get(0);
+			}
+
 				lastNameField.setText(user.getLastName());
 				firstNameField.setText(user.getFirstName());
 				emailField.setText(user.getEmail());
 				roleCombo.setValue(user.getRole());
-			}
+
 		});
 	}
 
@@ -308,18 +363,38 @@ public class MembersController  implements Initializable {
 	}
 
 	@FXML
-	void switchToPlanificationPage(MouseEvent event) throws IOException {
-		if (auth.checkUserRole()) {
-			Stage stage = (Stage) this.addBtn.getScene().getWindow();
-			sceneService.switchScene(stage, "gantt-view.fxml", null);
+	void swithToTicketPage(MouseEvent __) throws IOException {
+		if(!StorageService.getInstance().isOffline()) {
+			if (auth.checkUserRole()) {
+				Stage stage = (Stage) this.addBtn.getScene().getWindow();
+				sceneService.switchScene(stage, "ticket-view.fxml", null);
+			} else {
+				Stage stage = (Stage) this.tableView.getScene().getWindow();
+				sceneService.switchScene(stage, "ticket-view.fxml", null);
+			}
 		} else {
-			Stage stage = (Stage) this.tableView.getScene().getWindow();
-			sceneService.switchScene(stage, "gantt-view.fxml", null);
+			notifierService.notify(NotificationType.WARNING , "Attention" , "Cette fonctionlité n'est pas disponible offline");
 		}
+	}
+
+	@FXML
+	void switchToPlanificationPage(MouseEvent event) throws IOException {
+			if(!StorageService.getInstance().isOffline()) {
+				if (auth.checkUserRole()) {
+					Stage stage = (Stage) this.addBtn.getScene().getWindow();
+					sceneService.switchScene(stage, "gantt-view.fxml", null);
+				} else {
+					Stage stage = (Stage) this.tableView.getScene().getWindow();
+					sceneService.switchScene(stage, "gantt-view.fxml", null);
+				}
+			} else {
+				notifierService.notify(NotificationType.WARNING , "Attention" , "Cette fonctionlité n'est pas disponible offline");
+			}
 	}
 
 	private void getAllMembers() {
 		try {
+
 			var response = api.getTypeRequest(baseUrl + "users");
 			var json = new JSONObject(response.toString());
 			var jsonUsers = json.getJSONArray("users");
@@ -341,8 +416,13 @@ public class MembersController  implements Initializable {
 			}
 
 			tableView.setItems(users$);
+			StorageService.getInstance().setOffline(false);
 		} catch (IOException | RuntimeException e) {
-			notifierService.notify(NotificationType.ERROR, "Erreur", "Un problème est survenu...");
+			StorageService.getInstance().setOffline(true);
+			notifierService.notify(NotificationType.WARNING, "Attention", "Connexion peru vous etes en mode offline");
+			this.tableView.getItems().clear();
+			this.backupList$.addAll(StorageService.getInstance().getUsersList());
+			this.tableView.setItems(backupList$);
 		}
 	}
 

@@ -117,11 +117,15 @@ public class SignInController {
 			boolean isAdmin = authentication.checkUserRole() ;
 
 			if (isAdmin) {
-				this.sceneService.switchToNewWindow("categories-view.fxml" , null , new Stage());
+				Stage stage =  new Stage();
+				stage.setResizable(false);
+				this.sceneService.switchToNewWindow("categories-view.fxml" , null , stage);
 				this.notifierService.notify(NotificationType.SUCCESS, "Succès", "Vous êtes connecté.e !");
 
 			} else {
-				this.sceneService.switchToNewWindow("categories-dev-view.fxml" , null , new Stage());
+				Stage stage =  new Stage();
+				stage.setResizable(false);
+				this.sceneService.switchToNewWindow("categories-dev-view.fxml" , null ,stage);
 				this.notifierService.notify(NotificationType.SUCCESS, "Succès", "Vous êtes connecté.e !");
 			}
 			Stage stage = (Stage) this.loginBtn.getScene().getWindow() ;
