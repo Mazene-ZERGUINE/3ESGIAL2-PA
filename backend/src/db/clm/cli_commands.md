@@ -9,7 +9,7 @@ sequelize-cli model:generate --name categorie --attributes categorie_id:integer,
 ## commentaire
 
 ```
-sequelize-cli model:generate --name commentaire --attributes
+sequelize-cli model:generate --name commentaire --attributes publication_id:integer,utilisateur_id:integer,commentaire:text
 ```
 
 ## publication_favori

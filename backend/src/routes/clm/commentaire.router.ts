@@ -2,19 +2,15 @@ import { Router } from 'express';
 
 import { CommentaireController } from '../../controllers/clm/Commentaire.controller';
 import { Commentaire } from '../../models/clm/commentaire';
-import { isAdministrator, isAuthenticated } from '../../middlewares/clm/auth.middleware';
+import { isAuthenticated } from '../../middlewares/clm/auth.middleware';
 
 const router = Router();
 router
-	.get('/', [isAuthenticated], CommentaireController.coreGetAll(Commentaire))
+	.get('/', CommentaireController.coreGetAll(Commentaire))
 	.get('/:id', CommentaireController.coreGetOneByPk(Commentaire))
-	.get('/:id_publication', CommentaireController.coreGetOneByPk(Commentaire))
-	.post(
-		'/:id_user/:id_publication',
-		[isAuthenticated, isAdministrator],
-		CommentaireController.coreCreateWithoutTimestamps(Commentaire),
-	)
-	.put('/:id', [isAuthenticated, isAdministrator], CommentaireController.coreUpdateByIdWithoutTimestamps(Commentaire))
-	.delete('/:id', [isAuthenticated, isAdministrator], CommentaireController.coreDeleteById(Commentaire));
+	.get('/publications/:publicationId', CommentaireController.getByPublicationId)
+	.post('/publications/:publicationId', isAuthenticated, CommentaireController.coreCreateWithTimestamps(Commentaire))
+	.put('/:id', isAuthenticated, CommentaireController.coreUpdateByIdWithTimestamps(Commentaire))
+	.delete('/:id', isAuthenticated, CommentaireController.coreDeleteById(Commentaire));
 
 export default router;

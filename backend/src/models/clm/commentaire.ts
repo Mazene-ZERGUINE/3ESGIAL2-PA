@@ -2,20 +2,19 @@ import { DataTypes, Model } from 'sequelize';
 import { sequelize } from '../../db/clm/db_connection';
 import { Utilisateur } from './utilisateur';
 import { Publication } from './publication';
-import { PublicationAppreciation } from './publication-appreciation';
 
 export class Commentaire extends Model {}
 
 Commentaire.init(
 	{
-		Commentaire_id: {
+		commentaire_id: {
 			type: DataTypes.INTEGER,
 			primaryKey: true,
 			autoIncrement: true,
 		},
-		commentaire: DataTypes.STRING,
 		utilisateur_id: {
 			type: DataTypes.INTEGER,
+			allowNull: true,
 			references: {
 				model: 'utilisateur',
 				key: 'utilisateur_id',
@@ -28,6 +27,7 @@ Commentaire.init(
 				key: 'publication_id',
 			},
 		},
+		commentaire: DataTypes.TEXT,
 		created_at: {
 			allowNull: false,
 			type: DataTypes.DATE,
@@ -39,7 +39,7 @@ Commentaire.init(
 	},
 	{
 		sequelize,
-		modelName: 'publication',
+		modelName: 'commentaire',
 		freezeTableName: true,
 		timestamps: false,
 	},
@@ -47,36 +47,36 @@ Commentaire.init(
 
 //#region 		publication & utilisateur
 Commentaire.belongsTo(Utilisateur, { foreignKey: 'utilisateur_id' });
-Utilisateur.hasMany(Commentaire, { foreignKey: 'utilisateur_id' });
+Utilisateur.hasMany(Commentaire, { foreignKey: 'utilisateur_id', onDelete: 'SET NULL' });
 
 Commentaire.belongsTo(Publication, { foreignKey: 'publication_id' });
-Publication.hasMany(Commentaire, { foreignKey: 'publication_id' });
+Publication.hasMany(Commentaire, { foreignKey: 'publication_id', onDelete: 'CASCADE' });
 //#endregion	publication & utilisateur
 
-//#region 		publication & utilisateur
-Commentaire.belongsToMany(Utilisateur, {
-	through: PublicationAppreciation,
-	foreignKey: 'Commentaire_id',
-	otherKey: 'utilisateur_id',
-});
-
-Utilisateur.belongsToMany(Commentaire, {
-	through: PublicationAppreciation,
-	foreignKey: 'utilisateur_id',
-	otherKey: 'Commentaire_id',
-});
-
-// =====
-
-Commentaire.belongsToMany(Publication, {
-	through: PublicationAppreciation,
-	foreignKey: 'Commentaire_id',
-	otherKey: 'publication_id',
-});
-
-Publication.belongsToMany(Commentaire, {
-	through: PublicationAppreciation,
-	foreignKey: 'publication_id',
-	otherKey: 'Commentaire_id',
-});
-//#endregion	publication & utilisateur
+//#region 		utilisateur & commentaire + commentaire & publication
+// Commentaire.belongsToMany(Utilisateur, {
+// 	through: PublicationAppreciation,
+// 	foreignKey: 'commentaire_id',
+// 	otherKey: 'utilisateur_id',
+// });
+//
+// Utilisateur.belongsToMany(Commentaire, {
+// 	through: Commentaire,
+// 	foreignKey: 'utilisateur_id',
+// 	otherKey: 'commentaire_id',
+// });
+//
+// // =====
+//
+// Commentaire.belongsToMany(Publication, {
+// 	through: PublicationAppreciation,
+// 	foreignKey: 'commentaire_id',
+// 	otherKey: 'publication_id',
+// });
+//
+// Publication.belongsToMany(Commentaire, {
+// 	through: Commentaire,
+// 	foreignKey: 'publication_id',
+// 	otherKey: 'commentaire_id',
+// });
+//#endregion	utilisateur & commentaire + commentaire & publication
