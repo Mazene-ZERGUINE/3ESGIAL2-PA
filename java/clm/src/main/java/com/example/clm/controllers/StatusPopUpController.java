@@ -1,5 +1,6 @@
 package com.example.clm.controllers;
 
+import com.example.clm.models.Tasks;
 import com.example.clm.models.Users;
 import com.example.clm.utils.ApiService;
 import com.example.clm.utils.NotifierService;
@@ -21,7 +22,9 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -37,10 +40,19 @@ public class StatusPopUpController  implements Initializable {
 		this.taskId = taskId;
 		getTaskData(taskId);
 	}
+	private String categoryTitle;
 
+	public void setLabelName(String label , String category) throws IOException {
+		this.taskLabel = label;
+		this.categoryTitle = category;
+		getOflineTaskData(label , category);
+	}
+
+	private String taskLabel;
 	@FXML
 	private Button closeBtn;
 
+	private Tasks data ;
 	@FXML
 	private ListView<String> usersList;
 	private List<Users> users = new ArrayList<>();
@@ -75,24 +87,41 @@ public class StatusPopUpController  implements Initializable {
 		String description = this.description.getText();
 		LocalDate deadline = this.deadline.getValue();
 		String status = this.status.getValue();
-		ObservableList<String> selectedUsers = usersList.getSelectionModel().getSelectedItems();
 
-		JSONObject body = new JSONObject() ;
-		body.put("label", label);
-		body.put("description", description);
-		body.put("deadline", deadline);
-		body.put("status" , status);
-		body.put("members" , selectedUsers);
 
-		StringBuilder response = 	api.putTypeRequest(baseUrl + "tasks/" + taskId + "/update" , body) ;
-		JSONObject jsonResponse = new JSONObject(response.toString()) ;
-		if (jsonResponse.getInt("status_code") == 200) {
+		try {
+			ObservableList<String> selectedUsers = usersList.getSelectionModel().getSelectedItems();
+
+			JSONObject body = new JSONObject() ;
+			body.put("label", label);
+			body.put("description", description);
+			body.put("deadline", deadline);
+			body.put("status" , status);
+			body.put("members" , selectedUsers);
+			StringBuilder response = 	api.putTypeRequest(baseUrl + "tasks/" + taskId + "/update" , body) ;
+			JSONObject jsonResponse = new JSONObject(response.toString()) ;
+			if (jsonResponse.getInt("status_code") == 200) {
+				notifierService.notify(NotificationType.SUCCESS , "Succès" , "Tâche mise à jour.");
+				this.stage =(Stage)updateBtn.getScene().getWindow() ;
+				stage.hide();
+				stage.close();
+			}
+		} catch (Exception e) {
+			List<Tasks> tasks = StorageService.getInstance().getProjectTasksDict().get(categoryTitle);
+			tasks.stream()
+					.filter(task -> task.getLabel().equals(this.taskLabel))
+					.findFirst()
+					.ifPresent(task -> {
+						task.setStatus(status);
+						task.setDeadline(deadline.toString());
+						task.setLabel(label);
+						task.setDescription(description);
+					});
 			notifierService.notify(NotificationType.SUCCESS , "Succès" , "Tâche mise à jour.");
 			this.stage =(Stage)updateBtn.getScene().getWindow() ;
 			stage.hide();
 			stage.close();
 		}
-
 	}
 
 	private void setTheme() throws IOException {
@@ -120,25 +149,31 @@ public class StatusPopUpController  implements Initializable {
 			notifierService.notify(NotificationType.ERROR , "Erreur" , "Mauvaise requête.");
 		}
 	}
-	private void getAllUsers() throws IOException {
-		StringBuilder response = api.getTypeRequest(baseUrl + "users/") ;
-		JSONObject json = new JSONObject(response.toString()) ;
-		JSONArray dataArray = json.getJSONArray("users") ;
-		for (int i = 0 ; i < dataArray.length() ; i++) {
-			Users user = new Users(
-				dataArray.getJSONObject(i).getInt("id"),
-				dataArray.getJSONObject(i).getString("first_name"),
-				dataArray.getJSONObject(i).getString("last_name"),
-				dataArray.getJSONObject(i).getString("email"),
-				dataArray.getJSONObject(i).getString("password"),
-				dataArray.getJSONObject(i).getString("created_at"),
-				dataArray.getJSONObject(i).getString("role")
-				//dataArray.getJSONObject(i).getString("updated_at")
-			);
-			users.add(user) ;
-			usersList.getItems().add( dataArray.getJSONObject(i).getString("first_name")) ;
+	private void getAllUsers()  {
+		StringBuilder response = null;
+		try {
+			response = api.getTypeRequest(baseUrl + "users/");
+
+			JSONObject json = new JSONObject(response.toString()) ;
+			JSONArray dataArray = json.getJSONArray("users") ;
+			for (int i = 0 ; i < dataArray.length() ; i++) {
+				Users user = new Users(
+						dataArray.getJSONObject(i).getInt("id"),
+						dataArray.getJSONObject(i).getString("first_name"),
+						dataArray.getJSONObject(i).getString("last_name"),
+						dataArray.getJSONObject(i).getString("email"),
+						dataArray.getJSONObject(i).getString("password"),
+						dataArray.getJSONObject(i).getString("created_at"),
+						dataArray.getJSONObject(i).getString("role")
+						//dataArray.getJSONObject(i).getString("updated_at")
+				);
+				users.add(user) ;
+				usersList.getItems().add( dataArray.getJSONObject(i).getString("first_name")) ;
+			}
+			usersList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE); ;
+		} catch (IOException e) {
+			usersList = null;
 		}
-		usersList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE); ;
 	}
 
 	public void getTaskData(int taskId) throws IOException {
@@ -162,6 +197,37 @@ public class StatusPopUpController  implements Initializable {
 			status.getItems().add("BLOQUE");
 		}
 	}
+
+	private  void getOflineTaskData(String taskLabel , String categoryTitle) {
+		this.taskLabel = taskLabel;
+		this.categoryTitle = categoryTitle;
+		System.out.println(taskLabel + "  " + categoryTitle);
+		List<Tasks> tasks = StorageService.getInstance().getProjectTasksDict().get(categoryTitle);
+		data = tasks.stream()
+				.filter(task -> task.getLabel().equals(taskLabel))
+				.findFirst()
+				.orElse(null);
+
+
+		assert data != null;DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		LocalDate localDate = LocalDate.parse(data.getDeadline(), formatter);
+
+		ZoneId zoneId = ZoneId.of("America/New_York");
+		LocalDateTime localDateTime = localDate.atStartOfDay().atZone(zoneId).toLocalDateTime();
+
+		deadline.setValue(localDateTime.toLocalDate());
+		description.setText(data.getDescription());
+		status.setValue(data.getStatus());
+		title.setText(data.getLabel());
+
+		status.getItems().add("A FAIRE");
+		status.getItems().add("EN COURS");
+		status.getItems().add("TERMINE");
+		status.getItems().add("VERIFIE");
+		status.getItems().add("BLOQUE");
+	}
+
+
 
 	@Override
 	public void initialize(URL url, ResourceBundle resourceBundle) {

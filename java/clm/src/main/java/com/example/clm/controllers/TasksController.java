@@ -67,6 +67,8 @@ public class TasksController implements Initializable {
 	@FXML
 	private TableView<Tasks> tasksTable;
 
+	private final ObservableList<Tasks> backupList = FXCollections.observableArrayList();
+
 	@FXML
 	private TableColumn<Tasks, String> creationCol;
 
@@ -208,22 +210,28 @@ public class TasksController implements Initializable {
 			JSONObject jsonResponse = new JSONObject(response.toString());
 			if (jsonResponse.getInt("status_code") == 200) {
 				refreshList();
-				notifierService.notify(NotificationType.SUCCESS, "SUCCESS", "tache supprimer");
+				notifierService.notify(NotificationType.SUCCESS, "SUCCESS", "Tache supprimée");
 			}
 		} catch (Exception e) {
-			String selectedTask = tasksTable.getSelectionModel().getSelectedItems().get(0).getLabel();
-			System.out.println("selected " + selectedTask);
-			StorageService.getInstance().getProjectTasksDict().get(this.categoryTitle).removeIf(task -> task.getLabel().equals(selectedTask));
-			tasksTable.getItems().clear();
-			refreshList();
-
+			if (StorageService.getInstance().isOffline()) {
+				String selectedTask = tasksTable.getSelectionModel().getSelectedItems().get(0).getLabel();
+				List<Tasks> tasks = StorageService.getInstance().getProjectTasksDict().get(this.categoryTitle);
+				tasks.removeIf(task -> task.getLabel().equals(selectedTask));
+				refreshList();
+			}
 		}
 	}
+
 
 
 	@FXML
 	public void onExportBtnClicked(MouseEvent event) throws IOException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
 
+		if (StorageService.getInstance().isOffline()) {
+			notifierService.notify(NotificationType.WARNING , "Attention" , "cette fonctionnalité n'est pas disponible offline");
+			return;
+		}
+		
 		List <Tasks> data = this.createObjectToExport();
 		if (data.size() == 0) {
 			notifierService.notify(NotificationType.WARNING , "Avertissement" , "pas de donnée à exporter");
@@ -321,19 +329,22 @@ public class TasksController implements Initializable {
 				datesVerifications();
 			}
 		} catch (Exception e) {
-			System.out.println("ok");
-			List<Tasks> dataArray = StorageService.getInstance().getProjectTasksDict().get(this.categoryTitle);
-			if (dataArray != null) {
-				tasksTable.setItems(FXCollections.observableList(dataArray));
+			if (StorageService.getInstance().isOffline()){
+				List<Tasks> dataArray = StorageService.getInstance().getProjectTasksDict().get(this.categoryTitle);
+				if (dataArray != null) {
+					backupList.addAll(dataArray);
 
-				statusCol.setCellValueFactory(new PropertyValueFactory<>("status"));
-				taskCol.setCellValueFactory(new PropertyValueFactory<>("label"));
-				dealineCol.setCellValueFactory(new PropertyValueFactory<>("deadline"));
-				descriptionCol.setCellValueFactory(new PropertyValueFactory<>("description"));
-				creationCol.setCellValueFactory(new PropertyValueFactory<>("created_at"));
-				membersCol.setCellValueFactory(new PropertyValueFactory<>("members"));
+					tasksTable.setItems(this.backupList);
+					statusCol.setCellValueFactory(new PropertyValueFactory<>("status"));
+					taskCol.setCellValueFactory(new PropertyValueFactory<>("label"));
+					dealineCol.setCellValueFactory(new PropertyValueFactory<>("deadline"));
+					descriptionCol.setCellValueFactory(new PropertyValueFactory<>("description"));
+					creationCol.setCellValueFactory(new PropertyValueFactory<>("created_at"));
+					membersCol.setCellValueFactory(new PropertyValueFactory<>("members"));
 
-				//datesVerifications();
+					//datesVerifications();
+			}
+
 			}
 		}
 
@@ -405,12 +416,19 @@ public class TasksController implements Initializable {
 			int row = pos.getRow();
 			int col = pos.getColumn();
 			int  taskId = tasksTable.getItems().get(row).getId();
+			String taskLabel = tasksTable.getItems().get(row).getLabel();
 			// opening the status update modal window
 				FXMLLoader loader = new FXMLLoader(Main.class.getResource("templates/status-pop-up.fxml"));
 				Stage statusPopUp = new Stage();
 				Scene scene = new Scene(loader.load());
 				StatusPopUpController controller = loader.getController();
-				controller.setData(taskId);
+
+				if (StorageService.getInstance().isOffline()) {
+					controller.setLabelName(taskLabel , this.categoryTitle);
+				} else {
+					controller.setData(taskId);
+				}
+
 				statusPopUp.setScene(scene);
 				statusPopUp.setResizable(false);
 				statusPopUp.initStyle(StageStyle.UNDECORATED);

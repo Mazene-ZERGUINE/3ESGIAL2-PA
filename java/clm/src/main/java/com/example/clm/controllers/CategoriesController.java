@@ -521,6 +521,11 @@ public class CategoriesController extends Application implements Initializable {
 	@FXML
 	public void onExportBtnClicked(MouseEvent event) throws IOException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
 
+		if (StorageService.getInstance().isOffline()) {
+			notifierService.notify(NotificationType.WARNING , "Attention" , "cette fonctionnalité n'est pas disponible offline");
+			return;
+		}
+
 		List <Categorie> data = this.createObjectToExport();
 		if (data.size() == 0) {
 			notifierService.notify(NotificationType.WARNING , "Avertissement" , "pas de donnée à exporter");
