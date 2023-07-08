@@ -168,6 +168,24 @@
 					]
 				},
 				{
+					"name": "commentaire",
+					"item": [
+						{
+							"name": "get by publication id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{HOST}}/clm/commentaires/publications/1",
+									"host": ["{{HOST}}"],
+									"path": ["clm", "commentaires", "publications", "1"]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
 					"name": "image",
 					"item": [
 						{
