@@ -14,6 +14,7 @@ import { PostCommentFormComponent } from './post-comment-form/post-comment-form.
 import { PostCommentsListComponent } from './post-comments-list/post-comments-list.component';
 import { ComponentsModule } from '../../shared/components/components.module';
 import { ThousandSuffixPipe } from './shared/pipes/thousand-suffix/thousand-suffix.pipe';
+import { DateToNowPipe } from '../../shared/pipes/date-to-now/date-to-now.pipe';
 
 @NgModule({
   declarations: [
@@ -25,6 +26,7 @@ import { ThousandSuffixPipe } from './shared/pipes/thousand-suffix/thousand-suff
     PostCommentFormComponent,
     PostCommentsListComponent,
     ThousandSuffixPipe,
+    DateToNowPipe,
   ],
   imports: [
     CommonModule,

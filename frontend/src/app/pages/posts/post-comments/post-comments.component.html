@@ -1,3 +1,7 @@
-<app-post-comment-form></app-post-comment-form>
-<!-- TODO -->
-<app-post-comments-list></app-post-comments-list>
+<app-post-comment-form
+  [publicationId]="publicationId"
+  [currentUserId]="currentUserId"
+  (commented)="getComments()"
+></app-post-comment-form>
+
+<app-post-comments-list [publicationId]="publicationId" [comments]="comments"></app-post-comments-list>

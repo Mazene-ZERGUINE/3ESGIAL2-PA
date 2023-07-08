@@ -1,20 +1,49 @@
 <section class="row">
   <div class="col my-3">
     <ul class="list-group mt-4">
-      <li class="list-group-item" *ngFor="let comment of comments">
+      <li class="list-group-item" *ngFor="let comment of comments; trackBy: trackById">
         <div>
           <!-- TODO + comment.utilisateur.utilisateur.pseudonyme-->
-          <a [href]="usersPath + '/profile/' + 'a'" class="fw-semibold mt-0 me-3 text-decoration-none text-reset">
-            comment.utilisateur.utilisateur.nom comment.utilisateur.utilisateur.prenom
+          <a
+            [routerLink]="
+              !$any(comment).utilisateur ? null : '/' + usersPath + '/profile/' + $any(comment).utilisateur?.pseudonyme
+            "
+            class="fw-semibold mt-0 me-3 text-decoration-none text-reset"
+          >
+            {{
+              !$any(comment).utilisateur
+                ? '(utilisateur supprimé)'
+                : $any(comment).utilisateur?.nom + $any(comment).utilisateur?.prenom
+            }}
           </a>
-          <small class="text-secondary fw-lighter">il y a comment.created_at {{ testDate }}</small>
-          <div>comment.commentaire {{ comment.commentaire }}</div>
-          <div class="d-flex justify-content-end">
-            <button
-              class="btn btn-outline-danger mx-2"
-              disabled
-              (click)="onDelete(comment.publication_id, comment.utilisateur_id)"
+          <small class="text-secondary fw-lighter">il y a {{ comment.created_at | dateToNow }}</small>
+          <div *ngIf="!isEditMode || currentEditableCommentId !== comment.commentaire_id">
+            {{ comment.commentaire }}
+          </div>
+
+          <ng-container *ngIf="commentForm">
+            <form
+              [formGroup]="commentForm"
+              (ngSubmit)="onSubmit(comment)"
+              *ngIf="isEditMode && currentEditableCommentId === comment.commentaire_id"
             >
+              <textarea
+                class="form-control mb-2"
+                id="commentaire"
+                rows="3"
+                name="commentaire"
+                formControlName="commentaire"
+              ></textarea>
+              <button class="btn btn-outline-warning" [disabled]="commentForm.invalid">Modifier</button>
+              <button class="btn btn-outline-danger ms-2" type="button" (click)="onCancelEditMode()">Annuler</button>
+            </form>
+          </ng-container>
+
+          <div class="d-flex justify-content-end" *ngIf="isUserAdmin || comment.utilisateur_id === currentUserId">
+            <button class="btn btn-outline-warning mx-2" (click)="onEdit(comment.commentaire_id, comment.commentaire)">
+              <i class="bi bi-pencil-fill"></i>
+            </button>
+            <button class="btn btn-outline-danger mx-2" (click)="onDelete(comment.commentaire_id)">
               <i class="bi bi-trash-fill"></i>
             </button>
           </div>

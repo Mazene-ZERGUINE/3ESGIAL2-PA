@@ -1,10 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 import { minLengthValidator } from '../../../shared/utils/validator.utils';
 import { AuthService } from '../../../shared/core/services/auth/auth.service';
+import { CommentDTO } from '../shared/models/post.interface';
+import { PostsService } from '../shared/services/posts/posts.service';
+import { ToastService } from 'src/app/shared/components/toast/shared/toast.service';
 
 @UntilDestroy()
 @Component({
@@ -13,13 +16,19 @@ import { AuthService } from '../../../shared/core/services/auth/auth.service';
   styleUrls: ['./post-comment-form.component.scss'],
 })
 export class PostCommentFormComponent implements OnInit {
+  @Input() publicationId?: number;
+  @Input() currentUserId?: number;
+  @Output() commented = new EventEmitter<void>();
+
   form?: FormGroup;
   isAuthenticated?: boolean;
 
   constructor(
     private readonly authService: AuthService,
     private readonly fb: FormBuilder,
+    private readonly postsService: PostsService,
     private readonly router: Router,
+    private readonly toastService: ToastService,
   ) {}
 
   ngOnInit(): void {
@@ -35,7 +44,7 @@ export class PostCommentFormComponent implements OnInit {
 
   initForm(): void {
     this.form = this.fb.group({
-      comment: this.fb.control('', [Validators.required, minLengthValidator]),
+      commentaire: this.fb.control('', [Validators.required, minLengthValidator]),
     });
   }
 
@@ -49,10 +58,29 @@ export class PostCommentFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.form && this.form.invalid) {
+    if (!this.form) {
+      return;
+    }
+    if (this.form.invalid) {
       return;
     }
 
+    const payload: CommentDTO = {
+      commentaire: this.form.get('commentaire')?.value,
+      utilisateur_id: this.currentUserId ?? 0,
+      publication_id: this.publicationId ?? 0,
+      created_at: new Date(),
+      update_at: null,
+    };
+
     // TODO
+    this.postsService
+      .create(`commentaires/publications/${this.publicationId}`, payload)
+      .pipe(untilDestroyed(this))
+      .subscribe((_) => {
+        this.commented.emit();
+        this.toastService.showSuccess('Commentaire envoyé !');
+        this.form?.reset();
+      });
   }
 }
