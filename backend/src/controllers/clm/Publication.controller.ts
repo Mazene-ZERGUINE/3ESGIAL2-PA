@@ -189,6 +189,7 @@ export class PublicationController extends CoreController {
 
 			currentPublication.setAttributes({
 				...req.body,
+				utilisateur_id: currentPublication.getDataValue('utilisateur_id'),
 				created_at: currentPublication.getDataValue('created_at'),
 				updated_at: new Date(),
 			});
