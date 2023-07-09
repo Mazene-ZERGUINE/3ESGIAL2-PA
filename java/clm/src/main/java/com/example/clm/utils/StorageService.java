@@ -16,6 +16,16 @@ public class StorageService {
 	private String selectedExportFormat ;
 	private static StorageService instance;
 
+	private boolean needSync = false;
+
+	public boolean isNeedSync() {
+		return needSync;
+	}
+
+	public void setNeedSync(boolean needSync) {
+		this.needSync = needSync;
+	}
+
 	private String exportFileName;
 
 	private String themeName;
