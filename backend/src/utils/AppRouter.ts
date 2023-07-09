@@ -13,6 +13,7 @@ import publicationRouter from '../routes/clm/publication.router';
 import { isAdministrator, isAuthenticated } from '../middlewares/clm/auth.middleware';
 import imageRouter from '../routes/clm/image.router';
 import publicationAppreciationRouter from '../routes/clm/publication-appreciation.router';
+import utilisateurSignalementRouter from "../routes/clm/utilisateur-signalement.router";
 import {
 	checkForExportFormats,
 	checkThemes,
@@ -66,7 +67,8 @@ export default class AppRouter {
 			.use('/api/clm/reputations/', reputationRouter)
 			.use('/api/clm/sessions', [isAuthenticated, isAdministrator], sessionRouter)
 			.use('/api/clm/utilisateurs', utilisateurRouter)
-			.use('/api/clm/commentaires', commentaireRouter);
+			.use('/api/clm/commentaires', commentaireRouter)
+			.use('/api/clm/signalement-personne', utilisateurSignalementRouter);
 		//#endregion	clm
 	};
 }
