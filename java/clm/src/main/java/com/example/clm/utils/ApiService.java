@@ -8,9 +8,12 @@ import java.io.OutputStream;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
 
 import com.example.clm.models.Categorie;
+import com.example.clm.models.Tasks;
 import com.example.clm.models.Users;
+import com.github.tsohr.JSONArray;
 import com.github.tsohr.JSONObject;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -111,6 +114,34 @@ public class ApiService {
 			result.append(line);
 		}
 		return result;
+	}
+
+	public StringBuilder dbSync() throws IOException {
+		List<Users> usersBackUp = StorageService.getInstance().getUsersList();
+		Map<String , List<Tasks>> tasksBackUp = StorageService.getInstance().getProjectTasksDict();
+		List<Categorie> projctsBackUp = StorageService.getInstance().getProjectsList();
+
+		JSONObject payload = new JSONObject();
+
+		JSONArray users = new JSONArray(usersBackUp);
+		JSONObject tasks = new JSONObject(tasksBackUp);
+		JSONArray projects = new JSONArray(projctsBackUp);
+
+		payload.put("users" , users)
+				.put("tasks", tasks)
+				.put("projects" , projects);
+
+		return this.postTypeRequest("http://localhost:3000/api/client/db_sync" , payload );
+
+	}
+
+	public boolean testApiConnexion() throws IOException {
+		URL url = new URL("http://localhost:3000/api/client/ping");
+		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+		connection.setRequestMethod("GET");
+		int responseCode = connection.getResponseCode();
+		System.out.println(responseCode);
+		return responseCode == HttpURLConnection.HTTP_OK;
 	}
 
 
