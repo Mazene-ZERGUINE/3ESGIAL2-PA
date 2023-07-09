@@ -18,8 +18,8 @@ module.exports = {
 				primaryKey: true,
 				allowNull: true,
 				references: {
-					model: 'publication',
-					key: 'publication_id',
+					model: 'utilisateur',
+					key: 'utilisateur_id',
 				},
 				onDelete: 'CASCADE',
 			},

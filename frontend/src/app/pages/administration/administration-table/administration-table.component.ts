@@ -36,7 +36,6 @@ export class AdministrationTableComponent<T> implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(this.items);
     const areInputsInvalid = !this.entityName || !this.path;
     if (areInputsInvalid) {
       this.stopRendering();
@@ -44,7 +43,6 @@ export class AdministrationTableComponent<T> implements OnInit, OnChanges {
   }
 
   async onAdd(path: string): Promise<void> {
-    console.log('onAdd');
     if (path === this.postsPath) {
       return;
     }

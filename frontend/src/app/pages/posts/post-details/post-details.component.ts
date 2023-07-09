@@ -146,7 +146,7 @@ export class PostDetailsComponent implements OnInit, OnDestroy {
 
     try {
       const description = await this.modalService.open(ModalReportComponent).result;
-      console.log(description);
+
       // TODO
     } catch (_) {}
   }

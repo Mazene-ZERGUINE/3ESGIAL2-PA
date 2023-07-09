@@ -66,7 +66,6 @@ export class UserProfileDetailsComponent implements OnInit {
 
     try {
       const description = await this.modalService.open(ModalReportComponent).result;
-      console.log(description);
       // TODO
     } catch (_) {}
   }
@@ -79,7 +78,6 @@ export class UserProfileDetailsComponent implements OnInit {
         untilDestroyed(this),
       )
       .subscribe((data) => {
-        console.log(data);
         this.vote = data;
       });
   }

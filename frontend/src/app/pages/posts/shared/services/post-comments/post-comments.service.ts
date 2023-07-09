@@ -22,11 +22,13 @@ export class PostCommentsService extends CoreService {
   }
 
   resetCurrentPage() {
-    this._currentPage.next(0);
+    this._currentPage.next(1);
   }
 
-  getOneByPublicationId<T>(path: string, postId: number, page: number): Observable<T> {
-    this.emitCurrentPage(this._currentPage.value + 1);
-    return this.httpClient.get<T>(this.getPath(`${path}/${postId}?page=${page}`));
+  getOneByPublicationId<T>(path: string, postId: number, page?: number): Observable<T> {
+    const currentPage = page ?? this._currentPage.value;
+    this.emitCurrentPage(currentPage + 1);
+
+    return this.httpClient.get<T>(this.getPath(`${path}/${postId}?page=${currentPage}`));
   }
 }

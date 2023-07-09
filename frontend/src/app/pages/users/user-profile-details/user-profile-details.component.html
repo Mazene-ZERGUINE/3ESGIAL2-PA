@@ -3,19 +3,19 @@
     <div class="d-flex justify-content-between">
       <h1 class="my-3">{{ user.pseudonyme }}</h1>
       <div>
-        <button class="btn btn-outline-info" (click)="onReport()">
+        <button class="btn btn-outline-info" disabled (click)="onReport()">
           <i class="bi bi-person-exclamation icon-large"></i>
         </button>
-        <button class="btn btn-info" (click)="onReport()">
-          <i class="bi bi-person-exclamation icon-large"></i>
-        </button>
+        <!--        <button class="btn btn-info" (click)="onReport()">-->
+        <!--          <i class="bi bi-person-exclamation icon-large"></i>-->
+        <!--        </button>-->
       </div>
     </div>
     <!-- TODO -->
     <section>
       <p><b>Statut</b> : {{ user.statut }}</p>
       <p>
-        <b>Réputation</b> :
+        <b>Réputation <i>(votes des utilisateurs)</i></b> :
         <span [ngClass]="{ '': reputation === 0, 'text-success': reputation >= 1, 'text-danger': reputation <= -1 }">
           {{ reputation <= 0 ? '' : '+' }}{{ reputation }}
         </span>
