@@ -64,7 +64,8 @@ export default class AppRouter {
 			.use('/api/clm/reputations/', reputationRouter)
 			.use('/api/clm/sessions', [isAuthenticated, isAdministrator], sessionRouter)
 			.use('/api/clm/utilisateurs', utilisateurRouter)
-			.use('/api/clm/commentaires', commentaireRouter);
+			.use('/api/clm/commentaires', commentaireRouter)
+			.use('/api/clm/utilisateurs', utilisateurRouter);
 		//#endregion	clm
 	};
 }
