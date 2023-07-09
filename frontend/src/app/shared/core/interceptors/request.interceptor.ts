@@ -59,6 +59,10 @@ export class RequestInterceptor implements HttpInterceptor {
       return this.handleSpecificHttpError(err, err.error?.message || 'La ressource existe déjà.');
     }
 
+    if (err.status === HttpError['413RequestEntityTooLarge']) {
+      return this.handleSpecificHttpError(err, err.error?.message || 'Le contenu est trop grand.');
+    }
+
     if (err.status === HttpError['415UnsupportedMediaType']) {
       return this.handleSpecificHttpError(err, err.error?.message || "Le format de fichier n'est pas supporté.");
     }

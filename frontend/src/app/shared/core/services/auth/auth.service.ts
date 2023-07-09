@@ -66,6 +66,15 @@ export class AuthService {
     this._isAuthenticated$.next(value);
   }
 
+  async getDecodedToken(): Promise<any> {
+    try {
+      const token = await this.jwtHelper.tokenGetter();
+      return this.jwtHelper.decodeToken(token);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
   logIn(payload: { email: string; password: string }): Observable<{ access_token: string }> {
     return this.httpClient.post<{ access_token: string }>(`${this.API_URL}/log-in`, payload);
   }

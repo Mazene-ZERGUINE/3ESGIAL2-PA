@@ -100,6 +100,6 @@ Utilisateur.belongsToMany(Publication, {
 // 	onDelete: 'NO ACTION',
 // });
 
-Publication.hasMany(PublicationFavori, { foreignKey: 'utilisateur_id', onDelete: 'CASCADE' });
+Publication.hasMany(PublicationFavori, { foreignKey: 'publication_id', onDelete: 'CASCADE' });
 PublicationFavori.belongsTo(Publication, { foreignKey: 'publication_id', onDelete: 'NO ACTION' });
 //#endregion

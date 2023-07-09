@@ -126,7 +126,7 @@ export abstract class CoreController {
 		return async (req: Request, res: Response) => {
 			try {
 				const item = await model.findByPk(req.params.id, {
-					include: { all: true },
+					include: { all: true, nested: true },
 				});
 				if (!item) {
 					res.status(404).end();

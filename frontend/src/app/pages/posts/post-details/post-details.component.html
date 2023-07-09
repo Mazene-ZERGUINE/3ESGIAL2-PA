@@ -84,6 +84,6 @@
 <hr class="my-4" />
 <div class="row">
   <div class="col my-3" *ngIf="true">
-    <app-post-comments></app-post-comments>
+    <app-post-comments [publicationId]="postId" [currentUserId]="currentUserId"></app-post-comments>
   </div>
 </div>
