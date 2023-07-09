@@ -21,8 +21,8 @@ export class CommentaireController extends CoreController {
 			const data = await Commentaire.findAndCountAll({
 				// offset: (providedPage - 1) * CoreController.PAGE_SIZE,
 				// limit: CoreController.PAGE_SIZE,
-				offset: (providedPage - 1) * 6,
-				limit: 6,
+				offset: (providedPage - 1) * 10,
+				limit: 10,
 				include: { all: true, nested: true },
 				where: { publication_id: publicationId },
 				order: [['created_at', 'DESC']],
