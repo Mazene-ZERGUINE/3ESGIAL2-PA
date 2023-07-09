@@ -1,4 +1,6 @@
+import { title } from 'process';
 import { argon2d, hash } from 'argon2';
+import { ca, ta } from 'date-fns/locale';
 import { Request, Response } from 'express';
 
 const clientPool: any = require('../../db/clientPool');
@@ -8,55 +10,86 @@ export async function dbSync(req: Request, res: Response) {
 		const users: any[] = req.body.users;
 		const projects: any[] = req.body.projects;
 		const tasks: any[] = req.body.tasks;
-		let usersSyncQuery: string = '';
+		console.log(tasks);
+		// insert users
 		if (users.length > 0) {
-			usersSyncQuery = `INSERT INTO client_user (email, password, first_name, last_name, created_at, role) VALUES\n`;
-
-			for (const user of users) {
-				const { id, email, password, firstName, lastName, createdAt, role } = user;
-				const hashPassword: string = await hash(password);
-				const query: string = `('${email}', '${hashPassword}', '${firstName}', '${lastName}', '${createdAt}', '${role}'),\n`;
-				usersSyncQuery += query;
-			}
-
-			const lastCommaIndex: number = usersSyncQuery.lastIndexOf(',');
-			if (lastCommaIndex !== -1) {
-				usersSyncQuery = usersSyncQuery.substring(0, lastCommaIndex) + ';';
-			}
-		}
-
-		let projectsSyncQuery: string = '';
-		if (projects.length > 0) {
-			projectsSyncQuery = `INSERT INTO categories (title, desciption) VALUES\n`;
-
-			for (const project of projects) {
-				const { id, title, description } = project;
-				const query: string = `('${title}', '${description}'),\n`;
-				projectsSyncQuery += query;
-			}
-
-			const lastProjectIndex: number = projectsSyncQuery.lastIndexOf(',');
-			if (lastProjectIndex !== -1) {
-				projectsSyncQuery = projectsSyncQuery.substring(0, lastProjectIndex) + ';';
-			}
-		}
-
-		const backupQuery: string = usersSyncQuery + projectsSyncQuery;
-
-		if (backupQuery.length > 0) {
-			clientPool.query(backupQuery, (error: Error, result: any) => {
-				if (error) {
-					res.status(500).json('Internal server error');
-					console.log('err', error);
-				} else {
-					res.status(200).json('Database sync complete');
+			const userInsertPromise = users.map(async (user) => {
+				try {
+					const { id, email, password, firstName, lastName, createdAt, role } = user;
+					await clientPool.query(
+						'INSERT INTO client_user (email, password, first_name, last_name, created_at, role) VALUES($1 , $2, $3, $4, $5, $6)',
+						[email, await hash(password), firstName, lastName, createdAt, role],
+					);
+				} catch (error) {
+					console.error(`Error inserting user with email ${user.email}:`, error);
 				}
 			});
-		} else {
-			res.status(400).send('no data to sync');
+			await Promise.all(userInsertPromise);
 		}
-	} catch (error) {
-		res.status(500).json('Internal server error');
-		console.log('error', error);
+		// insert projects
+
+		if (projects.length > 0) {
+			const insertProjectPromises = projects.map(async (project) => {
+				try {
+					console.log(project);
+					const { title, discreption } = project;
+					await clientPool.query('INSERT INTO categories (title, desciption) VALUES ($1, $2)', [title, discreption]);
+				} catch (error) {
+					console.error(`Error inserting project with title ${project.title}:`, error);
+				}
+			});
+			await Promise.all(insertProjectPromises);
+
+			const selectIdPromises = projects.map(async (project) => {
+				try {
+					const { title } = project;
+					const result = await clientPool.query('SELECT * FROM categories WHERE title = $1', [title]);
+					return result.rows[0]; // Get the ID or undefined if not found
+				} catch (error) {
+					console.error(`Error selecting project ID for title ${project.title}:`, error);
+					return undefined;
+				}
+			});
+
+			const selectedProjectIds = await Promise.all(selectIdPromises);
+
+			for (const taskName in tasks) {
+				const task = tasks[taskName];
+
+				for (const project of selectedProjectIds) {
+					if (project.title === taskName) {
+						task.forEach((obj: any) => {
+							obj.category_id = project.id;
+						});
+					}
+				}
+			}
+
+			try {
+				for (const taskName in tasks) {
+					const task = tasks[taskName];
+
+					for (const object of task) {
+						const { id, members, startAt, status, label, deadline, created_at, description, category_id } = object;
+
+						const query = `
+          INSERT INTO tasks (start_at, status, label, deadline, created_at, description, category_id , members)
+          VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+        `;
+
+						const values = [startAt, status, label, deadline, created_at, description, category_id, 'null'];
+
+						await clientPool.query(query, values);
+					}
+				}
+			} catch (err) {
+				console.log(err);
+			}
+		}
+
+		res.status(200).json('database has been synchronised with success');
+	} catch (err) {
+		console.error('Error inserting data:', err);
+		res.status(500).json({ message: 'An error occurred while inserting data' });
 	}
 }
