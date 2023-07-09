@@ -69,8 +69,8 @@ public class addTaskController implements Initializable {
 		try {
 			response = api.getTypeRequest(baseUrl + "categories/project/" + categoryId);
 		} catch (IOException ex) {
-			System.out.println(ex.getCause());
-			System.out.println("ok");
+			notifierService.notify(NotificationType.WARNING , "Attention" , "Connection perdu vous etes en mode hros ligne");
+
 		}
 		JSONObject jsonResponse = new JSONObject(response.toString());
 		JSONArray dataArray = jsonResponse.getJSONArray("projects") ;

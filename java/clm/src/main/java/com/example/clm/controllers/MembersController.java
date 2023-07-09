@@ -6,6 +6,8 @@ import com.example.clm.models.Tasks;
 import com.example.clm.models.Users;
 import com.example.clm.utils.*;
 import com.github.tsohr.JSONObject;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableArray;
@@ -22,10 +24,14 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.util.Duration;
 import tray.notification.NotificationType;
 
 import java.awt.*;
@@ -184,24 +190,22 @@ public class MembersController  implements Initializable {
 			return;
 		}
 
-		var payload = new JSONObject();
-		payload
-			.put("last_name", lastName)
-			.put("first_name", firstName)
-			.put("email", email)
-			.put("password", password)
-			.put("role" , role) ;
-
 		try {
-			api.postTypeRequest(baseUrl + "users/", payload);
+			api.testApiConnexion();
+			StorageService.getInstance().setOffline(false);
+		} catch (Exception e) {
+			StorageService.getInstance().setOffline(true);
+		}
 
+		if (StorageService.getInstance().isOffline()) {
+			notifierService.notify(NotificationType.WARNING, "Attention", "Connexion perdu vous etes en mode offline");
+			StorageService.getInstance().setOffline(true);
+			Paint offlineColor = Color.RED;
+			this.conectionCircle.setFill(offlineColor);
+			this.connectionStatus.setText("Offline");
+			connectionStatus.setTextFill(offlineColor);
 			this.tableView.getItems().clear();
-			this.users.clear();
-			getAllMembers();
-			clearFields();
 
-			notifierService.notify(NotificationType.SUCCESS, "Success", "Utilisateur ajouté.");
-		} catch (IOException e) {
 			Users user = new Users(
 					0,
 					firstName,
@@ -214,7 +218,37 @@ public class MembersController  implements Initializable {
 
 			StorageService.getInstance().getUsersList().add(user);
 			getAllMembers();
+
+		} else {
+			StorageService.getInstance().setOffline(true);
+			Paint offlineColor = Color.GREEN;
+			this.conectionCircle.setFill(offlineColor);
+			this.connectionStatus.setText("Online");
+			connectionStatus.setTextFill(offlineColor);
+
+			var payload = new JSONObject();
+			payload
+					.put("last_name", lastName)
+					.put("first_name", firstName)
+					.put("email", email)
+					.put("password", password)
+					.put("role" , role) ;
+
+			try {
+				api.postTypeRequest(baseUrl + "users/", payload);
+
+				this.tableView.getItems().clear();
+				this.users.clear();
+				getAllMembers();
+				clearFields();
+
+				notifierService.notify(NotificationType.SUCCESS, "Success", "Utilisateur ajouté.");
+			} catch (IOException e) {
+				System.out.println("something went wrong");
+			}
 		}
+
+
 	}
 
 	private boolean arePasswordsSame(String password1, String password2) {
@@ -293,6 +327,34 @@ public class MembersController  implements Initializable {
 		var selectedUser = this.tableView.getSelectionModel().getSelectedItems().get(0);
 
 		try {
+			api.testApiConnexion();
+			StorageService.getInstance().setOffline(false);
+		} catch (Exception e) {
+			StorageService.getInstance().setOffline(true);
+		}
+
+		if (StorageService.getInstance().isOffline()) {
+			notifierService.notify(NotificationType.WARNING, "Attention", "Connexion perdu vous etes en mode offline");
+			StorageService.getInstance().setOffline(true);
+			Paint offlineColor = Color.RED;
+			this.conectionCircle.setFill(offlineColor);
+			this.connectionStatus.setText("Offline");
+			connectionStatus.setTextFill(offlineColor);
+			this.tableView.getItems().clear();
+
+			System.out.println("ok");
+			List<Users> users = StorageService.getInstance().getUsersList();
+			users.removeIf(u -> u.getEmail().equals(selectedUser.getEmail()));
+			users.forEach(s -> System.out.println(s.getEmail()));
+			this.backupList$.setAll(users);
+			tableView.setItems(backupList$);
+		} else {
+			StorageService.getInstance().setOffline(true);
+			Paint offlineColor = Color.GREEN;
+			this.conectionCircle.setFill(offlineColor);
+			this.connectionStatus.setText("Online");
+			connectionStatus.setTextFill(offlineColor);
+			try {
 				Users user = this.users
 						.stream()
 						.filter(u -> Objects.equals(u.getEmail(), selectedUser.getEmail()))
@@ -302,14 +364,10 @@ public class MembersController  implements Initializable {
 				this.tableView.getItems().remove(selectedUser);
 				getAllMembers();
 				notifierService.notify(NotificationType.SUCCESS, "Success", "Utilisateur supprimé.");
-
 		} catch (Exception e) {
-			System.out.println("ok");
-			List<Users> users = StorageService.getInstance().getUsersList();
-			users.removeIf(u -> u.getEmail().equals(selectedUser.getEmail()));
-			users.forEach(s -> System.out.println(s.getEmail()));
-			this.backupList$.setAll(users);
-			tableView.setItems(backupList$);
+				System.out.println("something went wrong");
+			}
+
 		}
 	}
 
@@ -393,37 +451,100 @@ public class MembersController  implements Initializable {
 	}
 
 	private void getAllMembers() {
+
+
 		try {
-
-			var response = api.getTypeRequest(baseUrl + "users");
-			var json = new JSONObject(response.toString());
-			var jsonUsers = json.getJSONArray("users");
-			ObservableList<Users> users$ = observableArrayList();
-
-			for (int i = 0; i < jsonUsers.length(); i++) {
-				var newUser = new Users(
-					jsonUsers.getJSONObject(i).getInt("id"),
-					jsonUsers.getJSONObject(i).getString("first_name"),
-					jsonUsers.getJSONObject(i).getString("last_name"),
-					jsonUsers.getJSONObject(i).getString("email"),
-					jsonUsers.getJSONObject(i).getString("password"),
-					jsonUsers.getJSONObject(i).getString("created_at") ,
-					jsonUsers.getJSONObject(i).getString("role")
-				);
-
-				users.add(newUser);
-				users$.add(newUser);
-			}
-
-			tableView.setItems(users$);
+			api.testApiConnexion();
 			StorageService.getInstance().setOffline(false);
-		} catch (IOException | RuntimeException e) {
+		} catch (Exception e) {
+			StorageService.getInstance().setOffline(true);
+		}
+
+		if (StorageService.getInstance().isOffline()) {
+			notifierService.notify(NotificationType.WARNING , "Attention" ,"Connexion perdu vous etes en mode offline");
+			StorageService.getInstance().setOffline(true);
+			Paint offlineColor = Color.RED;
+			this.conectionCircle.setFill(offlineColor);
+			this.connectionStatus.setText("Offline");
+			connectionStatus.setTextFill(offlineColor);
+			this.tableView.getItems().clear();
+
 			StorageService.getInstance().setOffline(true);
 			notifierService.notify(NotificationType.WARNING, "Attention", "Connexion peru vous etes en mode offline");
 			this.tableView.getItems().clear();
 			this.backupList$.addAll(StorageService.getInstance().getUsersList());
 			this.tableView.setItems(backupList$);
+		} else {
+			StorageService.getInstance().setOffline(true);
+			Paint offlineColor = Color.GREEN;
+			this.conectionCircle.setFill(offlineColor);
+			this.connectionStatus.setText("Online");
+			connectionStatus.setTextFill(offlineColor);
+			this.tableView.getItems().clear();
+
+			if (StorageService.getInstance().isNeedSync()) {
+				try {
+					api.dbSync();
+
+					// Create the progress bar and label
+					ProgressBar progressBar = new ProgressBar();
+					progressBar.setPrefWidth(400);
+
+					Label messageLabel = new Label("Synchronisation de la base de données");
+					messageLabel.setStyle("-fx-text-fill: black;"); // Optional: Change the text color
+
+					VBox vbox = new VBox(progressBar, messageLabel);
+
+					// Create the progress bar stage
+					Stage progressBarStage = new Stage();
+					progressBarStage.initModality(Modality.APPLICATION_MODAL); // Set as a modal stage
+					progressBarStage.initStyle(StageStyle.UNDECORATED);
+					progressBarStage.setScene(new Scene(vbox, 300, 100));
+					progressBarStage.show();
+
+					Timeline timeline = new Timeline(
+							new KeyFrame(Duration.seconds(5), e -> progressBarStage.close())
+					);
+					timeline.play();
+					StorageService.getInstance().setNeedSync(false);
+					StorageService.getInstance().getUsersList().clear();
+					StorageService.getInstance().getProjectsList().clear();
+					StorageService.getInstance().getProjectTasksDict().clear();
+
+				} catch (Exception e) {
+					System.out.println(e.getCause() + " " + e.getMessage());
+					System.out.println("something went wrong");
+				}
+			}
+
+			try {
+				var response = api.getTypeRequest(baseUrl + "users");
+				var json = new JSONObject(response.toString());
+				var jsonUsers = json.getJSONArray("users");
+				ObservableList<Users> users$ = observableArrayList();
+
+				for (int i = 0; i < jsonUsers.length(); i++) {
+					var newUser = new Users(
+							jsonUsers.getJSONObject(i).getInt("id"),
+							jsonUsers.getJSONObject(i).getString("first_name"),
+							jsonUsers.getJSONObject(i).getString("last_name"),
+							jsonUsers.getJSONObject(i).getString("email"),
+							jsonUsers.getJSONObject(i).getString("password"),
+							jsonUsers.getJSONObject(i).getString("created_at") ,
+							jsonUsers.getJSONObject(i).getString("role")
+					);
+
+					users.add(newUser);
+					users$.add(newUser);
+				}
+
+				tableView.setItems(users$);
+				StorageService.getInstance().setOffline(false);
+			} catch (IOException | RuntimeException e) {
+				System.out.println("something went wrong");
+			}
 		}
+
 	}
 
 	private void setColumns() {
