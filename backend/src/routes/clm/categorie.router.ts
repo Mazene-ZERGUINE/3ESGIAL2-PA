@@ -6,7 +6,7 @@ import { isAdministrator, isAuthenticated } from '../../middlewares/clm/auth.mid
 
 const router = Router();
 router
-	.get('/', [isAuthenticated], CategorieController.coreGetAllWithoutInclude(Categorie, 'categorie'))
+	.get('/', CategorieController.coreGetAllWithoutInclude(Categorie, 'categorie'))
 	.get('/count', [isAuthenticated], CategorieController.coreCount(Categorie))
 	.get('/:id', CategorieController.coreGetOneByPk(Categorie))
 	.post('/', [isAuthenticated, isAdministrator], CategorieController.coreCreateWithoutTimestamps(Categorie, 'libelle'))
