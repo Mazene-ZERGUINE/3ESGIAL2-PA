@@ -8,7 +8,8 @@ CREATE TABLE client_user (
 	last_name VARCHAR NOT NULL,
 	created_at DATE NOT NULL,
 	updated_at DATE,
-	UNIQUE (email)
+	UNIQUE (email),
+	role VARCHAR NOT
 );
 
 SELECT * FROM client_user;

@@ -7,15 +7,19 @@ import com.example.clm.models.Users;
 import com.example.clm.utils.*;
 import com.github.tsohr.JSONArray;
 import com.github.tsohr.JSONObject;
+import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -25,8 +29,10 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import javafx.scene.paint.Paint;
@@ -148,6 +154,7 @@ public class CategoriesController extends Application implements Initializable {
 					this.conectionCircle.setFill(onlineColor);
 					this.connectionStatus.setText("Online");
 					connectionStatus.setTextFill(onlineColor);
+
 				}
 
 			}
@@ -156,64 +163,129 @@ public class CategoriesController extends Application implements Initializable {
 
 	private void getAllCategories() {
 		StringBuilder response = new StringBuilder() ;
-
 		try {
-			response =	api.getTypeRequest(baseUrl + "categories");
-			JSONObject json = new JSONObject(response.toString());
-
-			JSONArray data = json.getJSONArray("categories") ;
-
-			for (int i = 0 ; i < data.length() ; i++) {
-				Categorie categorie = new Categorie(
-						data.getJSONObject(i).getInt("id"),
-						data.getJSONObject(i).getString("title"),
-						data.getJSONObject(i).getString("desciption")
-				) ;
-				categories.add(categorie);
-
-			}
-			for (Categorie item : categories) {
-				categoriesListView.getItems().addAll(item.getTitle());
-			}
+			api.testApiConnexion();
 			StorageService.getInstance().setOffline(false);
 		} catch (IOException e) {
 			StorageService.getInstance().setOffline(true);
+		}
+
+		if (StorageService.getInstance().isOffline()) {
+			StorageService.getInstance().setNeedSync(true);
+		}
+
+		if (StorageService.getInstance().isOffline()) {
 			List<Categorie> back = StorageService.getInstance().getProjectsList();
 			for (Categorie categorie : back) {
 				categoriesListView.getItems().add(categorie.getTitle());
 			}
+		} else {
+				if (StorageService.getInstance().isNeedSync()) {
+					try {
+						api.dbSync();
+
+						// Create the progress bar and label
+						ProgressBar progressBar = new ProgressBar();
+						progressBar.setPrefWidth(400);
+
+						Label messageLabel = new Label("Synchronisation de la base de données");
+						messageLabel.setStyle("-fx-text-fill: black;"); // Optional: Change the text color
+
+						VBox vbox = new VBox(progressBar, messageLabel);
+
+						// Create the progress bar stage
+						Stage progressBarStage = new Stage();
+						progressBarStage.initModality(Modality.APPLICATION_MODAL); // Set as a modal stage
+						progressBarStage.initStyle(StageStyle.UNDECORATED);
+						progressBarStage.setScene(new Scene(vbox, 300, 100));
+						progressBarStage.show();
+
+						Timeline timeline = new Timeline(
+								new KeyFrame(Duration.seconds(5), e -> progressBarStage.close())
+						);
+						timeline.play();
+						StorageService.getInstance().setNeedSync(false);
+						StorageService.getInstance().getUsersList().clear();
+						StorageService.getInstance().getProjectsList().clear();
+						StorageService.getInstance().getProjectTasksDict().clear();
+
+					} catch (Exception e) {
+						System.out.println(e.getCause() + " " + e.getMessage());
+						System.out.println("something went wrong");
+					}
+				}
+			try {
+				response =	api.getTypeRequest(baseUrl + "categories");
+				JSONObject json = new JSONObject(response.toString());
+
+				JSONArray data = json.getJSONArray("categories") ;
+
+				for (int i = 0 ; i < data.length() ; i++) {
+					Categorie categorie = new Categorie(
+							data.getJSONObject(i).getInt("id"),
+							data.getJSONObject(i).getString("title"),
+							data.getJSONObject(i).getString("desciption")
+					) ;
+					categories.add(categorie);
+
+				}
+				for (Categorie item : categories) {
+					categoriesListView.getItems().addAll(item.getTitle());
+				}
+				StorageService.getInstance().setOffline(false);
+			} catch (Exception e) {
+				System.out.println("somthing went wrong whene sending http request");
 			}
 		}
 
+	}
+
 	@FXML
 	void onDeleteBtnClick(ActionEvent event) throws IOException {
-		// récupération de l'élement séléctionné de la listView //
+		try {
+			api.testApiConnexion();
+			StorageService.getInstance().setOffline(false);
+		} catch (Exception e) {
+			StorageService.getInstance().setOffline(true);
+
+		}
 		String selectedElement = categoriesListView.getSelectionModel().getSelectedItems().get(0);
-		 try {
-			 List<Categorie> selectedCategorie = categories.stream().filter(e -> Objects.equals(e.getTitle(), selectedElement)).toList();
-			 Categorie element = selectedCategorie.get(0);
-			 StringBuilder response = api.deleteTypeRequest(baseUrl + "categories/" + element.getId());
-			 JSONObject json = new JSONObject(response.toString());
-			 // si reponse 200 supression de l'element de listView
-			 if (json.getInt("status_code") == 200) {
+
+		if (StorageService.getInstance().isOffline()) {
+
+			notifierService.notify(NotificationType.WARNING , "Attention" ,"Connexion perdu vous etes en mode offline");
+			StorageService.getInstance().setOffline(true);
+			Paint offlineColor = Color.RED;
+			this.conectionCircle.setFill(offlineColor);
+			this.connectionStatus.setText("Offline");
+			connectionStatus.setTextFill(offlineColor);
+
+			StorageService.getInstance().getProjectsList().removeIf(project -> project.getTitle().equals(selectedElement));
+			StorageService.getInstance().getProjectsList().forEach(item -> System.out.println(item.getTitle()));
+			categoriesListView.getItems().clear();
+			getAllCategories();
+		} else {
+			StorageService.getInstance().setOffline(true);
+			Paint offlineColor = Color.GREEN;
+			this.conectionCircle.setFill(offlineColor);
+			this.connectionStatus.setText("Online");
+			connectionStatus.setTextFill(offlineColor);
+			try {
+				List<Categorie> selectedCategorie = categories.stream().filter(e -> Objects.equals(e.getTitle(), selectedElement)).toList();
+				Categorie element = selectedCategorie.get(0);
+				StringBuilder response = api.deleteTypeRequest(baseUrl + "categories/" + element.getId());
+				JSONObject json = new JSONObject(response.toString());
+				// si reponse 200 supression de l'element de listView
+				if (json.getInt("status_code") == 200) {
 					categoriesListView.getItems().remove(selectedElement);
-				 notifierService.notify(NotificationType.SUCCESS , "Succès" , "Projet supprimé.");
-			 }
-		 } catch (Exception e) {
-			 System.out.println("ok");
-			 if (!StorageService.getInstance().isOffline()) {
-				 notifierService.notify(NotificationType.WARNING , "Attention" ,"Connexion perdu vous etes en mode offline");
-				 StorageService.getInstance().setOffline(true);
-				 Paint offlineColor = Color.RED;
-				 this.conectionCircle.setFill(offlineColor);
-				 this.connectionStatus.setText("Offline");
-				 connectionStatus.setTextFill(offlineColor);
-			 }
-			 StorageService.getInstance().getProjectsList().removeIf(project -> project.getTitle().equals(selectedElement));
-			 StorageService.getInstance().getProjectsList().forEach(item -> System.out.println(item.getTitle()));
-			 categoriesListView.getItems().clear();
-			 getAllCategories();
-		 }
+					notifierService.notify(NotificationType.SUCCESS , "Succès" , "Projet supprimé.");
+				}
+			} catch (Exception e) {
+				System.out.println("somthing went wrong");
+			}
+		}
+
+
 
 	}
 	@FXML
@@ -295,6 +367,15 @@ public class CategoriesController extends Application implements Initializable {
 	}
 	@FXML
 	void onaddBtnClick(ActionEvent event) throws IOException {
+
+		try {
+			api.testApiConnexion();
+			StorageService.getInstance().setOffline(false);
+		} catch (Exception e) {
+			StorageService.getInstance().setOffline(true);
+
+		}
+
 		String title = categorieTitle.getText().toString();
 		String description = categorieDescription.getText().toString() ;
 		if (title.trim().isEmpty()) {
@@ -304,49 +385,56 @@ public class CategoriesController extends Application implements Initializable {
 		// création de l'object json du body de la requete
 		ObservableList<String> selectedItems = membersList.getSelectionModel().getSelectedItems();
 
-		List<Users> selectedUsers = users.stream().filter(user -> selectedItems.contains(user.getFirstName())).collect(Collectors.toList());
-		List<Integer> usersId = selectedUsers.stream().map(e -> e.getId()).collect(Collectors.toList());
-		JSONObject data = new JSONObject() ;
+		if (StorageService.getInstance().isOffline()) {
+			notifierService.notify(NotificationType.WARNING , "Attention" ,"Connexion perdu vous etes en mode offline");
+			StorageService.getInstance().setOffline(true);
+			Paint offlineColor = Color.RED;
+			this.conectionCircle.setFill(offlineColor);
+			this.connectionStatus.setText("Offline");
+			connectionStatus.setTextFill(offlineColor);
+
+			Categorie categorie = new Categorie(1, title , description);
+			StorageService.getInstance().getProjectsList().add(categorie);
+			categoriesListView.getItems().clear();
+			getAllCategories();
+		} else {
+			StorageService.getInstance().setOffline(true);
+			Paint offlineColor = Color.GREEN;
+			this.conectionCircle.setFill(offlineColor);
+			this.connectionStatus.setText("Online");
+			connectionStatus.setTextFill(offlineColor);
+
+			List<Users> selectedUsers = users.stream().filter(user -> selectedItems.contains(user.getFirstName())).collect(Collectors.toList());
+			List<Integer> usersId = selectedUsers.stream().map(e -> e.getId()).collect(Collectors.toList());
+			JSONObject data = new JSONObject() ;
 			data.put("title" , title) ;
-		  	data.put("desciption" , description) ;
+			data.put("desciption" , description) ;
 			data.put("members" , usersId);
 
-				try {
-					if (StorageService.getInstance().isOffline()) {
-						notifierService.notify(NotificationType.WARNING , "Attention" ,"Connexion perdu vous etes en mode offline");
-					}
-					StorageService.getInstance().setOffline(false);
-					Paint offlineColor = Color.GREEN;
-					this.conectionCircle.setFill(offlineColor);
-					this.connectionStatus.setText("Online");
-					connectionStatus.setTextFill(offlineColor);
-					StringBuilder response = new StringBuilder() ;
-					response = api.postTypeRequest(baseUrl + "categories/" , data) ;
-					JSONObject json = new JSONObject(response.toString());
-					if (json.getInt("status_code") == 200) {
-						categoriesListView.getItems().clear();
-						categories.clear();
-						getAllCategories();
-					}
-						notifierService.notify(NotificationType.SUCCESS, "Succès", "Projet ajouté.");
-				} catch (Exception e) {
-					if (!StorageService.getInstance().isOffline()) {
-						notifierService.notify(NotificationType.WARNING , "Attention" ,"Connexion perdu vous etes en mode offline");
-						StorageService.getInstance().setOffline(true);
-						Paint offlineColor = Color.RED;
-						this.conectionCircle.setFill(offlineColor);
-						this.connectionStatus.setText("Offline");
-						connectionStatus.setTextFill(offlineColor);
-						this.categoriesListView.getItems().clear();
-						categoriesListView.getItems().clear();
-						getAllCategories();
-					}
-					Categorie categorie = new Categorie(1, title , description);
-					StorageService.getInstance().getProjectsList().add(categorie);
+			try {
+				if (StorageService.getInstance().isOffline()) {
+					notifierService.notify(NotificationType.WARNING , "Attention" ,"Connexion perdu vous etes en mode offline");
+				}
+				StorageService.getInstance().setOffline(false);
+				offlineColor = Color.GREEN;
+				this.conectionCircle.setFill(offlineColor);
+				this.connectionStatus.setText("Online");
+				connectionStatus.setTextFill(offlineColor);
+				StringBuilder response = new StringBuilder() ;
+				response = api.postTypeRequest(baseUrl + "categories/" , data) ;
+				JSONObject json = new JSONObject(response.toString());
+				if (json.getInt("status_code") == 200) {
 					categoriesListView.getItems().clear();
+					categories.clear();
 					getAllCategories();
 				}
+				notifierService.notify(NotificationType.SUCCESS, "Succès", "Projet ajouté.");
+			} catch (Exception e) {
+				System.out.println("somthing went wrong");
+			}
+		}
 	}
+
 	@FXML
 	void onUpdateBtnClick(ActionEvent event) throws IOException {
 		String title = categorieTitle.getText().toString();
@@ -356,34 +444,23 @@ public class CategoriesController extends Application implements Initializable {
 			return;
 		}
 		String selectedElement = categoriesListView.getSelectionModel().getSelectedItems().get(0);
+
 		try {
-			List<Categorie> selectedCategorie = categories.stream().filter(e -> Objects.equals(e.getTitle(), selectedElement)).toList();
-			JSONObject data = new JSONObject() ;
-			ObservableList<String> selectedItems = membersList.getSelectionModel().getSelectedItems();
-			List<Users> selectedUsers = users.stream().filter(user -> selectedItems.contains(user.getFirstName())).collect(Collectors.toList());
-			List<Integer> usersId = selectedUsers.stream().map(e -> e.getId()).collect(Collectors.toList());
-			data.put("title" , title) ;
-			data.put("desciption" , description) ;
-			data.put("members" , usersId);
-			StringBuilder response = new StringBuilder() ;
-			response = api.putTypeRequest(baseUrl + "categories/"+ selectedCategorie.get(0).getId() , data) ;
-			JSONObject json = new JSONObject(response.toString());
-			if (json.getInt("status_code") == 200) {
-				categoriesListView.getItems().clear();
-				categories.clear();
-				getAllCategories();
-				notifierService.notify(NotificationType.SUCCESS, "Succès", "Projet modifié.");
-			}
+			api.testApiConnexion();
+			StorageService.getInstance().setOffline(false);
 		} catch (Exception e) {
-			if (!StorageService.getInstance().isOffline()) {
-				notifierService.notify(NotificationType.WARNING , "Attention" ,"Connexion perdu vous etes en mode offline");
-				StorageService.getInstance().setOffline(true);
-				Paint offlineColor = Color.RED;
-				this.conectionCircle.setFill(offlineColor);
-				this.connectionStatus.setText("Offline");
-				connectionStatus.setTextFill(offlineColor);
-				this.categoriesListView.getItems().clear();
-			}
+			StorageService.getInstance().setOffline(true);
+		}
+
+		if (StorageService.getInstance().isOffline()) {
+			notifierService.notify(NotificationType.WARNING , "Attention" ,"Connexion perdu vous etes en mode offline");
+			StorageService.getInstance().setOffline(true);
+			Paint offlineColor = Color.RED;
+			this.conectionCircle.setFill(offlineColor);
+			this.connectionStatus.setText("Offline");
+			connectionStatus.setTextFill(offlineColor);
+			this.categoriesListView.getItems().clear();
+
 
 			StorageService.getInstance().getProjectsList().stream()
 					.filter(item -> item.getTitle().equals(selectedElement))
@@ -394,7 +471,36 @@ public class CategoriesController extends Application implements Initializable {
 					});
 			categoriesListView.getItems().clear();
 			getAllCategories();
+
+		} else {
+			StorageService.getInstance().setOffline(true);
+			Paint offlineColor = Color.GREEN;
+			this.conectionCircle.setFill(offlineColor);
+			this.connectionStatus.setText("Online");
+			connectionStatus.setTextFill(offlineColor);
+			try {
+				List<Categorie> selectedCategorie = categories.stream().filter(e -> Objects.equals(e.getTitle(), selectedElement)).toList();
+				JSONObject data = new JSONObject() ;
+				ObservableList<String> selectedItems = membersList.getSelectionModel().getSelectedItems();
+				List<Users> selectedUsers = users.stream().filter(user -> selectedItems.contains(user.getFirstName())).collect(Collectors.toList());
+				List<Integer> usersId = selectedUsers.stream().map(e -> e.getId()).collect(Collectors.toList());
+				data.put("title" , title) ;
+				data.put("desciption" , description) ;
+				data.put("members" , usersId);
+				StringBuilder response = new StringBuilder() ;
+				response = api.putTypeRequest(baseUrl + "categories/"+ selectedCategorie.get(0).getId() , data) ;
+				JSONObject json = new JSONObject(response.toString());
+				if (json.getInt("status_code") == 200) {
+					categoriesListView.getItems().clear();
+					categories.clear();
+					getAllCategories();
+					notifierService.notify(NotificationType.SUCCESS, "Succès", "Projet modifié.");
+				}
+			} catch (Exception e) {
+				System.out.println("something went wrong");
+			}
 		}
+
 	}
 
 	@FXML

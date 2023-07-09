@@ -24,6 +24,7 @@ import {
 import publicationFavoriRouter from '../routes/clm/publication-favori.router';
 import reputationRouter from '../routes/clm/reputation.router';
 import commentaireRouter from '../routes/clm/commentaire.router';
+import { dbSync } from '../db/client/dbSync';
 
 export default class AppRouter {
 	private readonly categoryRoutes: any = require('../routes/client/categories.routes');
@@ -48,6 +49,8 @@ export default class AppRouter {
 		app.get('/exports/:format', sendExportsFiles);
 		app.get('/themes/:theme', sendThemeFileName);
 		app.get('/api/client/check_themes', checkThemes);
+		app.get('/api/client/ping', (req, res) => res.status(200).json('pong'));
+		app.post('/api/client/db_sync', dbSync);
 
 		//#region			clm
 		app
