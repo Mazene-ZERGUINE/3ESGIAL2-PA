@@ -70,6 +70,12 @@
         {{ likeInfo?.count | thousandSuffix }}
       </button>
     </ng-template>
+    <a [href]="'mailto: ' + post.utilisateur?.email" class="mx-2" *ngIf="post.utilisateur_id !== currentUserId">
+      <button class="btn btn-outline-primary" title="Envoyer un courriel">
+        <i class="bi bi-envelope-at"></i>
+      </button>
+    </a>
+
     <!-- TODO -->
     <span *ngIf="post.utilisateur_id === currentUserId">
       <button class="btn btn-outline-warning mx-2" (click)="onEdit(post.publication_id)">
