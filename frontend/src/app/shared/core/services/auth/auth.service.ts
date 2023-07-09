@@ -14,6 +14,7 @@ export class AuthService {
   private readonly API_URL = `${environment.apiUrl}/auth`;
   private readonly _isAuthenticated$ = new BehaviorSubject(false);
   private readonly _isAdmin$ = new BehaviorSubject(false);
+  private readonly _username$ = new BehaviorSubject('');
 
   constructor(private readonly httpClient: HttpClient, private readonly jwtHelper: JwtHelperService) {}
 
@@ -31,6 +32,10 @@ export class AuthService {
 
   get isAuthenticated$() {
     return this._isAuthenticated$.asObservable();
+  }
+
+  get username$() {
+    return this._username$.asObservable();
   }
 
   async getCurrentUserId(): Promise<undefined | number> {
@@ -52,14 +57,17 @@ export class AuthService {
     localStorage.setItem(this.ACCESS_TOKEN_KEY, token);
     this._isAuthenticated$.next(true);
 
-    const role = await this.jwtHelper.decodeToken(token)?.role;
+    const decodedToken = await this.jwtHelper.decodeToken(token);
+    const role = await decodedToken?.role;
     this._isAdmin$.next(role === Role.admin);
+    this._username$.next(decodedToken?.pseudonyme);
   }
 
   deleteToken(): void {
     localStorage.removeItem(this.ACCESS_TOKEN_KEY);
     this._isAuthenticated$.next(false);
     this._isAdmin$.next(false);
+    this._username$.next('');
   }
 
   emitOnIsAuthenticated$(value: boolean): void {

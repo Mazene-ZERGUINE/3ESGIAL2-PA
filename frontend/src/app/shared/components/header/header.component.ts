@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { first, Observable } from 'rxjs';
+import { catchError, first, Observable, of } from 'rxjs';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 import { AuthService } from '../../core/services/auth/auth.service';
@@ -13,19 +13,9 @@ import { JwtHelperService } from '@auth0/angular-jwt';
   styleUrls: ['./header.component.scss'],
 })
 export class HeaderComponent implements OnInit {
-  async ngOnInit(): Promise<void> {
-    await this.setUsername();
-  }
-
-  async setUsername() {
-    const token = await this.jwtHelper.tokenGetter();
-    const decodedToken = this.jwtHelper.decodeToken(token);
-
-    this.username = decodedToken?.pseudonyme;
-  }
-
   readonly isAdmin: Observable<boolean>;
   readonly isAuthenticated: Observable<boolean>;
+  readonly username$: Observable<string>;
 
   backOfficeRoutes: ReadonlyArray<{ path: string; label: string; queryParams?: { page: number } }> = [
     { path: '/administration/categories', label: 'Catégories', queryParams: { page: 1 } },
@@ -59,6 +49,18 @@ export class HeaderComponent implements OnInit {
   ) {
     this.isAdmin = this.authService.isAdmin$;
     this.isAuthenticated = this.authService.isAuthenticated$;
+    this.username$ = this.authService.username$;
+  }
+
+  async ngOnInit(): Promise<void> {
+    // await this.setUsername();
+  }
+
+  async setUsername() {
+    const token = await this.jwtHelper.tokenGetter();
+    const decodedToken = this.jwtHelper.decodeToken(token);
+
+    this.username = decodedToken?.pseudonyme;
   }
 
   async onSignupClick(): Promise<void> {
@@ -72,8 +74,12 @@ export class HeaderComponent implements OnInit {
   onLogoutClick(): void {
     this.authService
       .logOut()
-      .pipe(first(), untilDestroyed(this))
-      .subscribe(() => {
+      .pipe(
+        first(),
+        catchError((err) => of(err)),
+        untilDestroyed(this),
+      )
+      .subscribe((_) => {
         this.authService.deleteToken();
         this.router.navigateByUrl('login');
       });

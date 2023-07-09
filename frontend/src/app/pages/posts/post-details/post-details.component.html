@@ -31,7 +31,13 @@
     </p>
     <p>
       <small class="text-body-secondary">
-        Par : {{ $any(post)['utilisateur']['nom'] }} {{ $any(post)['utilisateur']['prenom'] }}
+        Par :
+        <a
+          [routerLink]="'/users/profile/' + $any(post)['utilisateur']['pseudonyme']"
+          class="fw-semibold mt-0 me-3 text-decoration-none text-reset"
+        >
+          {{ $any(post)['utilisateur']['nom'] }} {{ $any(post)['utilisateur']['prenom'] }}
+        </a>
       </small>
       <br />
       <small class="text-body-secondary">Le : {{ post.created_at | date | date : 'dd MMMM yyyy' : '' : 'fr' }}</small>

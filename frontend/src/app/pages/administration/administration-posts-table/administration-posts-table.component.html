@@ -17,8 +17,10 @@
             scope="col"
             *ngIf="
               item.key !== 'categorie' &&
+              item.key !== 'commentaires' &&
               item.key !== 'description' &&
               item.key !== 'images' &&
+              item.key !== 'publication_favoris' &&
               item.key !== 'publication_id' &&
               item.key !== 'utilisateur'
             "
@@ -45,8 +47,10 @@
           <td
             *ngIf="
               prop.key !== 'categorie' &&
+              prop.key !== 'commentaires' &&
               prop.key !== 'description' &&
               prop.key !== 'images' &&
+              prop.key !== 'publication_favoris' &&
               prop.key !== 'publication_id' &&
               prop.key !== 'titre' &&
               prop.key !== 'utilisateur'

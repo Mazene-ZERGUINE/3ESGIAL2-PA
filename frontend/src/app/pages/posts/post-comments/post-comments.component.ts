@@ -1,9 +1,10 @@
 import { Component, Input } from '@angular/core';
+import { map } from 'rxjs';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+
 import { PostCommentsService } from '../shared/services/post-comments/post-comments.service';
 import { Comment } from '../shared/models/post.interface';
 import { Response } from '../../../shared/core/models/interfaces/response.interface';
-import { map } from 'rxjs';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({
