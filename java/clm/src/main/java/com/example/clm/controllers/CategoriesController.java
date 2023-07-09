@@ -234,6 +234,7 @@ public class CategoriesController extends Application implements Initializable {
 				}
 				StorageService.getInstance().setOffline(false);
 			} catch (Exception e) {
+				System.out.println(e.getCause() + " " + e.getMessage());
 				System.out.println("somthing went wrong whene sending http request");
 			}
 		}
