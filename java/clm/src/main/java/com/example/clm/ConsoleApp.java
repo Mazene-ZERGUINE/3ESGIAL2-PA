@@ -202,8 +202,10 @@ public class ConsoleApp {
         ApiService api = new ApiService();
         try {
             JSONObject response = new JSONObject(api.getTypeRequest(baseUrl + "check_updates/" + data.getString("version") ).toString()) ;
-            if (response.getInt("code_status") == 200) {
+
+            if (!response.getString("version").isEmpty()) {
                 System.out.println("\u001B[32m" + " > des nouveau mis à jour sont disponible " + "\u001B[0m");
+            }
                 System.out.println("\u001B[32m" + " > version" + response.getString("version") + "\u001B[0m");
                 System.out.println(" > voulez vous mettre à jour CLM? yes/no");
 
@@ -245,7 +247,7 @@ public class ConsoleApp {
                     System.out.println("\u001B[32m" +  "Instalation Terminé" + "\u001B[0m");
 
                     System.out.println("Redamarage de CLM");
-                    Thread.sleep(100);
+                    Thread.sleep(2000);
 
                     // restarting the application to see the new updates //
                     System.out.println("starting system updates");
@@ -256,8 +258,14 @@ public class ConsoleApp {
                     processBuilder2.directory(new File(currentDirectory));
                     Process process2 = processBuilder2.start();
 
-                    tmp.delete();
-                }
+                    data.put("version" , response.getString("version"));
+                    File file = new File("../configs/app_version.json");
+                    FileWriter fileWriter = new FileWriter(file);
+                    fileWriter.write(data.toString());
+                    fileWriter.close();
+
+
+
             }
         } catch (Exception e) {
             System.out.println(" > pas de mis à jour détecter!");
@@ -300,7 +308,7 @@ public class ConsoleApp {
             System.out.print("] " + progress + "%");
 
             try {
-                Thread.sleep(100);
+                Thread.sleep(30);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

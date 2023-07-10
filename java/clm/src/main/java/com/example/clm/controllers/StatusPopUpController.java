@@ -179,7 +179,6 @@ public class StatusPopUpController  implements Initializable {
 	public void getTaskData(int taskId) throws IOException {
 		StringBuilder response = api.getTypeRequest(baseUrl + "tasks/" + taskId + "/task");
 		JSONObject jsonResponse = new JSONObject(response.toString());
-		System.out.println(jsonResponse);
 		if (jsonResponse.getInt("status_code") == 200) {
 			JSONObject data = jsonResponse.getJSONArray("tasks").getJSONObject(0);
 			Instant instant = Instant.parse(data.getString("deadline"));
@@ -201,7 +200,6 @@ public class StatusPopUpController  implements Initializable {
 	private  void getOflineTaskData(String taskLabel , String categoryTitle) {
 		this.taskLabel = taskLabel;
 		this.categoryTitle = categoryTitle;
-		System.out.println(taskLabel + "  " + categoryTitle);
 		List<Tasks> tasks = StorageService.getInstance().getProjectTasksDict().get(categoryTitle);
 		data = tasks.stream()
 				.filter(task -> task.getLabel().equals(taskLabel))

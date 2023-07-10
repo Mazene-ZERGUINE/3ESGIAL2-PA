@@ -43,6 +43,8 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static javafx.collections.FXCollections.observableArrayList;
 
@@ -117,9 +119,7 @@ public class MembersController  implements Initializable {
 		}
 
 		if (!auth.checkUserRole()) {
-			System.out.println("ok");
 			JSONObject userData = auth.getUserData();
-			System.out.println(userData.toString());
 			this.userRole.setText(userData.getString("role"));
 			this.userEmail.setText(userData.getString("email"));
 			this.userName.setText(userData.getString("first_name"));
@@ -190,6 +190,20 @@ public class MembersController  implements Initializable {
 			return;
 		}
 
+		if (password.length() < 8) {
+			notifierService.notify(NotificationType.ERROR, "Erreur" , "le mot de passe doit contenir au moins 8 caractères");
+			return;
+		}
+
+		String email_validatro = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+		Pattern pattern = Pattern.compile(email_validatro);
+		Matcher matcher = pattern.matcher(email);
+
+		if (!matcher.matches()) {
+			notifierService.notify(NotificationType.ERROR, "Erreur" , "email non valide");
+			return;
+		}
+
 		try {
 			api.testApiConnexion();
 			StorageService.getInstance().setOffline(false);
@@ -244,7 +258,7 @@ public class MembersController  implements Initializable {
 
 				notifierService.notify(NotificationType.SUCCESS, "Success", "Utilisateur ajouté.");
 			} catch (IOException e) {
-				System.out.println("something went wrong");
+				notifierService.notify(NotificationType.ERROR, "Erreur", "email exist déja");
 			}
 		}
 
@@ -280,6 +294,20 @@ public class MembersController  implements Initializable {
 		var isOneFieldEmpty = lastName.isBlank() || firstName.isBlank() || email.isEmpty();
 		if (isOneFieldEmpty) {
 			notifierService.notify(NotificationType.ERROR, "Error", "Tous les champs sont obligatoires, sauf les mots de passe.");
+			return;
+		}
+
+		if (password.length() < 8) {
+			notifierService.notify(NotificationType.ERROR, "Erreur" , "le mot de passe doit contenir au moins 8 caractères");
+			return;
+		}
+
+		String email_validatro = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+		Pattern pattern = Pattern.compile(email_validatro);
+		Matcher matcher = pattern.matcher(email);
+
+		if (!matcher.matches()) {
+			notifierService.notify(NotificationType.ERROR, "Erreur" , "email non valide");
 			return;
 		}
 
@@ -342,10 +370,9 @@ public class MembersController  implements Initializable {
 			connectionStatus.setTextFill(offlineColor);
 			this.tableView.getItems().clear();
 
-			System.out.println("ok");
+
 			List<Users> users = StorageService.getInstance().getUsersList();
 			users.removeIf(u -> u.getEmail().equals(selectedUser.getEmail()));
-			users.forEach(s -> System.out.println(s.getEmail()));
 			this.backupList$.setAll(users);
 			tableView.setItems(backupList$);
 		} else {
@@ -417,21 +444,6 @@ public class MembersController  implements Initializable {
 		} else {
 			Stage stage = (Stage) this.tableView.getScene().getWindow();
 			sceneService.switchScene(stage, "categories-dev-view.fxml", null);
-		}
-	}
-
-	@FXML
-	void swithToTicketPage(MouseEvent __) throws IOException {
-		if(!StorageService.getInstance().isOffline()) {
-			if (auth.checkUserRole()) {
-				Stage stage = (Stage) this.addBtn.getScene().getWindow();
-				sceneService.switchScene(stage, "ticket-view.fxml", null);
-			} else {
-				Stage stage = (Stage) this.tableView.getScene().getWindow();
-				sceneService.switchScene(stage, "ticket-view.fxml", null);
-			}
-		} else {
-			notifierService.notify(NotificationType.WARNING , "Attention" , "Cette fonctionlité n'est pas disponible offline");
 		}
 	}
 
@@ -529,7 +541,7 @@ public class MembersController  implements Initializable {
 							jsonUsers.getJSONObject(i).getString("first_name"),
 							jsonUsers.getJSONObject(i).getString("last_name"),
 							jsonUsers.getJSONObject(i).getString("email"),
-							jsonUsers.getJSONObject(i).getString("password"),
+							"blocked",
 							jsonUsers.getJSONObject(i).getString("created_at") ,
 							jsonUsers.getJSONObject(i).getString("role")
 					);
@@ -551,6 +563,22 @@ public class MembersController  implements Initializable {
 		lastNameColumn.setCellValueFactory(new PropertyValueFactory<>("lastName"));
 		firstNameColumn.setCellValueFactory(new PropertyValueFactory<>("firstName"));
 		emailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
+	}
+
+
+	@FXML
+	void swithToTicketPage(MouseEvent __) throws IOException {
+		if(!StorageService.getInstance().isOffline()) {
+			if (auth.checkUserRole()) {
+				Stage stage = (Stage) this.addBtn.getScene().getWindow();
+				sceneService.switchScene(stage, "tickets-view.fxml", null);
+			} else {
+				Stage stage = (Stage) this.addBtn.getScene().getWindow();
+				sceneService.switchScene(stage, "tickets-view.fxml", null);
+			}
+		} else {
+			notifierService.notify(NotificationType.WARNING , "Attention" , "Cette fonctionlité n'est pas disponible offline");
+		}
 	}
 	@FXML
 	void onUpdatePasswordBtnClick(ActionEvent event) throws IOException {

@@ -12,6 +12,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
+<?import javafx.scene.shape.Circle?>
 <AnchorPane prefHeight="650.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.clm.controllers.GanttController">
 	<children>
 		<AnchorPane prefHeight="650.0" prefWidth="1100.0" styleClass="mainPane">
@@ -25,7 +26,7 @@
 										<Font size="20.0" />
 									</font>
 								</Text>
-								<Text fill="WHITE" layoutX="518.0" layoutY="35.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Ticket" AnchorPane.topAnchor="15.6640625">
+								<Text fill="WHITE" onMouseClicked="#swithToTicketPage" layoutX="518.0" layoutY="35.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Ticket" AnchorPane.topAnchor="15.6640625">
 									<font>
 										<Font size="20.0" />
 									</font>
@@ -55,6 +56,8 @@
 										<Image url="@../images/Alecive-Flatwoken-Apps-Terminal-Pc-104.512.png" />
 									</image>
 								</ImageView>
+								<Circle fx:id="conectionCircle" fill="DODGERBLUE" layoutX="137.0" layoutY="29.0" radius="13.0" stroke="BLACK" strokeType="INSIDE" />
+								<Label fx:id="connectionStatus" layoutX="157.0" layoutY="20.0" text="Label" />
 							</children>
 						</AnchorPane>
 					</top>

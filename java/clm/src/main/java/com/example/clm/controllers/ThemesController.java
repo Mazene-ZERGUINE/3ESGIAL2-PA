@@ -26,7 +26,6 @@ public class ThemesController implements Initializable {
 	@Override
 	public void initialize(URL url, ResourceBundle resourceBundle) {
 		Path path = Path.of("../");
-		System.out.println(path.toAbsolutePath());
 		File[] thems = getThemesList("../themes");
 
 		for (File file : thems) {

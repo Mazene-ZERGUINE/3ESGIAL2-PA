@@ -8,6 +8,7 @@ import com.github.tsohr.JSONException;
 import com.github.tsohr.JSONObject;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
@@ -20,9 +21,11 @@ import tray.notification.NotificationType;
 import java.io.*;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Arrays;
+import java.util.ResourceBundle;
 
-public class SignInController {
+public class SignInController implements Initializable {
 
 	private final String baseUrl = "http://localhost:3000/api/" ;
 	private final ApiService api = new ApiService();
@@ -72,7 +75,6 @@ public class SignInController {
 		try {
 
 			responseCode = api.postTypeRequestWithResponseCode(baseUrl + "trello/signin", data);
-			System.out.println(responseCode);
 		}
 		catch (Exception e) {
 			notifierService.notify(NotificationType.ERROR, "Erreur", "Une erreur est apparu. Réessayer plus tard.");
@@ -164,7 +166,6 @@ private void recoverPassword(MouseEvent event) throws IOException {
 			StringBuilder response = new StringBuilder() ;
 			response = api.postTypeRequest(baseUrl + "client/recover_password" , data ) ;
 			JSONObject json = new JSONObject(response.toString());
-			System.out.println(json);
 			if (json.getInt("status_code") == 200) {
 				notifierService.notify(NotificationType.SUCCESS , "Email evoyée" , "un email contenat votre nouveau mot de passe est envoyée à \n " + email);
 
@@ -181,5 +182,35 @@ private void recoverPassword(MouseEvent event) throws IOException {
 			notifierService.notify(NotificationType.ERROR , "Email non trouvé" , "compte n'existe pas");
 		}
 
+	}
+
+	@Override
+	public void initialize(URL url, ResourceBundle resourceBundle) {
+		String path = "../configs/app_version.json" ;
+		File appFile = new File(path) ;
+
+		JSONObject data = null;
+		try (BufferedReader reader = new BufferedReader(new FileReader("../configs/app_version.json"))) {
+			StringBuilder jsonContent = new StringBuilder();
+			String line;
+			while ((line = reader.readLine()) != null) {
+				jsonContent.append(line);
+			}
+			data = new JSONObject(jsonContent.toString());
+		} catch (IOException e) {
+			System.out.println("Error reading from the file: " + e.getMessage());
+		}
+
+		String appVersion = data.getString("version");
+
+		ApiService api = new ApiService();
+		try {
+
+			api.getTypeRequest(baseUrl + "client/check_updates/" + data.getString("version"));
+			new NotifierService().notify(NotificationType.INFORMATION, "Information" , "Des mis à jour sont disponible");
+		} catch (Exception e) {
+			System.out.println(e.getMessage() + " " + e.getCause());
+
+		}
 	}
 }

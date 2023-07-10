@@ -4,7 +4,8 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
-<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
@@ -15,6 +16,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
+<?import javafx.scene.shape.Circle?>
 <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="650.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.clm.controllers.TicketsController">
 	<children>
 		<AnchorPane prefHeight="650.0" prefWidth="1100.0" styleClass="mainPane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -43,7 +45,7 @@
 										<Font size="20.0" />
 									</font>
 								</Text>
-								<Text fill="WHITE" layoutX="351.0" layoutY="37.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Membres" AnchorPane.topAnchor="17.0">
+								<Text fill="WHITE" layoutX="351.0" onMouseClicked="#switchToMembersPage" layoutY="37.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Membres" AnchorPane.topAnchor="17.0">
 									<font>
 										<Font size="20.0" />
 									</font>
@@ -58,6 +60,8 @@
 										<Image url="@../images/Alecive-Flatwoken-Apps-Terminal-Pc-104.512.png" />
 									</image>
 								</ImageView>
+								<Circle fx:id="conectionCircle" fill="DODGERBLUE" layoutX="137.0" layoutY="29.0" radius="13.0" stroke="BLACK" strokeType="INSIDE" />
+								<Label fx:id="connectionStatus" layoutX="157.0" layoutY="20.0" text="Label" />
 							</children>
 						</AnchorPane>
 					</center>
@@ -76,21 +80,31 @@
                   </AnchorPane>
                   <AnchorPane prefHeight="371.0" prefWidth="365.0">
                      <children>
-                        <Button fx:id="addBtn" layoutX="8.0" layoutY="29.0" mnemonicParsing="false" onAction="#onAddBtnClick" prefHeight="40.0" prefWidth="159.0" styleClass="add-button" text="Ajouter" textFill="WHITE" />
-                        <Button fx:id="deleteBtn" layoutX="189.0" layoutY="29.0" mnemonicParsing="false" onAction="#onDeleteBtnClick" prefHeight="40.0" prefWidth="159.0" styleClass="delete-button" text="Effacer" textFill="WHITE" />
+                        <Button fx:id="addBtn" layoutX="16.0" layoutY="29.0" mnemonicParsing="false" onAction="#onAddBtnClick" prefHeight="40.0" prefWidth="108.0" styleClass="add-button" text="Ajouter" textFill="WHITE" />
+                        <Button fx:id="deleteBtn" layoutX="154.0" layoutY="29.0" mnemonicParsing="false" onAction="#onDeleteBtnClick" prefHeight="40.0" prefWidth="108.0" styleClass="delete-button" text="Effacer" textFill="WHITE" />
                         <TextField fx:id="ticketTitle" layoutX="14.0" layoutY="110.0" prefHeight="26.0" prefWidth="336.0" promptText="ticket" styleClass="inputs" />
                         <ComboBox fx:id="ticketType" layoutX="16.0" layoutY="157.0" prefHeight="26.0" prefWidth="336.0" promptText="type" styleClass="inputs" />
                         <TextArea fx:id="description" layoutX="16.0" layoutY="196.0" prefHeight="153.0" prefWidth="336.0" promptText="description" styleClass="inputs" />
+                        <ImageView fx:id="exportBtn" fitHeight="57.0" fitWidth="115.0" layoutX="278.0" layoutY="21.0" onMouseClicked="#onExportBtnClicked" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../images/Polysoude-export-icon.png" />
+                           </image>
+                        </ImageView>
 
 										 </children>
                   </AnchorPane>
                </children>
             </VBox>
-				<ScrollPane fitToWidth="true" layoutX="381.0" layoutY="98.0" prefHeight="536.0" prefViewportHeight="900.0" prefViewportWidth="600.0" prefWidth="724.0" styleClass="mainPane" xmlns:fx="http://javafx.com/fxml/1">
-					<content>
-						<VBox fx:id="vbox" prefWidth="550.0" />
-					</content>
-				</ScrollPane>
+            <TableView fx:id="ticketsTabel" layoutX="365.0" layoutY="98.0" onMouseClicked="#onTicketSelect" prefHeight="535.0" prefWidth="730.0">
+              <columns>
+                <TableColumn fx:id="ticketCol" prefWidth="115.0" text="Ticket" />
+                <TableColumn fx:id="typeCol" prefWidth="117.0" text="Type" />
+                  <TableColumn fx:id="authorCol" prefWidth="103.0" text="Author" />
+                  <TableColumn fx:id="descCol" prefWidth="159.0" text="Description" />
+                  <TableColumn fx:id="membersCol" prefWidth="108.0" text="Members" />
+                  <TableColumn fx:id="statusCol" prefWidth="127.0" text="Status" />
+              </columns>
+            </TableView>
 
 			</children>
 		</AnchorPane>
