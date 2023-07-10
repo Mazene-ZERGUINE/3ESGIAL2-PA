@@ -45,6 +45,7 @@
   <app-posts-list
     [currentUserId]="currentUserId"
     [isAuthenticated]="isAuthenticated$ | async"
+    [reportInfo]="reportInfo$ | async"
     [likeInfo]="likeInfo$ | async"
     [starInfo]="starInfo$ | async"
     [posts]="posts$ | async"

@@ -1,29 +1,7 @@
 <div class="col">
   <form *ngIf="form" [formGroup]="form" (ngSubmit)="onSubmit()">
     <div class="mb-3">
-      <label class="form-label required" for="publication_id">Identifiant de publication</label>
-      <input
-        class="form-control"
-        type="number"
-        id="publication_id"
-        name="publication_id"
-        formControlName="publication_id"
-        required
-        autofocus
-      />
-      <small
-        class="text-danger my-2"
-        *ngIf="
-          form.get('publication_id')?.touched &&
-          form.get('publication_id')?.dirty &&
-          (form.get('publication_id')?.getError('pattern') || form.get('publication_id')?.getError('min'))
-        "
-      >
-        Le champ doit contenir l'identifiant de publication.
-      </small>
-    </div>
-    <div class="mb-3">
-      <label class="form-label required" for="description">Ajouter une description</label>
+      <label class="form-label required" for="description">Modifier la description</label>
       <textarea
         class="form-control"
         id="description"
@@ -44,6 +22,24 @@
         Le champ doit contenir une description.
       </div>
     </div>
-    <button class="btn btn-outline-success" [disabled]="form.invalid">Ajouter</button>
+    <div class="mb-3">
+      <div class="mb-3">
+        <label class="form-label required" for="statut">Statut</label>
+        <select class="form-select" formControlName="statut" id="statut" aria-label="Sélection de statut">
+          <ng-container *ngFor="let status of statuses">
+            <option [value]="status">
+              {{ status !== 'ferme' ? status : 'fermé' }}
+            </option>
+          </ng-container>
+        </select>
+        <small
+          class="text-danger my-2"
+          *ngIf="form.get('statut')?.touched && form.get('statut')?.dirty && form.get('statut')?.getError('pattern')"
+        >
+          Le champ est incorrect.
+        </small>
+      </div>
+    </div>
+    <button class="btn btn-outline-warning" [disabled]="form.invalid">Modifier</button>
   </form>
 </div>

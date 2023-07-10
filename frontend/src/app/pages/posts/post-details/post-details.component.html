@@ -51,13 +51,24 @@
       </div>
     </div>
     <span *ngIf="post.utilisateur_id !== currentUserId">
-      <button class="btn btn-outline-info mx-2" (click)="onReport()" *ngIf="!isAuthenticated; else elseButtonBlock">
-        <i class="bi bi-exclamation-triangle-fill"></i>
+      <button
+        class="btn btn-outline-info mx-2"
+        (click)="onReport(post)"
+        *ngIf="!isAuthenticated || !isReportedByCurrentUser; else elseButtonBlock"
+      >
+        <i class="bi bi-exclamation-triangle"></i>
       </button>
       <ng-template #elseButtonBlock>
-        <button class="btn btn-info mx-2 no-pointer">
-          <i class="bi bi-exclamation-triangle-fill"></i>
+        <button title="Vous avez signalé la publication." class="btn btn-info mx-2 no-pointer">
+          <i class="bi bi-exclamation-triangle"></i>
         </button>
+        <!--                  <button-->
+        <!--                    title="Vous avez signalé la publication."-->
+        <!--                    class="btn btn-info mx-2 no-pointer"-->
+        <!--                    (click)="onReport($event)"-->
+        <!--                  >-->
+        <!--                    <i class="bi bi-exclamation-triangle"></i>-->
+        <!--                  </button>-->
       </ng-template>
     </span>
     <!-- TODO -->

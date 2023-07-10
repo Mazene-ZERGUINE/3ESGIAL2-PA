@@ -1,31 +1,74 @@
 import { Component } from '@angular/core';
-import { Entity } from '../shared/enum/entity.enum';
-import { Path } from '../../../shared/enum/path.enum';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { filter, map, tap } from 'rxjs';
 
+import { Path } from '../../../shared/enum/path.enum';
+import { Entity } from '../shared/enum/entity.enum';
+import { Response } from '../../../shared/core/models/interfaces/response.interface';
+import { PostReportsService } from 'src/app/shared/core/services/post-reports/post-reports.service';
+import { PostReport } from '../../../shared/core/models/interfaces/post-report.interface';
+
+@UntilDestroy()
 @Component({
   selector: 'app-administration-reported-posts-list',
   templateUrl: './administration-reported-posts-list.component.html',
   styleUrls: ['./administration-reported-posts-list.component.scss'],
 })
 export class AdministrationReportedPostsListComponent {
-  reportedPosts = [];
-  entityName = Entity.publicationSignalement;
-  page = 1;
+  collectionSize = 0;
+  postReports: PostReport[] = [];
+  entityName = Entity.publication;
+  pageParam = 1;
   path = Path.reportedPosts;
 
+  constructor(
+    private readonly route: ActivatedRoute,
+    private readonly router: Router,
+    private readonly postReportsService: PostReportsService,
+  ) {}
+
   ngOnInit(): void {
-    // TODO
+    this.subscribeToRouter();
+    this.subscribeToQueryParams();
+
+    this.getPostReports();
   }
 
-  onAdd(): void {
-    // TODO
+  getPostReports() {
+    this.postReportsService
+      .getAll<Response<any>>(`publication-signalements?page=${this.pageParam}`)
+      .pipe(
+        map((res) => res?.data),
+        tap((data) => {
+          this.collectionSize = data.count || 0;
+        }),
+        untilDestroyed(this),
+      )
+      .subscribe((data) => {
+        this.postReports = data.rows;
+      });
   }
 
-  onEdit(id: number): void {
-    // TODO
+  onPageChange(page: number): void {
+    this.pageParam = page;
+
+    this.router.navigate(['administration', 'posts'], { queryParams: { page } });
   }
 
-  onDelete(id: number): void {
-    // TODO
+  private subscribeToQueryParams(): void {
+    this.route.queryParams.subscribe((params) => {
+      this.pageParam = Number(params['page']) || 1;
+    });
+  }
+
+  private subscribeToRouter(): void {
+    this.router.events.pipe(filter((e) => e instanceof NavigationEnd)).subscribe((e) => {
+      if (e instanceof NavigationEnd && e.url === '/login') {
+        return;
+      }
+
+      this.getPostReports();
+    });
   }
 }

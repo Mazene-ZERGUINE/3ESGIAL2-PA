@@ -1,1 +1,20 @@
-<app-administration-table [entityName]="entityName" [items]="reportedPosts" [path]="path"></app-administration-table>
+<app-administration-reported-posts-table
+  [entityName]="entityName"
+  [items]="postReports"
+  (deleted)="getPostReports()"
+></app-administration-reported-posts-table>
+
+<ngb-pagination
+  class="d-flex justify-content-center mt-5"
+  aria-label="Posts pagination"
+  [collectionSize]="collectionSize"
+  [(page)]="pageParam"
+  [pageSize]="20"
+  (pageChange)="onPageChange($event)"
+  [maxSize]="3"
+  [rotate]="true"
+  [boundaryLinks]="true"
+  *ngIf="collectionSize >= 1"
+></ngb-pagination>
+
+<app-back-to-top></app-back-to-top>
