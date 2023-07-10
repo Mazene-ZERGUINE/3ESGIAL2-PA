@@ -51,6 +51,10 @@ export abstract class CoreController {
 		};
 	}
 
+	/**
+	 * @deprecated
+	 * @param model
+	 */
 	static coreGetAll(model: any) {
 		return async ({ query: { page } }: Request, res: Response) => {
 			const providedPage = page ? Number(page) : 1;
@@ -66,6 +70,29 @@ export abstract class CoreController {
 				});
 
 				res.status(200).json({ data: items });
+			} catch (error) {
+				CoreController.handleError(error, res);
+			}
+		};
+	}
+
+	static coreGetAndCountAllWithTimestamps(model: any) {
+		return async ({ query: { page } }: Request, res: Response) => {
+			const providedPage = page ? Number(page) : 1;
+
+			try {
+				const data = await model.findAndCountAll({
+					offset: (providedPage - 1) * CoreController.PAGE_SIZE,
+					limit: CoreController.PAGE_SIZE,
+					include: {
+						all: true,
+						nested: true,
+					},
+					order: [['created_at', 'DESC']],
+					distinct: true,
+				});
+
+				res.status(200).json({ data });
 			} catch (error) {
 				CoreController.handleError(error, res);
 			}
