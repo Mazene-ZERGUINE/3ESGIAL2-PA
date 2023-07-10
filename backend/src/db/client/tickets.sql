@@ -6,6 +6,7 @@ CREATE TABLE tickets (
 	status VARCHAR ,
 	description VARCHAR,
 	tag VARCHAR ,
+	author VARCHAR,
 	ticket_title VARCHAR
 ) ;
 
