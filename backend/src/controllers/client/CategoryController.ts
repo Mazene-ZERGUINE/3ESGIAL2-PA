@@ -35,7 +35,8 @@ const getOneCategorieById = (req: Request, res: any) => {
 const addNewCategory = (req: Request, res: Response) => {
 	const members: number[] = req.body.members;
 	const { title, desciption } = req.body;
-	clientPool.query(categoriesQueries.addNewCategoryQuery, [title, desciption], (error: Error, results: any) => {
+
+	clientPool.query('SELECT * FROM categories WHERE title = $1', [title], (error: Error, results: any) => {
 		if (error) {
 			res.status(501).json({
 				error: 'Erreur serveur interne. ',
@@ -43,23 +44,36 @@ const addNewCategory = (req: Request, res: Response) => {
 			});
 			return;
 		}
-		members.forEach((member: number) => {
-			clientPool.query(
-				categoriesQueries.addProjectsMumbers,
-				[results.rows[0].id, member],
-				(error: Error, resuts: any) => {
-					if (error) {
-						res.status(501).json({
-							error: 'Erreur serveur interne. ',
-							details: error,
-						});
-						return;
-					}
-				},
-			);
+		if (results.rows.length > 0) {
+			res.status(400).send('project exists');
+			return;
+		}
+		clientPool.query(categoriesQueries.addNewCategoryQuery, [title, desciption], (error: Error, results: any) => {
+			if (error) {
+				res.status(501).json({
+					error: 'Erreur serveur interne. ',
+					details: error,
+				});
+				return;
+			}
+			members.forEach((member: number) => {
+				clientPool.query(
+					categoriesQueries.addProjectsMumbers,
+					[results.rows[0].id, member],
+					(error: Error, resuts: any) => {
+						if (error) {
+							res.status(501).json({
+								error: 'Erreur serveur interne. ',
+								details: error,
+							});
+							return;
+						}
+					},
+				);
+			});
 		});
+		res.status(200).send({ status_code: 200, messasge: 'Projet ajouté.' });
 	});
-	res.status(200).send({ status_code: 200, messasge: 'Projet ajouté.' });
 };
 
 const deleteCategory = (req: Request, res: Response) => {
