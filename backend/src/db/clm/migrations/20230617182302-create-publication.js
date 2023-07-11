@@ -16,7 +16,7 @@ module.exports = {
 				type: Sequelize.TEXT,
 			},
 			statut: {
-				type: Sequelize.ENUM('actif', 'inactif'),
+				type: Sequelize.ENUM('actif', 'banni', 'inactif'),
 			},
 			utilisateur_id: {
 				type: Sequelize.INTEGER,
