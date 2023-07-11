@@ -74,7 +74,6 @@ public class addTaskController implements Initializable {
 		}
 		JSONObject jsonResponse = new JSONObject(response.toString());
 		JSONArray dataArray = jsonResponse.getJSONArray("projects") ;
-		System.out.println(dataArray.toString());
 		for (int i = 0 ; i< dataArray.length() ; i++){
 			Users user = new Users(
 				dataArray.getJSONObject(i).getInt("id"),
@@ -122,6 +121,14 @@ public class addTaskController implements Initializable {
 			notifierService.notify(NotificationType.ERROR , "Erreur" , "La date de début ne peut pas dépasser la date limite.");
 			return;
 		}
+
+		LocalDate sixMonthsAfterToday = now.plusMonths(6);
+
+		if (taskDeadline.isAfter(sixMonthsAfterToday)) {
+			notifierService.notify(NotificationType.ERROR , "Erreur" , "6 mois au maximum pour une tache");
+			return;
+		}
+
 
 		// creating the request json body
 		JSONObject json = new JSONObject() ;

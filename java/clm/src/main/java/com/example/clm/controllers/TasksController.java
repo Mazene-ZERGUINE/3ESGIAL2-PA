@@ -302,16 +302,20 @@ public class TasksController implements Initializable {
 		try {
 			StringBuilder response = api.getTypeRequest(baseUrl + "tasks/" + categoryId);
 			JSONObject jsonResponse = new JSONObject(response.toString());
-			System.out.println(jsonResponse);
 			if (jsonResponse.getInt("status_code") == 200) {
 				JSONArray dataArray = jsonResponse.getJSONArray("tasks");
 				for (int i = 0; i < dataArray.length(); i++) {
+					ZonedDateTime zonedDateTime = ZonedDateTime.parse(dataArray.getJSONObject(i).getString("deadline"));
+					ZonedDateTime formatStartAt = ZonedDateTime.parse(dataArray.getJSONObject(i).getString("start_at"));
+					DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+					String formatedDeadline = zonedDateTime.format(formatter);
+					String formatedStartAt = formatStartAt.format(formatter);
 					Tasks task = new Tasks(
 							dataArray.getJSONObject(i).getInt("taskid"),
 							dataArray.getJSONObject(i).getString("label"),
 							dataArray.getJSONObject(i).getString("description"),
-							dataArray.getJSONObject(i).getString("start_at"),
-							dataArray.getJSONObject(i).getString("deadline"),
+							formatedStartAt,
+							formatedDeadline,
 							dataArray.getJSONObject(i).getString("status"),
 							dataArray.getJSONObject(i).getString("members"),
 							dataArray.getJSONObject(i).getString("created_at")
@@ -357,9 +361,8 @@ public class TasksController implements Initializable {
 			row.itemProperty().addListener((obs, oldItem, newItem) -> {
 				if (newItem != null && newItem.getDeadline() != null) {
 					LocalDateTime now = LocalDateTime.now();
-					Instant instant = Instant.parse(newItem.getDeadline());
-					ZoneId zoneId = ZoneId.of("America/New_York");
-					LocalDateTime time = LocalDateTime.ofInstant(instant, zoneId);
+					LocalDate deadlineTime = LocalDate.parse(newItem.getDeadline());
+					LocalDateTime time = deadlineTime.atStartOfDay();
 					boolean doneStatusTest = now.isAfter(time) && !newItem.getStatus().equals("TERMINE");
 					boolean verifiedStatusTest = now.isAfter(time) && !newItem.getStatus().equals("VERIFIE") ;
 					boolean sevenDaysToDoneTest = ChronoUnit.DAYS.between(now , time) < 7 && !newItem.getStatus().equals("TERMINE");
@@ -448,6 +451,48 @@ public class TasksController implements Initializable {
 				statusPopUp.show();
 			}
 		}
+
+	@FXML
+	void switchToMembersPage(MouseEvent __) throws IOException {
+		Stage stage = (Stage)this.tasksTable.getScene().getWindow();
+		if (!auth.checkUserRole()) {
+			sceneService.switchScene(stage , "dev-members-view.fxml" , null);
+		} else {
+			sceneService.switchScene(stage , "members-view.fxml" , null);
+
+		}
+	}
+
+
+	@FXML
+	void switchToTicketPage(MouseEvent __) throws IOException {
+		if(!StorageService.getInstance().isOffline()) {
+			if (auth.checkUserRole()) {
+				Stage stage = (Stage) this.addBtn.getScene().getWindow();
+				sceneService.switchScene(stage, "tickets-view.fxml", null);
+			} else {
+				Stage stage = (Stage) this.tasksTable.getScene().getWindow();
+				sceneService.switchScene(stage, "tickets-view.fxml", null);
+			}
+		} else {
+			notifierService.notify(NotificationType.WARNING , "Attention" , "Cette fonctionlité n'est pas disponible offline");
+		}
+	}
+
+	@FXML
+	void switchToPlanificationPage(MouseEvent event) throws IOException {
+		if(!StorageService.getInstance().isOffline()) {
+			if (auth.checkUserRole()) {
+				Stage stage = (Stage) this.addBtn.getScene().getWindow();
+				sceneService.switchScene(stage, "gantt-view.fxml", null);
+			} else {
+				Stage stage = (Stage) this.tasksTable.getScene().getWindow();
+				sceneService.switchScene(stage, "gantt-view.fxml", null);
+			}
+		} else {
+			notifierService.notify(NotificationType.WARNING , "Attention" , "Cette fonctionlité n'est pas disponible offline");
+		}
+	}
 	@Override
 	public void initialize(URL url, ResourceBundle resourceBundle) {
 		try {
@@ -456,4 +501,6 @@ public class TasksController implements Initializable {
 			throw new RuntimeException(e);
 		}
 	}
+
+
 }

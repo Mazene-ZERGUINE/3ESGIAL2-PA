@@ -54,7 +54,6 @@ public class ApiService {
 	}
 
 	public int postTypeRequestWithResponseCode(String url, JSONObject data) throws IOException {
-		//System.out.println(data);
 		URL requestUrl = new URL(url);
 		HttpURLConnection conn = (HttpURLConnection) requestUrl.openConnection();
 		conn.setRequestMethod("POST");
@@ -140,7 +139,6 @@ public class ApiService {
 		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 		connection.setRequestMethod("GET");
 		int responseCode = connection.getResponseCode();
-		System.out.println(responseCode);
 		return responseCode == HttpURLConnection.HTTP_OK;
 	}
 

@@ -8,10 +8,10 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.shape.Circle?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<?import javafx.scene.shape.Circle?>
 <AnchorPane prefHeight="650.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.clm.controllers.TasksController">
 	<children>
 		<AnchorPane prefHeight="650.0" prefWidth="1100.0" styleClass="mainPane">
@@ -25,12 +25,12 @@
 										<Font size="20.0" />
 									</font>
 								</Text>
-								<Text fill="WHITE" layoutX="518.0" layoutY="35.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Ticket" AnchorPane.topAnchor="15.6640625">
+								<Text fill="WHITE" layoutX="518.0" layoutY="35.0" onMouseClicked="#switchToTicketPage" strokeType="OUTSIDE" strokeWidth="0.0" text="Ticket" AnchorPane.topAnchor="15.6640625">
 									<font>
 										<Font size="20.0" />
 									</font>
 								</Text>
-								<Text fill="WHITE" layoutX="596.0" layoutY="36.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Planification" AnchorPane.topAnchor="16.6640625">
+								<Text fill="WHITE" layoutX="596.0" layoutY="36.0" onMouseClicked="#switchToPlanificationPage" strokeType="OUTSIDE" strokeWidth="0.0" text="Planification" AnchorPane.topAnchor="16.6640625">
 									<font>
 										<Font size="20.0" />
 									</font>
@@ -40,7 +40,7 @@
 										<Font size="20.0" />
 									</font>
 								</Text>
-								<Text fill="WHITE" layoutX="351.0" layoutY="37.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Membres" AnchorPane.topAnchor="17.0">
+								<Text fill="WHITE" layoutX="351.0" layoutY="37.0" onMouseClicked="#switchToMembersPage" strokeType="OUTSIDE" strokeWidth="0.0" text="Membres" AnchorPane.topAnchor="17.0">
 									<font>
 										<Font size="20.0" />
 									</font>
@@ -78,16 +78,16 @@
                   <TableColumn fx:id="statusCol" prefWidth="126.0" text="Statut" />
               </columns>
             </TableView>
-            <AnchorPane layoutX="48.0" layoutY="94.0" prefHeight="42.0" prefWidth="181.0" style="-fx-background-color: #000958; -fx-background-radius: 25;">
-               <children>
-                  <Label fx:id="category" layoutX="61.0" layoutY="13.0" prefHeight="17.0" prefWidth="86.0" textFill="WHITE" AnchorPane.bottomAnchor="12.0" AnchorPane.leftAnchor="80.0" AnchorPane.rightAnchor="34.0" AnchorPane.topAnchor="12.0" />
-               </children>
-            </AnchorPane>
             <ImageView fx:id="exportBtn" fitHeight="57.0" fitWidth="115.0" layoutX="543.0" layoutY="87.0" onMouseClicked="#onExportBtnClicked" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../images/Polysoude-export-icon.png" />
                </image>
             </ImageView>
+            <Label fx:id="category" layoutX="22.0" layoutY="101.0" text="Label" textFill="#000958">
+               <font>
+                  <Font size="21.0" />
+               </font>
+            </Label>
 			</children>
 		</AnchorPane>
 	</children>

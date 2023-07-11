@@ -9,6 +9,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
+<?import javafx.scene.shape.Circle?>
 <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="650.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.clm.controllers.CategoriesController">
 	<children>
 		<AnchorPane fx:id="mainPane" prefHeight="650.0" prefWidth="1100.0" styleClass="mainPane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -52,6 +53,8 @@
 										<Image url="@../images/Alecive-Flatwoken-Apps-Terminal-Pc-104.512.png" />
 									</image>
 								</ImageView>
+								<Circle fx:id="conectionCircle" fill="DODGERBLUE" layoutX="137.0" layoutY="29.0" radius="13.0" stroke="BLACK" strokeType="INSIDE" />
+								<Label fx:id="connectionStatus" layoutX="157.0" layoutY="20.0" text="Label" />
 							</children>
 						</AnchorPane>
 					</right>

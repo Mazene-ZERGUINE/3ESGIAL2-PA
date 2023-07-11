@@ -1,10 +1,7 @@
 package com.example.clm.controllers;
 import com.example.clm.models.Categorie;
 import com.example.clm.models.Tasks;
-import com.example.clm.utils.ApiService;
-import com.example.clm.utils.AuthService;
-import com.example.clm.utils.SceneService;
-import com.example.clm.utils.StorageService;
+import com.example.clm.utils.*;
 import com.github.tsohr.JSONArray;
 import com.github.tsohr.JSONObject;
 import javafx.fxml.FXML;
@@ -15,16 +12,21 @@ import javafx.scene.chart.*;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
+import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
+import tray.notification.NotificationType;
 
 import java.io.IOException;
 import java.net.URL;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -37,6 +39,11 @@ import java.util.ResourceBundle;
 
 public class GanttController implements Initializable {
 
+	@FXML
+	private Circle conectionCircle;
+
+	@FXML
+	private Label connectionStatus;
 	@FXML
 	private BarChart<Integer, String> chart;
 
@@ -62,13 +69,18 @@ public class GanttController implements Initializable {
 
 
 	public void devProjects() throws IOException {
+		javafx.scene.paint.Paint offlineColor = Color.GREEN;
+		this.conectionCircle.setFill(offlineColor);
+		this.connectionStatus.setText("Online");
+		connectionStatus.setTextFill(offlineColor);
+
 		int userId = auth.getUserId();
 		StringBuilder response = api.getTypeRequest(baseUrl + "categories/dev/" + userId);
 		JSONObject jsonResponse = new JSONObject(response.toString());
 		JSONArray dataArray = jsonResponse.getJSONArray("projects") ;
 		for (int i = 0 ; i < dataArray.length() ; i++) {
 			Categorie categorie = new Categorie(
-				dataArray.getJSONObject(i).getInt("id"),
+				dataArray.getJSONObject(i).getInt("category_id"),
 				dataArray.getJSONObject(i).getString("title"),
 				dataArray.getJSONObject(i).getString("desciption")
 			);
@@ -77,7 +89,31 @@ public class GanttController implements Initializable {
 		}
 	}
 
+	@FXML
+	void swithToTicketPage(MouseEvent __) throws IOException {
+		StorageService.getInstance().setOffline(false);
+		if(!StorageService.getInstance().isOffline()) {
+			if (auth.checkUserRole()) {
+				Stage stage = (Stage) this.projects.getScene().getWindow();
+				sceneService.switchScene(stage, "tickets-view.fxml", null);
+			} else {
+				Stage stage = (Stage) this.projects.getScene().getWindow();
+				sceneService.switchScene(stage, "tickets-view.fxml", null);
+			}
+		} else {
+			new NotifierService().notify(NotificationType.WARNING , "Attention" , "Cette fonctionlité n'est pas disponible offline");
+		}
+	}
 	public void getAllProjets() {
+
+		if (!StorageService.getInstance().isOffline()) {
+			StorageService.getInstance().setOffline(true);
+			Paint offlineColor = Color.GREEN;
+			this.conectionCircle.setFill(offlineColor);
+			this.connectionStatus.setText("Online");
+			connectionStatus.setTextFill(offlineColor);
+		}
+
 		StringBuilder response = new StringBuilder() ;
 		try {
 			response =	api.getTypeRequest(baseUrl + "categories");
@@ -157,7 +193,7 @@ public class GanttController implements Initializable {
 				String from = formatter.format(creatinDate);
 				String to = formatter.format(deadline);
 				// getting the number of days between the tow
-				Integer numberOfDays = (int) ChronoUnit.DAYS.between(creatinDate, deadline);
+				Integer numberOfDays = (int) ChronoUnit.DAYS.between(LocalDate.now(), deadline);
 				// setting the chart data
 				XYChart.Data<Integer, String> dataPoint = new XYChart.Data<>(numberOfDays, element.getLabel());
 				dataPoint.nodeProperty().addListener((obs, oldNode, newNode) -> {
@@ -236,13 +272,11 @@ public class GanttController implements Initializable {
 	public void initialize(URL url, ResourceBundle resourceBundle) {
 		if (!auth.checkUserRole()) {
 			try {
-				System.out.println("dev");
 				devProjects();
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}
 		} else {
-			System.out.println("admin");
 			getAllProjets();
 
 		}

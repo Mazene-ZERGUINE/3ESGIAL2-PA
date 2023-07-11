@@ -56,7 +56,7 @@ import tray.notification.NotificationType;
 
 
 
-public class CategoriesController extends Application implements Initializable {
+public class CategoriesController  implements Initializable {
 
 	private static final AuthService auth = new AuthService() ;
 
@@ -97,18 +97,9 @@ public class CategoriesController extends Application implements Initializable {
 	private TextField categorieTitle;
 	private Parent root ;
 
-	@Override
-	public void start(Stage stage) throws IOException {
-		FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("templates/categories-view.fxml"));
-		Scene scene = new Scene(fxmlLoader.load(), 1100, 650);
-		stage.setTitle("CLM");
-		stage.setScene(scene);
-		stage.show();
-	}
 
-	public static void main(String[] args) {
-		launch();
-	}
+
+
   // récupere tous les catégorie aprés le lancement de la scene
 	@Override
 	public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -262,7 +253,6 @@ public class CategoriesController extends Application implements Initializable {
 			connectionStatus.setTextFill(offlineColor);
 
 			StorageService.getInstance().getProjectsList().removeIf(project -> project.getTitle().equals(selectedElement));
-			StorageService.getInstance().getProjectsList().forEach(item -> System.out.println(item.getTitle()));
 			categoriesListView.getItems().clear();
 			getAllCategories();
 		} else {
@@ -297,10 +287,8 @@ public class CategoriesController extends Application implements Initializable {
 				if (e.getClickCount() == 2) {
 					// redirection vers tasks-view.fxml
 					String selectedElement = devProjects.getSelectionModel().getSelectedItems().get(0);
-					System.out.println(selectedElement);
 					List<Categorie> selectedCategorie = projects.stream().filter(element -> Objects.equals(element.getTitle(), selectedElement)).toList();
 					int categorieId = selectedCategorie.get(0).getId();
-					selectedCategorie.forEach(ex -> System.out.println(ex.getId()));
 					Stage stage = (Stage) mainPane.getScene().getWindow(); // récupération de stage de la scene current
 					FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("templates/tasks-view.fxml"));
 					try {
@@ -356,9 +344,7 @@ public class CategoriesController extends Application implements Initializable {
 						}
 						JSONObject jsonResponse = new JSONObject(response.toString());
 						JSONArray dataArray = jsonResponse.getJSONArray("projects") ;
-						System.out.println(dataArray.toString());
 						for (int i = 0 ; i< dataArray.length() ; i++){
-							System.out.println(dataArray.getJSONObject(i).getString("first_name"));
 								membersList.getSelectionModel().select(dataArray.getJSONObject(i).getString("first_name"));
 						}
 
@@ -398,6 +384,8 @@ public class CategoriesController extends Application implements Initializable {
 			StorageService.getInstance().getProjectsList().add(categorie);
 			categoriesListView.getItems().clear();
 			getAllCategories();
+			clearFields();
+			notifierService.notify(NotificationType.SUCCESS, "Ajouter" , "Projet ajouté");
 		} else {
 			StorageService.getInstance().setOffline(true);
 			Paint offlineColor = Color.GREEN;
@@ -429,13 +417,21 @@ public class CategoriesController extends Application implements Initializable {
 					categories.clear();
 					getAllCategories();
 				}
+				clearFields();
 				notifierService.notify(NotificationType.SUCCESS, "Succès", "Projet ajouté.");
 			} catch (Exception e) {
-				System.out.println("somthing went wrong");
+				notifierService.notify(NotificationType.ERROR, "Erreur" , "ce project existe déja");
+				StorageService.getInstance().setOffline(false);
 			}
 		}
 	}
 
+
+	private void clearFields() {
+		this.categorieTitle.clear();
+		this.membersList.getSelectionModel().clearSelection();
+		this.categorieDescription.clear();
+	}
 	@FXML
 	void onUpdateBtnClick(ActionEvent event) throws IOException {
 		String title = categorieTitle.getText().toString();
@@ -472,7 +468,8 @@ public class CategoriesController extends Application implements Initializable {
 					});
 			categoriesListView.getItems().clear();
 			getAllCategories();
-
+			clearFields();
+			notifierService.notify(NotificationType.SUCCESS , "Modifier" , "Project modifier");
 		} else {
 			StorageService.getInstance().setOffline(true);
 			Paint offlineColor = Color.GREEN;
@@ -533,10 +530,10 @@ public class CategoriesController extends Application implements Initializable {
 		if(!StorageService.getInstance().isOffline()) {
 			if (auth.checkUserRole()) {
 				Stage stage = (Stage) this.addBtn.getScene().getWindow();
-				sceneService.switchScene(stage, "ticket-view.fxml", null);
+				sceneService.switchScene(stage, "tickets-view.fxml", null);
 			} else {
-				Stage stage = (Stage) this.categoriesListView.getScene().getWindow();
-				sceneService.switchScene(stage, "ticket-view.fxml", null);
+				Stage stage = (Stage) this.mainPane.getScene().getWindow();
+				sceneService.switchScene(stage, "tickets-view.fxml", null);
 			}
 		} else {
 			notifierService.notify(NotificationType.WARNING , "Attention" , "Cette fonctionlité n'est pas disponible offline");
@@ -550,7 +547,7 @@ public class CategoriesController extends Application implements Initializable {
 				Stage stage = (Stage) this.addBtn.getScene().getWindow();
 				sceneService.switchScene(stage, "gantt-view.fxml", null);
 			} else {
-				Stage stage = (Stage) this.categoriesListView.getScene().getWindow();
+				Stage stage = (Stage) this.mainPane.getScene().getWindow();
 				sceneService.switchScene(stage, "gantt-view.fxml", null);
 			}
 		} else {

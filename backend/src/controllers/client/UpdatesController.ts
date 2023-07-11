@@ -14,8 +14,8 @@ export function checkUpdates(req: Request, res: Response): void {
 	fs.readdir(updatesPath, { withFileTypes: true }, (err, files) => {
 		if (err) {
 			console.error('Error reading directory:', err);
+			res.status(400).send('Error reading updates folder');
 			return;
-			res.status(400).send('no updates found in updates folder');
 		}
 
 		const folders = files.filter((file) => file.isDirectory());
@@ -25,19 +25,21 @@ export function checkUpdates(req: Request, res: Response): void {
 			var updatesVersion: string[] = folder.name.split('.');
 			if (Number(updatesVersion[0]) > Number(currentVersions[0])) {
 				newVersion = folder.name;
-			}
-			if (Number(updatesVersion[1]) > Number(currentVersions[1])) {
+			} else if (Number(updatesVersion[1]) > Number(currentVersions[1])) {
+				newVersion = folder.name;
+			} else if (Number(updatesVersion[2]) > Number(currentVersions[2])) {
 				newVersion = folder.name;
 			}
-			if (Number(updatesVersion[1]) > Number(currentVersions[1])) {
-				newVersion = folder.name;
+
+			if (folder.name == currentVersion) {
+				newVersion = null;
 			}
 		});
+
 		if (newVersion !== null) {
-			res.status(200).send({ code_status: 200, message: 'a new version is released', version: newVersion });
-			return;
+			res.status(200).send({ code_status: 200, message: 'A new version is released', version: newVersion });
 		} else {
-			res.status(403).send({ code_status: 200, message: 'no updates released yet' });
+			res.status(200).send({ code_status: 200, message: 'No updates released yet' });
 		}
 	});
 }

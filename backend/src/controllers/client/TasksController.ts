@@ -68,7 +68,6 @@ const getTaskById = (req: Request, res: Response): void => {
 };
 
 const updateTask = (req: Request, res: Response) => {
-	console.log(req.body);
 	const taskId: number = parseInt(req.params.task_id);
 	const { label, description, status, deadline, members } = req.body;
 	var membersString: string = '';
