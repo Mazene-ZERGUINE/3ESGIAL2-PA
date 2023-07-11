@@ -32,6 +32,7 @@ export interface PostDTO {
   statut: Status;
   images: Image[];
   commentaires: Comment[];
+  utilisateur?: User;
   utilisateur_id: number;
   categorie_id: null | number;
   created_at: Date;

@@ -221,7 +221,6 @@ export class PostDetailsComponent implements OnInit, OnDestroy {
         if (!data) {
           return;
         }
-
         this.post = data;
       });
   }
