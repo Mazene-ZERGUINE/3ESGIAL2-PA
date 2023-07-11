@@ -47,4 +47,8 @@ export class AdministrationReportedPostsTableComponent {
         });
     } catch (e) {}
   }
+
+  async onSee(path: string, parameter: string | number): Promise<void> {
+    await this.router.navigateByUrl(`${path}/${parameter}`);
+  }
 }

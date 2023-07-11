@@ -29,6 +29,7 @@ export class PostDetailsComponent implements OnInit, OnDestroy {
 
   canContinue = true;
   currentUserId?: number;
+  isAdmin: boolean;
   isAuthenticated: boolean;
   likeInfo?: { count: number; liked: boolean };
   post?: Post;
@@ -47,6 +48,7 @@ export class PostDetailsComponent implements OnInit, OnDestroy {
     private readonly toastService: ToastService,
   ) {
     this.isAuthenticated = this.authService.isAuthenticated;
+    this.isAdmin = this.authService.isAdmin;
     this.postId = Number(this.route.snapshot.paramMap.get('id'));
     this.isIdInvalid = isNaN(this.postId) || this.postId <= 0;
   }
@@ -133,6 +135,7 @@ export class PostDetailsComponent implements OnInit, OnDestroy {
   }
 
   async onEdit(id: number): Promise<void> {
+    // TODO admin access
     await this.router.navigateByUrl(`posts/${id}/edit`);
   }
 

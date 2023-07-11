@@ -1,4 +1,4 @@
-<h1>Administration des {{ entityName }}s</h1>
+<h1>Administration des signalements de publication</h1>
 
 <div class="table-responsive">
   <table class="table table-striped">
@@ -13,11 +13,12 @@
         <!--#endregion  id -->
         <!--#region     remaining fields -->
         <ng-container *ngFor="let item of $any(items[0]) | keyvalue">
-          <th scope="col" *ngIf="item.key !== 'publication_signalement_id' && item.key !== 'description'">
+          <th scope="col" *ngIf="item.key !== 'publication_signalement_id'">
             {{ $any(item.key) | titlecase }}
           </th>
         </ng-container>
         <!--#endregion  remaining fields -->
+        <th scope="col">Voir publication</th>
         <th scope="col">Edition</th>
         <th scope="col">Suppression</th>
       </tr>
@@ -40,11 +41,16 @@
                 : ($any(prop.value) | date | date : 'dd MMMM yyyy' : '' : 'fr')
             }}
           </td>
-          <td *ngIf="prop.key === 'titre'">
+          <td *ngIf="prop.key === 'description'">
             {{ $any(prop.value) | slice : 0 : 10 }}{{ $any(prop.value)?.length > 10 ? '...' : '' }}
           </td>
         </ng-container>
         <!--#endregion  remaining fields -->
+        <td>
+          <button class="btn btn-outline-secondary" (click)="onSee('posts', $any(item)['publication_id'])">
+            <i class="bi bi-eye"></i>
+          </button>
+        </td>
         <td>
           <button
             class="btn btn-outline-warning"

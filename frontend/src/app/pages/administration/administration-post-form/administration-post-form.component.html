@@ -60,7 +60,7 @@
       <label class="form-label required" for="statut">Statut</label>
       <select class="form-select" formControlName="statut" id="statut" aria-label="Sélection de statut">
         <ng-container *ngFor="let status of statuses">
-          <option [value]="status" *ngIf="status !== 'banni'">
+          <option [value]="status">
             {{ status }}
           </option>
         </ng-container>
