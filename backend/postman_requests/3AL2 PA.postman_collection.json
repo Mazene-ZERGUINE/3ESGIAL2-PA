@@ -412,9 +412,66 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{HOST}}/clm/favoris/publications/1",
+									"raw": "{{HOST}}/clm/favoris/publications/3",
 									"host": ["{{HOST}}"],
-									"path": ["clm", "favoris", "publications", "1"]
+									"path": ["clm", "favoris", "publications", "3"]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "publication signalements",
+					"item": [
+						{
+							"name": "get all",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{ADMIN_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{HOST}}/clm/publication-signalements?page=1",
+									"host": ["{{HOST}}"],
+									"path": ["clm", "publication-signalements"],
+									"query": [
+										{
+											"key": "page",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get one by publication id",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{ADMIN_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{HOST}}/clm/publication-signalements/publications/2",
+									"host": ["{{HOST}}"],
+									"path": ["clm", "publication-signalements", "publications", "2"]
 								}
 							},
 							"response": []
