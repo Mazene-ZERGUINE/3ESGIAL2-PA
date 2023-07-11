@@ -53,7 +53,7 @@ export class AdministrationReportedPostsListComponent {
   onPageChange(page: number): void {
     this.pageParam = page;
 
-    this.router.navigate(['administration', 'posts'], { queryParams: { page } });
+    this.router.navigate(['administration', 'reported-posts'], { queryParams: { page: this.pageParam } });
   }
 
   private subscribeToQueryParams(): void {
@@ -63,12 +63,17 @@ export class AdministrationReportedPostsListComponent {
   }
 
   private subscribeToRouter(): void {
-    this.router.events.pipe(filter((e) => e instanceof NavigationEnd)).subscribe((e) => {
-      if (e instanceof NavigationEnd && e.url === '/login') {
-        return;
-      }
+    this.router.events
+      .pipe(
+        filter((e) => e instanceof NavigationEnd),
+        untilDestroyed(this),
+      )
+      .subscribe((e) => {
+        if (e instanceof NavigationEnd && e.url === '/login') {
+          return;
+        }
 
-      this.getPostReports();
-    });
+        this.getPostReports();
+      });
   }
 }

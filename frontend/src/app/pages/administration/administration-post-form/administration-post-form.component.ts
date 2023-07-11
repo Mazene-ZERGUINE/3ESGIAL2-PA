@@ -1,20 +1,20 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { catchError, map, of } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
+import { JwtHelperService } from '@auth0/angular-jwt';
 
 import { Status } from '../../sign-up/shared/enums/status.enum';
 import { minLengthValidator } from '../../../shared/utils/validator.utils';
-import { onlyLettersRegex } from '../../../shared/utils/regex.utils';
+import { statusRegex } from '../../../shared/utils/regex.utils';
 import { ToastService } from '../../../shared/components/toast/shared/toast.service';
 import { Response } from '../../../shared/core/models/interfaces/response.interface';
 import { Categorie, Post } from '../../posts/shared/models/post.interface';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { AdministrationCategoriesService } from '../shared/services/administration-categories/administration-categories.service';
-import { catchError, map, of } from 'rxjs';
 import { HttpError } from '../../../shared/core/enums/http-error.enums';
-import { HttpErrorResponse } from '@angular/common/http';
 import { AdministrationPostsService } from '../shared/services/administration-posts/administration-posts.service';
-import { JwtHelperService } from '@auth0/angular-jwt';
 
 @UntilDestroy()
 @Component({
@@ -120,7 +120,7 @@ export class AdministrationPostFormComponent {
     this.form = this.fb.group({
       titre: this.fb.control('', [Validators.required, minLengthValidator]),
       description: this.fb.control('', [Validators.required, minLengthValidator]),
-      statut: this.fb.control('', [Validators.required, Validators.pattern(onlyLettersRegex)]),
+      statut: this.fb.control('', [Validators.required, Validators.pattern(statusRegex)]),
       images: this.fb.control([]),
       categorie: this.fb.control(0, [Validators.required, Validators.min(1)]),
     });

@@ -115,12 +115,17 @@ export class UserPostsListComponent implements OnInit {
   }
 
   private subscribeToRouter(): void {
-    this.router.events.pipe(filter((e) => e instanceof NavigationEnd)).subscribe((e) => {
-      if (e instanceof NavigationEnd && e.url === '/login') {
-        return;
-      }
+    this.router.events
+      .pipe(
+        filter((e) => e instanceof NavigationEnd),
+        untilDestroyed(this),
+      )
+      .subscribe((e) => {
+        if (e instanceof NavigationEnd && e.url === '/login') {
+          return;
+        }
 
-      this.getPosts();
-    });
+        this.getPosts();
+      });
   }
 }

@@ -14,7 +14,6 @@ import { AuthService } from '../../../shared/core/services/auth/auth.service';
 import { PostReportStatus } from '../../../shared/core/enums/PostReportStatus.enum';
 import { PostReportDTO } from '../../../shared/core/models/interfaces/post-report.interface';
 import { ToastService } from '../../../shared/components/toast/shared/toast.service';
-import { Observable } from 'rxjs';
 
 @UntilDestroy()
 @Component({
@@ -37,6 +36,7 @@ export class PostsListComponent {
   @Output() disliked = new EventEmitter<void>();
   @Output() starred = new EventEmitter<void>();
   @Output() unstarred = new EventEmitter<void>();
+  @Output() reported = new EventEmitter<void>();
 
   constructor(
     public readonly sanitizer: DomSanitizer,
@@ -109,6 +109,7 @@ export class PostsListComponent {
         .create('publication-signalements', payload)
         .pipe(untilDestroyed(this))
         .subscribe((_) => {
+          this.reported.emit();
           this.toastService.showSuccess('Publication signalée !');
         });
     } catch (_) {}

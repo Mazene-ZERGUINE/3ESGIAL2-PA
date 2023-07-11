@@ -313,12 +313,17 @@ export class PostsComponent implements OnInit {
   }
 
   private subscribeToRouter(): void {
-    this.router.events.pipe(filter((e) => e instanceof NavigationEnd)).subscribe((_) => {
-      if (this.canGetSearchedPosts) {
-        this.getPostsBySearch(this.searchTerms);
-      } else {
-        this.getPosts();
-      }
-    });
+    this.router.events
+      .pipe(
+        filter((e) => e instanceof NavigationEnd),
+        untilDestroyed(this),
+      )
+      .subscribe((_) => {
+        if (this.canGetSearchedPosts) {
+          this.getPostsBySearch(this.searchTerms);
+        } else {
+          this.getPosts();
+        }
+      });
   }
 }

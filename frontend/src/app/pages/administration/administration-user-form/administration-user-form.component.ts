@@ -10,6 +10,7 @@ import {
   onlyLettersRegex,
   startsWithLetterWhichContainsLetterAndNumbersRegex,
   startsWithNumberWhichContainsLetterOrNumberRegex,
+  statusRegex,
 } from '../../../shared/utils/regex.utils';
 import { User, UserDTO } from '../../../shared/core/models/interfaces/user.interface';
 import { SignUpService } from '../../sign-up/shared/sign-up.service';
@@ -100,7 +101,7 @@ export class AdministrationUserFormComponent {
         Validators.pattern(startsWithNumberWhichContainsLetterOrNumberRegex),
       ]),
       role: this.fb.control('', [Validators.required, Validators.pattern(onlyLettersRegex)]),
-      statut: this.fb.control('', [Validators.required, Validators.pattern(onlyLettersRegex)]),
+      statut: this.fb.control('', [Validators.required, Validators.pattern(statusRegex)]),
     });
   }
 
@@ -120,7 +121,7 @@ export class AdministrationUserFormComponent {
         Validators.pattern(startsWithNumberWhichContainsLetterOrNumberRegex),
       ]),
       role: this.fb.control('', [Validators.required, Validators.pattern(onlyLettersRegex)]),
-      statut: this.fb.control('', [Validators.required, Validators.pattern(onlyLettersRegex)]),
+      statut: this.fb.control('', [Validators.required, Validators.pattern(statusRegex)]),
     });
   }
 

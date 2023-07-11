@@ -4,7 +4,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { map } from 'rxjs';
 
 import { minLengthValidator } from '../../../shared/utils/validator.utils';
-import { onlyLettersRegex } from '../../../shared/utils/regex.utils';
+import { reportStatusRegex } from '../../../shared/utils/regex.utils';
 import { ReportStatus } from '../../sign-up/shared/enums/report-status.enum';
 import { PostReportsService } from '../../../shared/core/services/post-reports/post-reports.service';
 import { Response } from '../../../shared/core/models/interfaces/response.interface';
@@ -50,7 +50,6 @@ export class AdministrationReportedPostFormComponent {
         untilDestroyed(this),
       )
       .subscribe((data) => {
-        console.log(data);
         this.form?.patchValue({
           description: data.description,
           statut: data.statut,
@@ -63,7 +62,7 @@ export class AdministrationReportedPostFormComponent {
   initForm(): void {
     this.form = this.fb.group({
       description: this.fb.control('', [Validators.required, minLengthValidator]),
-      statut: this.fb.control('', [Validators.required, Validators.pattern(onlyLettersRegex)]),
+      statut: this.fb.control('', [Validators.required, Validators.pattern(reportStatusRegex)]),
     });
   }
 
@@ -85,7 +84,9 @@ export class AdministrationReportedPostFormComponent {
     this.postReportsService
       .updatePutById('publication-signalements', this.idParam, payload)
       .pipe(untilDestroyed(this))
-      .subscribe((_) => {});
+      .subscribe((_) => {
+        this.router.navigate(['administration', 'reported-posts'], { queryParams: { page: 1 } });
+      });
   }
 
   private async setIsIdParamValid(): Promise<void> {

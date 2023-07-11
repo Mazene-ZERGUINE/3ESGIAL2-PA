@@ -54,6 +54,7 @@
     (disliked)="getPosts()"
     (starred)="getPosts()"
     (unstarred)="getPosts()"
+    (reported)="getPosts()"
   ></app-posts-list>
   <div class="d-flex justify-content-center mt-5" *ngIf="posts$ | async">
     <ngb-pagination

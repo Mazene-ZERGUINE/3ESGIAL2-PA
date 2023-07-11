@@ -16,6 +16,7 @@ import { PostReport, PostReportDTO } from '../../../shared/core/models/interface
 import { PostReportStatus } from '../../../shared/core/enums/PostReportStatus.enum';
 import { PostReportsService } from '../../../shared/core/services/post-reports/post-reports.service';
 import { ToastService } from '../../../shared/components/toast/shared/toast.service';
+import { Status } from '../../sign-up/shared/enums/status.enum';
 
 @UntilDestroy()
 @Component({
@@ -35,6 +36,7 @@ export class PostDetailsComponent implements OnInit, OnDestroy {
   post?: Post;
   starInfo?: { starred: boolean } = { starred: false };
   isReportedByCurrentUser?: boolean;
+  statut = Status;
 
   constructor(
     private readonly authService: AuthService,
@@ -191,6 +193,7 @@ export class PostDetailsComponent implements OnInit, OnDestroy {
         .create('publication-signalements', payload)
         .pipe(untilDestroyed(this))
         .subscribe((_) => {
+          this.getReportByPostId(this.postId);
           this.toastService.showSuccess('Publication signalée !');
         });
     } catch (_) {}
@@ -270,6 +273,7 @@ export class PostDetailsComponent implements OnInit, OnDestroy {
         if (!data) {
           return;
         }
+
         this.post = data;
       });
   }

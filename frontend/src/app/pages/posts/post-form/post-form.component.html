@@ -1,5 +1,5 @@
 <div class="col">
-  <h1 class="my-3">{{ isEditPage ? 'Edition ' : 'Ajout ' }} de publication</h1>
+  <h1 class="my-3">{{ isEditPage ? 'Edition ' : 'Ajout ' }} de publication {{ !isPostBanned ? '' : '(modérée)' }}</h1>
   <form
     enctype="multipart/form-data"
     class="border border-secondary border-opacity-50 rounded p-3"
@@ -55,7 +55,7 @@
     <ul class="list-group mb-3">
       <li class="list-group-item d-flex justify-content-between" *ngFor="let image of $any(images)">
         {{ image.name }}
-        <button class="btn btn-outline-danger" (click)="onDelete(image)">
+        <button class="btn btn-outline-danger" [disabled]="isPostBanned" (click)="onDelete(image)">
           <i class="bi bi-trash-fill"></i>
         </button>
       </li>
@@ -67,6 +67,9 @@
           <option [value]="status" *ngIf="status !== 'banni'">
             {{ status }}
           </option>
+          <option [value]="status" *ngIf="status === 'banni' && decodedToken?.role === role.admin">
+            {{ status }}
+          </option>
         </ng-container>
       </select>
       <small
@@ -76,7 +79,10 @@
         Le champ est incorrect.
       </small>
     </div>
-    <button [ngClass]="isEditPage ? 'btn btn-outline-warning' : 'btn btn-outline-success'" [disabled]="form.invalid">
+    <button
+      [ngClass]="isEditPage ? 'btn btn-outline-warning' : 'btn btn-outline-success'"
+      [disabled]="form.invalid || isPostBanned"
+    >
       {{ isEditPage ? 'Editer' : 'Ajouter' }}
     </button>
   </form>

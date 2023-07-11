@@ -14,7 +14,7 @@ import { catchError, map, of } from 'rxjs';
 import { HttpError } from '../../../shared/core/enums/http-error.enums';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Role } from '../../sign-up/shared/enums/role.enum';
-import { onlyLettersRegex } from '../../../shared/utils/regex.utils';
+import { onlyLettersRegex, statusRegex } from '../../../shared/utils/regex.utils';
 
 @UntilDestroy()
 @Component({
@@ -29,8 +29,10 @@ export class PostFormComponent implements OnInit {
   filePath?: string;
   files?: File[] = [];
   idParam = 0;
+  isPostBanned?: boolean;
   decodedToken?: any;
   statuses: ReadonlyArray<Status> = Object.values(Status);
+  role = Role;
 
   private removedFiles: any[] = [];
 
@@ -63,8 +65,8 @@ export class PostFormComponent implements OnInit {
     if (!this.isEditPage) {
       this.initAddForm();
     } else {
-      this.getPostById();
       this.initEditForm();
+      this.getPostById();
     }
   }
 
@@ -74,7 +76,8 @@ export class PostFormComponent implements OnInit {
       .pipe(
         map((res) => res?.data),
         map((data) => {
-          const canEdit = data.utilisateur_id == this.decodedToken.utilisateur_id || this.decodedToken === Role.admin;
+          const canEdit =
+            data.utilisateur_id == this.decodedToken?.utilisateur_id || this.decodedToken?.role === Role.admin;
           if (!canEdit) {
             return null;
           }
@@ -113,6 +116,11 @@ export class PostFormComponent implements OnInit {
           categorie: data?.categorie_id,
           statut: data?.statut,
         });
+
+        if (data.statut === Status.banned && this.decodedToken?.role !== Role.admin) {
+          this.isPostBanned = true;
+          this.form?.get('statut')?.disable();
+        }
       });
   }
 
@@ -138,7 +146,7 @@ export class PostFormComponent implements OnInit {
     this.form = this.fb.group({
       titre: this.fb.control('', [Validators.required]),
       description: this.fb.control(''),
-      statut: this.fb.control('', [Validators.required, Validators.pattern(onlyLettersRegex)]),
+      statut: this.fb.control('', [Validators.required, Validators.pattern(statusRegex)]),
       images: this.fb.control([]),
       categorie: this.fb.control(0, [Validators.required, Validators.min(1)]),
     });
@@ -176,6 +184,9 @@ export class PostFormComponent implements OnInit {
 
   onSubmit(): void {
     if (!this.form || this.form?.invalid) {
+      return;
+    }
+    if (this.isPostBanned) {
       return;
     }
 
