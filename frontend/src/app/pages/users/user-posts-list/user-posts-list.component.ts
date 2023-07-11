@@ -120,7 +120,6 @@ export class UserPostsListComponent implements OnInit {
         return;
       }
 
-      console.log('subscribe to router');
       this.getPosts();
     });
   }

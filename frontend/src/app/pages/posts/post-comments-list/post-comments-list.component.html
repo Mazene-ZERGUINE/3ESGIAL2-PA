@@ -13,7 +13,7 @@
             {{
               !$any(comment).utilisateur
                 ? '(utilisateur supprimé)'
-                : $any(comment).utilisateur?.nom + $any(comment).utilisateur?.prenom
+                : $any(comment).utilisateur?.prenom + ' ' + ($any(comment).utilisateur?.nom | uppercase)
             }}
           </a>
           <small class="text-secondary fw-lighter">il y a {{ comment.created_at | dateToNow }}</small>

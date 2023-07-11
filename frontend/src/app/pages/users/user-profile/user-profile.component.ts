@@ -120,7 +120,8 @@ export class UserProfileComponent {
         .pipe(untilDestroyed(this))
         .subscribe((_) => {
           this.authService.deleteToken();
-          this.router.navigateByUrl('signup');
+          // this.router.navigateByUrl('signup');
+          location.href = '/signup';
         });
     } catch (e) {}
   }

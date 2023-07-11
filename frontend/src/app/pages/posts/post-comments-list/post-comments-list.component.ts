@@ -90,7 +90,7 @@ export class PostCommentsListComponent implements OnInit, OnDestroy {
       .getOneByPublicationId<Response<{ count: number; rows: Comment[] }>>(
         'commentaires/publications',
         this.publicationId,
-        this.currentPage,
+        // this.currentPage,
       )
       .pipe(
         tap((_) => (this.isLoading = true)),
@@ -99,9 +99,8 @@ export class PostCommentsListComponent implements OnInit, OnDestroy {
       )
       .subscribe((data) => {
         if (!data) return;
-        console.log('1', this.comments);
+
         this.comments = [...this.comments, ...data.rows];
-        console.log('2', this.comments);
         this.isLoading = false;
       });
   }

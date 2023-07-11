@@ -40,7 +40,6 @@ export class AdministrationPostsListComponent {
       .count<Response<number>>('publications/count/all')
       .pipe(
         tap((res) => {
-          console.log('res', res);
           this.collectionSize = res?.data || 0;
         }),
         switchMap(() =>
@@ -50,7 +49,6 @@ export class AdministrationPostsListComponent {
         untilDestroyed(this),
       )
       .subscribe((data) => {
-        console.log('data', data);
         this.posts = data;
       });
   }

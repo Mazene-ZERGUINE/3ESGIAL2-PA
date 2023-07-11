@@ -118,7 +118,7 @@ export class PostsComponent implements OnInit {
 
   initFilterForm(): void {
     this.filterForm = this.fb.group({
-      categorie: this.fb.control(0, [Validators.required, Validators.min(1)]),
+      categorie: this.fb.control(0, [Validators.required, Validators.min(0)]),
     });
   }
 
