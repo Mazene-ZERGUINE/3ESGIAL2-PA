@@ -183,14 +183,12 @@ export class PostsComponent implements OnInit {
 
   getPosts(): void {
     this.postsService
-      .count<Response<number>>('publications/count/all')
+      .getAll<Response<{ count: number; rows: Post[] }>>(`publications/active?page=${this.pageParam}`)
       .pipe(
-        tap((res) => {
-          this.collectionSize = res?.data || 0;
-        }),
-        switchMap((_) => this.postsService.getAll<Response<Post[]>>(`publications?page=${this.pageParam}`)),
-        tap((res) => {
-          this.postsService.emitPosts(res.data);
+        map((res) => res?.data),
+        tap((data) => {
+          this.collectionSize = data.count || 0;
+          this.postsService.emitPosts(data.rows);
         }),
         // concatMap((res) => {
         //   const posts = res?.data || [];
@@ -241,8 +239,8 @@ export class PostsComponent implements OnInit {
         //
         //   return forkJoin(observables);
         // }),
-        mergeMap((res) => {
-          const posts = res?.data || [];
+        mergeMap((data) => {
+          const posts = data?.rows || [];
 
           const observables = posts.map((post) => {
             return zip(

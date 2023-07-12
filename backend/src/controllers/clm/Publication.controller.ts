@@ -65,6 +65,28 @@ export class PublicationController extends CoreController {
 		}
 	}
 
+	static async getAllActive(req: Request, res: Response): Promise<void> {
+		const { page } = req.query;
+		const providedPage = page ? Number(page) : 1;
+
+		try {
+			const data = await Publication.findAndCountAll({
+				offset: (providedPage - 1) * CoreController.PAGE_SIZE,
+				limit: CoreController.PAGE_SIZE,
+				where: { statut: Status.active },
+				include: {
+					all: true,
+					nested: true,
+				},
+				order: [['publication_id', 'DESC']],
+			});
+
+			res.status(200).json({ data: data });
+		} catch (error) {
+			CoreController.handleError(error, res);
+		}
+	}
+
 	static async search(req: Request, res: Response): Promise<void> {
 		const { page } = req.query;
 		const { categorie_id, searches } = req.body;
