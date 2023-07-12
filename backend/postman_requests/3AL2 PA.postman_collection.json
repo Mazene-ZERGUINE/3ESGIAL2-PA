@@ -688,7 +688,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"email\": \"a@email.fr\",\n    \"mot_de_passe\": \"a\",\n    \"pseudonyme\": \"a\",\n    \"nom\": \"noma\",\n    \"prenom\": \"prenom\",\n    \"departement\": \"75\",\n    \"ville\": \"paris\",\n    \"role\": \"administrateur\",\n    \"statut\": \"actif\"\n}",
+									"raw": "{\n    \"email\": \"admin@email.fr\",\n    \"mot_de_passe\": \"a\",\n    \"pseudonyme\": \"admin\",\n    \"nom\": \"noma\",\n    \"prenom\": \"prenoma\",\n    \"departement\": \"75\",\n    \"ville\": \"Paris\",\n    \"role\": \"administrateur\",\n    \"statut\": \"actif\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
