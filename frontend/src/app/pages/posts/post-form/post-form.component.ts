@@ -223,8 +223,8 @@ export class PostFormComponent implements OnInit {
         .create('publications', formData)
         .pipe(untilDestroyed(this))
         .subscribe((_) => {
-          // this.router.navigate(['posts'], { queryParams: { page: 1 } });
-          location.href = '/posts';
+          this.router.navigate(['posts'], { queryParams: { page: 1 } });
+          // location.href = '/posts';
           this.toastService.showSuccess('Publication créée !');
         });
     }
