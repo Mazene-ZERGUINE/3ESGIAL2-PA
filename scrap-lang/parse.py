@@ -20,8 +20,10 @@ def p_bloc(p):
 
 
 def p_statement_assign(p):
+    
     '''statement : NAME EQUALS expression SEMI 
-                 | NAME EQUALS expression '''
+                 | NAME EQUALS expression 
+                 | NAME EQUALS statement  '''
     p[0] = ('ASSIGN', p[1], p[3])
     
 
@@ -35,6 +37,16 @@ def p_for_loop(p):
     p[0] = ('FOR' , p[3] , p[5] , p[7] , p[10])
 
 
+def p_eval_concatenation(p):
+    '''statement : expression
+                 | expression CONCAT statement
+                 | PRINT CONCAT statement'''
+    if len(p) == 2:
+        p[0] = ("concat", p[1])
+    else:
+        p[0] = ("concat", p[1], p[3])
+
+
 def p_statement_comment(p):
     '''statement : COMMENTS'''
     p[0] = ('COMMENT', p[1])
@@ -44,6 +56,8 @@ def p_if_els_statement(p):
                   | IF expression THEN RACC bloc LACC  
                   | IF expression THEN RACC bloc LACC ELSEIF expression THEN RACC bloc LACC ELSE RACC bloc LACC 
                   | IF expression THEN RACC bloc LACC ELSE RACC bloc LACC 
+                  | IF statement THEN RACC bloc LACC ELSE RACC bloc LACC 
+                  | IF statement THEN statement
     
     '''
     if len(p) == 5 : p[0] = ('IF' , p[2] , p[4]) 
@@ -53,7 +67,8 @@ def p_if_els_statement(p):
         
 def p_statement_print(p):
     '''statement : PRINT LPAREN expression RPAREN SEMI 
-                 | PRINT STRING SEMI'''
+                 | PRINT STRING SEMI 
+                 | PRINT LPAREN statement RPAREN SEMI'''
     if len(p) == 4 :
         p[0] = ('PRINTSTR' , p[2])
     else:
@@ -114,6 +129,20 @@ def p_function(p):
         p[0] = ('function' , p[2] , p[7] , p[4])
 
 
+
+def p_is_html(p):
+    ''' statement : NAME DOTE HTML LPAREN RPAREN SEMI '''
+    p[0] = ('is_html' , p[1])
+
+
+def p_get_table_by_id(p):
+    ''' statement : NAME DOTE TABLEID LPAREN STRING RPAREN SEMI '''
+    p[0] = ('table_id' , p[1] , p[5])
+
+def p_scan(p):
+    ''' statement : NAME DOTE SCAN LPAREN RPAREN SEMI 
+                  | NAME EQUALS NAME DOTE SCAN LPAREN RPAREN SEMI'''
+    p[0] = ('scan' , p[1])
 
 def p_multi_assigne(p):
     ''' statement : params EQUALS param_call SEMI  '''
@@ -209,5 +238,17 @@ def p_expression_name(p):
 
 def p_error(p):
     print("Syntax error at '%s'" % p.value)
+
+
+def p_expression_true(p):
+    'expression : TRUE'
+    p[0] = True
+
+
+def p_expression_false(p):
+    'expression : FALSE'
+    p[0] = False
+
+
 
 yacc.yacc()
