@@ -1,6 +1,6 @@
 from urllib.parse import urlparse
 
-from scraper.scraper import scrap_page_html, scrap_table
+from scraper.scraper import fetch_all, scrap_page_html, scrap_table
 
 
 
@@ -51,10 +51,18 @@ def evalInst(p):
     if p[0] == 'concat': return str_concat(p)
     if p[0] == 'scan' : return scrap_data(p)
     if p[0] == "table_id" : return get_table_by_id(p)
+    if p[0] == 'fetch_all': return fetch_table_data(p)
 
     return 'undifined'
 
 
+def fetch_table_data(p):
+    if p[1] not in names: 
+        raise Exception( p[1],"is not a table element")
+    table_to_fetch = names[p[1]]
+    
+    data = fetch_all(table_to_fetch)
+    return data
 
 def get_table_by_id(p):
     content = names[p[1]]

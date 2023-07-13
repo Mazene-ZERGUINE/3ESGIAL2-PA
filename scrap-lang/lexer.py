@@ -30,6 +30,7 @@ reserved = {
     'is_html' : "HTML",
     'scan': 'SCAN',
     'get_table_by_id': 'TABLEID',
+    'fetch_all' : 'FETCH',
     'false': 'FALSE',
     'true': 'TRUE'
 }

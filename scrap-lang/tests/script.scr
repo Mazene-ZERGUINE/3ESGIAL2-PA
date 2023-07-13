@@ -9,12 +9,11 @@ if (check) -> {
 
     /** scraping website data */ 
     content = website::scan();
-
     table = content::get_table_by_id("ENTable");
-
     tableData = table::fetch_all();
+    print(tableData);
     
-
+    
 } else {
     message = "invalide url! "?.website?." is not a website";
     print(message);

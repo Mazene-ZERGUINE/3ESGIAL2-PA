@@ -130,6 +130,10 @@ def p_function(p):
 
 
 
+def p_fetch_table(p):
+    ''' statement : NAME DOTE FETCH LPAREN RPAREN SEMI '''
+    p[0] = ('fetch_all' , p[1])
+
 def p_is_html(p):
     ''' statement : NAME DOTE HTML LPAREN RPAREN SEMI '''
     p[0] = ('is_html' , p[1])
