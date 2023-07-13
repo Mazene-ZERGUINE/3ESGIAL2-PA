@@ -8,7 +8,7 @@ output_folder = 'out'
 if len(sys.argv) == 1 :
     s = ''
     while 1 :
-        s = input('calc >>> ')
+        s = input('scrape-lang >>> ')
         if s == "exit" :
             exit()
         elif s == "" :
