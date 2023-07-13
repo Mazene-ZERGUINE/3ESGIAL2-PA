@@ -1,3 +1,5 @@
 environment
 ply
 selenium
+beautifulsoup4
+requests
