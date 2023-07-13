@@ -1,15 +1,16 @@
+from urllib.parse import urlparse
+
+from scraper.scraper import scrap_page_html, scrap_table
+
+
+
 names = {}
 functions = {}
 global_vars = {}
 
 def evalInst(p):
     # Normalement faire que 
-
     if p == 'empty' : return 
-
-    if type(p) != tuple : 
-        print("inst non tuple")
-        return 
 
     if p[0] == 'bloc':
         evalInst(p[1])
@@ -19,26 +20,73 @@ def evalInst(p):
     if p[0] == 'ASSIGN':
         if type(p[1]) == tuple:
             eval_multi_assignes(p[1] , p[2])
-        else:    
-            names[p[1]] = evalExpr(p[2])
+        else:
+            if evalExpr(p[2]) != 'undifined': 
+                names[p[1]] = evalExpr(p[2])
+            else:
+                names[p[1]] = evalInst(p[2])
             
     if p[0] == 'PRINT':
         if len(p) == 3:
-            print("CALC >> " , evalExpr(p[2]))
+
+            print("scrape-lang >> " , evalExpr(p[2]))
             return evalInst(p[1])
         else:
-            print("CALC >> ", evalExpr(p[1]))
-    if p[0] == 'PRINTSTR' : print("CALC >> " , p[1].replace('"',''))
+            
+            
+            if evalExpr(p[1]) != 'undifined':
+                print("scrap-lang >> ", evalExpr(p[1]))
+                return evalInst(p[1])
+            else:
+                
+                print("scrap-lang >> ", evalInst(p[1]))
+                return evalInst(p[1])
     if p[0] == "IF": eval_if_elseif_else(p)
     if p[0] == "FOR" : eval_for_loop(p)
     if p[0] == "WHILE" : eval_while_loop(p)
     if p[0] == 'function' : eval_function(p) 
     if p[0] == 'CALL' : eval_function_call(p)
-    if p[0] == 'RETURN' : print('CALC >>  return value : ' , evalExpr(p[1]))
-
-            
+    if p[0] == 'RETURN' : print('scrap-lang >>  return value : ' , evalExpr(p[1]))
+    if p[0] == 'is_html': return check_if_website(p)
+    if p[0] == 'concat': return str_concat(p)
+    if p[0] == 'scan' : return scrap_data(p)
+    if p[0] == "table_id" : return get_table_by_id(p)
 
     return 'undifined'
+
+
+
+def get_table_by_id(p):
+    content = names[p[1]]
+    tabe_id = p[2]
+    return scrap_table(content=content , table_id=tabe_id) 
+
+
+def scrap_data(p):
+    print("scraping")
+    html_data = scrap_page_html(names[p[1]])
+    return html_data
+    
+
+def str_concat(p):
+    if isinstance(p, str):
+        return evalExpr(p)
+    elif len(p) > 1:
+        return str_concat(p[1]) + str_concat(p[2])
+    else:
+        return str_concat(p[1])  
+
+    
+def check_if_website(p):
+    parsed_url = urlparse(names[p[1]])
+    
+    if parsed_url.scheme.lower() not in ('http', 'https'):
+        return False
+    
+    if not parsed_url.netloc:
+        return False
+    
+    return True
 
 
 def eval_multi_assignes(p , t):
@@ -51,8 +99,7 @@ def evalExpr(p):
     if type(p) == int : return p
     if type(p) == str : 
         if '"' in p :
-            t = ('PRINTSTR' , p)
-            return evalInst(t)
+            return p.replace('"' , "")
         if p not in names and p not in global_vars:
             raise Exception(p + " variable not initialized") 
         if p in global_vars :
@@ -128,8 +175,12 @@ def eval_while_loop(p):
 
 
 def eval_if_elseif_else(p) : 
+    
     if (len(p) == 3) : 
-        if evalExpr(p[1]) == True : return evalInst(p[2])
+        if evalExpr(p[1]) != 'undifined':
+            if evalExpr(p[1]) == True : return evalInst(p[2])
+        else:
+            if evalInst(p[1]) == True : return evalInst(p[2])
     elif len(p) == 4:
         if evalExpr(p[1]) == True : return evalInst(p[2]) 
         else : return evalInst(p[3])
