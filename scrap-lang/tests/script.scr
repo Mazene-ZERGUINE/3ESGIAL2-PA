@@ -1,20 +1,47 @@
+fun scrapHtmlPageDemo()
+    start
+        check = website::is_html();
 
-website = "https://ec.europa.eu/eurostat/cache/infographs/energy_balances/enbal.html?geo=EU27_2020&unit=KTOE&language=EN&year=2021&fuel=fuelMainFuel&siec=TOTAL&details=0&chartOptions=0&stacking=normal&chartBal=&chart=&full=0&chartBalText=&order=DESC&siecs=&dataset=nrg_bal_s&decimals=0&agregates=0&fuelList=fuelElectricity,fuelCombustible,fuelNonCombustible,fuelOtherPetroleum,fuelMainPetroleum,fuelOil,fuelOtherFossil,fuelFossil,fuelCoal,fuelMainFuel"; 
+        if (check) -> { 
+            message = "scraping "?.website;
+            print(message);
 
-check = website::is_html();
+            /** scraping website data */ 
+            content = website::scan();
 
-if (check) -> { 
-    message = "scraping "?.website;
-    print(message);
+            print(content); 
+            
+        } else {
+            message = "invalide url! "?.website?." is not a website";
+            print(message);
+        }
+    end
 
-    /** scraping website data */ 
-    content = website::scan();
-    table = content::get_table_by_id("ENTable");
-    tableData = table::fetch_all();
-    print(tableData);
-    
-    
-} else {
-    message = "invalide url! "?.website?." is not a website";
-    print(message);
-}
+
+
+fun scrapTableDemo(content)
+    start
+
+       table = content::get_table_by_id("ENTable");
+       table_data = table::fetch_all();
+       print(table_data);
+
+    end
+
+
+
+
+fun main() 
+    start 
+        website = "https://ec.europa.eu/eurostat/cache/infographs/energy_balances/enbal.html?geo=EU27_2020&unit=KTOE&language=EN&year=2021&fuel=fuelMainFuel&siec=TOTAL&details=0&chartOptions=0&stacking=normal&chartBal=&chart=&full=0&chartBalText=&order=DESC&siecs=&dataset=nrg_bal_s&decimals=0&agregates=0&fuelList=fuelElectricity,fuelCombustible,fuelNonCombustible,fuelOtherPetroleum,fuelMainPetroleum,fuelOil,fuelOtherFossil,fuelFossil,fuelCoal,fuelMainFuel"; 
+
+        scrapHtmlPageDemo();
+
+        html = website::scan();
+
+        scrapTableDemo(html) ;
+
+    end
+
+
+main(); 

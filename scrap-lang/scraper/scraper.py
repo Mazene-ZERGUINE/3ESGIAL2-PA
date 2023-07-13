@@ -17,6 +17,7 @@ def scrap_page_html(url: str):
 
 def scrap_table(content: BeautifulSoup , table_id):
     
+    table_id = table_id.replace('"' , "")
     table = content.find('table' , id=table_id.replace('"' , ""))
     if (table == None):
         raise Exception("the table with the id " , table_id ," is not found")

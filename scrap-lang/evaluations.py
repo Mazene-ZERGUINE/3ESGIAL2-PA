@@ -53,8 +53,8 @@ def evalInst(p):
     if p[0] == "table_id" : return get_table_by_id(p)
     if p[0] == 'fetch_all': return fetch_table_data(p)
 
-    return 'undifined'
 
+    return 'undifined'
 
 def fetch_table_data(p):
     if p[1] not in names: 
@@ -113,6 +113,7 @@ def evalExpr(p):
         if p in global_vars :
             return global_vars[p]
         else:
+            
             return names[p]
     if type(p) == tuple:
         if p[0] == '+' : return evalExpr(p[1])+evalExpr(p[2])
@@ -143,9 +144,9 @@ def eval_function_call(p):
     else:
         call_params = p[2]
         function_params = functions[p[1]][1]
-
+        print(call_params)
         if(type(call_params) == int or type(function_params) == str) :
-            names[function_params] = call_params
+            names[function_params] = names[call_params]
             return evalInst(functions[p[1]][0])
         
         if type(call_params[0]) == int  :
