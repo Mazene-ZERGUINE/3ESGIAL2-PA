@@ -26,7 +26,12 @@ reserved = {
     'start' : 'START' ,
     'end' : 'END' ,
     'return': 'RETURN',
-    'def' : 'DEFINE'
+    'def' : 'DEFINE',
+    'is_html' : "HTML",
+    'scan': 'SCAN',
+    'get_table_by_id': 'TABLEID',
+    'false': 'FALSE',
+    'true': 'TRUE'
 }
 
 
@@ -34,7 +39,7 @@ tokens = [
     'NAME','NUMBER',
     'PLUS','MINUS','TIMES','DIVIDE','EQUALS', "ISEQUAL", "NOTEQUAL",
     'LPAREN','RPAREN', 'SEMI', "ET" , "OU",'RACC' , 'LACC', 'THEN' , "COMMA", 'STRING',
-    'SUP' , "INFF"  , "INCR" , "DECR" , 'PLUSEQ' , 'MINEQ' , 'COMMENT' , 'COMMENTS'] + list(reserved.values())
+    'SUP' , "INFF"  , "INCR" , "DECR" , 'PLUSEQ' , 'MINEQ' , 'COMMENT' , 'COMMENTS' , "DOTE" , "CONCAT"] + list(reserved.values())
 
 t_PLUS    = r'\+'
 t_MINUS   = r'-'
@@ -60,6 +65,8 @@ t_PLUSEQ = r'\+\='
 t_MINEQ = r'-='
 t_STRING = r'"[^"]+"'
 t_COMMENTS = r'\/\*.*\*\/'
+t_DOTE = r'\::'
+t_CONCAT = r'\?.'
 
 
 
