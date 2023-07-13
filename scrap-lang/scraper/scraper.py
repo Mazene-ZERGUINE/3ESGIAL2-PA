@@ -37,3 +37,8 @@ def fetch_all(table: BeautifulSoup):
 
     return table_data
     
+
+def get_page_titles(html_content: BeautifulSoup):
+    heading_tags = html_content.find_all(['h1', 'h2', 'h3', 'h4', 'h5', 'h6'])
+    headings = [tag.get_text() for tag in heading_tags]
+    return headings

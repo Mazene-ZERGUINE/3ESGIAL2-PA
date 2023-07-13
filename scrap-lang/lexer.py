@@ -31,6 +31,7 @@ reserved = {
     'scan': 'SCAN',
     'get_table_by_id': 'TABLEID',
     'fetch_all' : 'FETCH',
+    'get_all_titles': "ALLTITLES",
     'false': 'FALSE',
     'true': 'TRUE'
 }

@@ -130,6 +130,10 @@ def p_function(p):
 
 
 
+def p_get_title(p):
+    ''' statement : NAME DOTE ALLTITLES LPAREN RPAREN SEMI '''
+    p[0] = ('all_titles' , p[1])
+
 def p_fetch_table(p):
     ''' statement : NAME DOTE FETCH LPAREN RPAREN SEMI '''
     p[0] = ('fetch_all' , p[1])
