@@ -8,6 +8,7 @@ import { multerConfig } from '../../middlewares/clm/multer.middleware';
 const router = Router();
 router
 	.get('/', PublicationController.coreGetAllAndOrderedBy(Publication, 'DESC', 'publication_id'))
+	.get('/active', PublicationController.getAllActive)
 	.get('/count/all', PublicationController.coreCount(Publication))
 	.get('/:id', PublicationController.coreGetOneByPk(Publication))
 	.post('/', [isAuthenticated, multerConfig.array('images', 3)], PublicationController.create)

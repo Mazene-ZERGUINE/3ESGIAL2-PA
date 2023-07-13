@@ -67,15 +67,22 @@
                 <button
                   title="Signaler la publication."
                   class="btn btn-outline-info mx-2"
-                  (click)="onReport($event)"
-                  *ngIf="!isAuthenticated; else elseButtonBlock"
+                  (click)="onReport($event, post)"
+                  *ngIf="!isAuthenticated || !reportInfo[post.publication_id]?.reported; else elseButtonBlock"
                 >
-                  <i class="bi bi-exclamation-triangle-fill"></i>
+                  <i class="bi bi-exclamation-triangle"></i>
                 </button>
                 <ng-template #elseButtonBlock>
                   <button title="Vous avez signalé la publication." class="btn btn-info mx-2 no-pointer">
-                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    <i class="bi bi-exclamation-triangle"></i>
                   </button>
+                  <!--                  <button-->
+                  <!--                    title="Vous avez signalé la publication."-->
+                  <!--                    class="btn btn-info mx-2 no-pointer"-->
+                  <!--                    (click)="onReport($event)"-->
+                  <!--                  >-->
+                  <!--                    <i class="bi bi-exclamation-triangle"></i>-->
+                  <!--                  </button>-->
                 </ng-template>
               </span>
               <!-- TODO -->

@@ -12,6 +12,11 @@ import { Response } from '../../../shared/core/models/interfaces/response.interf
 import { AuthService } from '../../../shared/core/services/auth/auth.service';
 import { PostLikesService } from '../../../shared/core/services/post-likes/post-likes.service';
 import { PostFavoritesService } from '../../../shared/core/services/post-favorites/post-favorites.service';
+import { PostReport, PostReportDTO } from '../../../shared/core/models/interfaces/post-report.interface';
+import { PostReportStatus } from '../../../shared/core/enums/PostReportStatus.enum';
+import { PostReportsService } from '../../../shared/core/services/post-reports/post-reports.service';
+import { ToastService } from '../../../shared/components/toast/shared/toast.service';
+import { Status } from '../../sign-up/shared/enums/status.enum';
 
 @UntilDestroy()
 @Component({
@@ -25,10 +30,13 @@ export class PostDetailsComponent implements OnInit, OnDestroy {
 
   canContinue = true;
   currentUserId?: number;
+  isAdmin: boolean;
   isAuthenticated: boolean;
   likeInfo?: { count: number; liked: boolean };
   post?: Post;
   starInfo?: { starred: boolean } = { starred: false };
+  isReportedByCurrentUser?: boolean;
+  statut = Status;
 
   constructor(
     private readonly authService: AuthService,
@@ -37,9 +45,12 @@ export class PostDetailsComponent implements OnInit, OnDestroy {
     private readonly postFavoritesService: PostFavoritesService,
     private readonly postLikesService: PostLikesService,
     private readonly postsService: PostsService,
+    private readonly postReportsService: PostReportsService,
     private readonly router: Router,
+    private readonly toastService: ToastService,
   ) {
     this.isAuthenticated = this.authService.isAuthenticated;
+    this.isAdmin = this.authService.isAdmin;
     this.postId = Number(this.route.snapshot.paramMap.get('id'));
     this.isIdInvalid = isNaN(this.postId) || this.postId <= 0;
   }
@@ -88,6 +99,27 @@ export class PostDetailsComponent implements OnInit, OnDestroy {
       });
   }
 
+  getReportByPostId(postId: number): void {
+    if (!this.currentUserId) return;
+
+    this.postReportsService
+      .getOneById<Response<{ reported: true }>>(
+        `publication-signalements/publications/${postId}/utilisateurs`,
+        this.currentUserId,
+      )
+      .pipe(
+        map((res) => res?.data),
+        catchError((err) => of(err)),
+        untilDestroyed(this),
+      )
+      .subscribe((data) => {
+        if (!data) {
+          return;
+        }
+        this.isReportedByCurrentUser = data.reported;
+      });
+  }
+
   async onDelete(path: string, postId: number): Promise<void> {
     try {
       const hasUserValidated = await this.modalService.open(ModalFocusConfirmComponent).result;
@@ -105,6 +137,7 @@ export class PostDetailsComponent implements OnInit, OnDestroy {
   }
 
   async onEdit(id: number): Promise<void> {
+    // TODO admin access
     await this.router.navigateByUrl(`posts/${id}/edit`);
   }
 
@@ -138,8 +171,10 @@ export class PostDetailsComponent implements OnInit, OnDestroy {
       });
   }
 
-  async onReport(): Promise<void> {
-    if (!this.isAuthenticated) {
+  async onReport(post: Post): Promise<void> {
+    const currentUserId = await this.authService.getCurrentUserId();
+    const isUnauthenticated = !this.isAuthenticated || !currentUserId;
+    if (isUnauthenticated) {
       await this.router.navigateByUrl('/login');
       return;
     }
@@ -147,7 +182,20 @@ export class PostDetailsComponent implements OnInit, OnDestroy {
     try {
       const description = await this.modalService.open(ModalReportComponent).result;
 
-      // TODO
+      const payload: PostReportDTO = {
+        publication_id: post.publication_id,
+        utilisateur_id: currentUserId,
+        description,
+        statut: PostReportStatus.open,
+      };
+
+      this.postReportsService
+        .create('publication-signalements', payload)
+        .pipe(untilDestroyed(this))
+        .subscribe((_) => {
+          this.getReportByPostId(this.postId);
+          this.toastService.showSuccess('Publication signalée !');
+        });
     } catch (_) {}
   }
 
@@ -210,6 +258,10 @@ export class PostDetailsComponent implements OnInit, OnDestroy {
           await this.setCurrentUserId();
           this.getLikesByPostId(this.postId);
           this.getFavoriteByPostId(this.postId);
+
+          if (this.post) {
+            this.getReportByPostId(this.postId);
+          }
         }),
         catchError((err) => {
           this.router.navigateByUrl('/not-found', { skipLocationChange: true });
@@ -221,6 +273,7 @@ export class PostDetailsComponent implements OnInit, OnDestroy {
         if (!data) {
           return;
         }
+
         this.post = data;
       });
   }

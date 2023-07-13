@@ -1,12 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import {
   catchError,
-  concatMap,
   debounceTime,
   distinctUntilChanged,
   filter,
   forkJoin,
-  from,
   map,
   mergeMap,
   Observable,
@@ -19,15 +17,16 @@ import { ViewportScroller } from '@angular/common';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { JwtHelperService } from '@auth0/angular-jwt';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { Categorie, Post } from './shared/models/post.interface';
 import { AuthService } from '../../shared/core/services/auth/auth.service';
 import { PostsService } from './shared/services/posts/posts.service';
 import { Response } from '../../shared/core/models/interfaces/response.interface';
 import { PostLikesService } from '../../shared/core/services/post-likes/post-likes.service';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { minLengthValidator } from '../../shared/utils/validator.utils';
 import { PostFavoritesService } from '../../shared/core/services/post-favorites/post-favorites.service';
+import { PostReportsService } from '../../shared/core/services/post-reports/post-reports.service';
 
 @UntilDestroy()
 @Component({
@@ -37,6 +36,7 @@ import { PostFavoritesService } from '../../shared/core/services/post-favorites/
 })
 export class PostsComponent implements OnInit {
   readonly isAuthenticated$: Observable<boolean>;
+  readonly reportInfo$?: Observable<{ [key: string]: { reported: boolean } }>;
   readonly likeInfo$?: Observable<{ [key: string]: { count: number; liked: boolean } }>;
   readonly posts$: Observable<null | Post[]>;
   readonly starInfo$?: Observable<{ [key: string]: { starred: boolean } }>;
@@ -47,6 +47,7 @@ export class PostsComponent implements OnInit {
   filterForm?: FormGroup;
   form?: FormGroup;
   likeInfo: { [key: number]: { count: number; liked: boolean } } = {};
+  reportInfo: { [key: string]: { reported: boolean } } = {};
   starInfo: { [key: string]: { starred: boolean } } = {};
   selectedPost?: Post;
   pageParam = 1;
@@ -61,6 +62,7 @@ export class PostsComponent implements OnInit {
     private readonly postFavoritesService: PostFavoritesService,
     private readonly postLikesService: PostLikesService,
     private readonly postsService: PostsService,
+    private readonly postReportsService: PostReportsService,
     private readonly route: ActivatedRoute,
     private readonly router: Router,
     private readonly viewportScroller: ViewportScroller,
@@ -68,6 +70,7 @@ export class PostsComponent implements OnInit {
     this.isAuthenticated$ = this.authService.isAuthenticated$;
     this.posts$ = this.postsService.posts$;
     this.likeInfo$ = this.postLikesService.likeInfo$;
+    this.reportInfo$ = this.postReportsService.reportInfo$;
     this.starInfo$ = this.postFavoritesService.starInfo$;
   }
 
@@ -180,14 +183,12 @@ export class PostsComponent implements OnInit {
 
   getPosts(): void {
     this.postsService
-      .count<Response<number>>('publications/count/all')
+      .getAll<Response<{ count: number; rows: Post[] }>>(`publications/active?page=${this.pageParam}`)
       .pipe(
-        tap((res) => {
-          this.collectionSize = res?.data || 0;
-        }),
-        switchMap((_) => this.postsService.getAll<Response<Post[]>>(`publications?page=${this.pageParam}`)),
-        tap((res) => {
-          this.postsService.emitPosts(res.data);
+        map((res) => res?.data),
+        tap((data) => {
+          this.collectionSize = data.count || 0;
+          this.postsService.emitPosts(data.rows);
         }),
         // concatMap((res) => {
         //   const posts = res?.data || [];
@@ -238,8 +239,8 @@ export class PostsComponent implements OnInit {
         //
         //   return forkJoin(observables);
         // }),
-        mergeMap((res) => {
-          const posts = res?.data || [];
+        mergeMap((data) => {
+          const posts = data?.rows || [];
 
           const observables = posts.map((post) => {
             return zip(
@@ -251,9 +252,19 @@ export class PostsComponent implements OnInit {
                 'favoris/publications',
                 post.publication_id,
               ),
+              !this.currentUserId
+                ? of({ data: { reported: false } })
+                : this.postReportsService.getOneById<Response<{ reported: true }>>(
+                    `publication-signalements/publications/${post.publication_id}/utilisateurs`,
+                    this.currentUserId,
+                  ),
             ).pipe(
-              tap(([likeInfo, favoriteInfos]) => {
+              tap(([likeInfo, favoriteInfos, reportInfo]) => {
                 const publicationId = post.publication_id;
+                this.reportInfo[publicationId] = {
+                  reported: reportInfo.data.reported,
+                };
+
                 this.likeInfo[publicationId] = {
                   count: likeInfo.data.count,
                   liked: likeInfo.data.liked,
@@ -275,6 +286,7 @@ export class PostsComponent implements OnInit {
       .subscribe((_) => {
         this.postLikesService.emitLikeInfo(this.likeInfo);
         this.postFavoritesService.emitStarInfo(this.starInfo);
+        this.postReportsService.emitReportInfo(this.reportInfo);
       });
   }
 
@@ -299,12 +311,17 @@ export class PostsComponent implements OnInit {
   }
 
   private subscribeToRouter(): void {
-    this.router.events.pipe(filter((e) => e instanceof NavigationEnd)).subscribe((_) => {
-      if (this.canGetSearchedPosts) {
-        this.getPostsBySearch(this.searchTerms);
-      } else {
-        this.getPosts();
-      }
-    });
+    this.router.events
+      .pipe(
+        filter((e) => e instanceof NavigationEnd),
+        untilDestroyed(this),
+      )
+      .subscribe((_) => {
+        if (this.canGetSearchedPosts) {
+          this.getPostsBySearch(this.searchTerms);
+        } else {
+          this.getPosts();
+        }
+      });
   }
 }

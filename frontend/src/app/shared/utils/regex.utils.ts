@@ -4,3 +4,5 @@ export const startsWithLetterWhichContainsLetterAndNumbersRegex = /^[a-zA-Z]+[a-
 export const startsWithNumberWhichContainsLetterOrNumberRegex = /^[0-9][A-Z0-9]+$/;
 export const startsWithLetterWhichContainsLettersAndSpacesAndApostrophesAndCannotEndWithSpacesApostrophesDashes =
   /^(?!.*[-']$)(?!.*[-'][ -'])(?!.*[ -'][-'])[a-zA-ZÀ-ÖØ-öø-ÿ][-'aa-zA-ZÀ-ÖØ-öø-ÿ ]*$/;
+export const reportStatusRegex = /^(ouvert|en cours|ferme)$/;
+export const statusRegex = /^(actif|banni|inactif)$/;

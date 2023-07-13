@@ -1,12 +1,19 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
-import { Post } from '../shared/models/post.interface';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Router } from '@angular/router';
-import { Status } from '../../sign-up/shared/enums/status.enum';
 import { DomSanitizer } from '@angular/platform-browser';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+
+import { Post } from '../shared/models/post.interface';
+import { Status } from '../../sign-up/shared/enums/status.enum';
 import { PostLikesService } from '../../../shared/core/services/post-likes/post-likes.service';
 import { PostFavoritesService } from '../../../shared/core/services/post-favorites/post-favorites.service';
-import { Observable } from 'rxjs';
+import { PostReportsService } from '../../../shared/core/services/post-reports/post-reports.service';
+import { ModalReportComponent } from '../../../shared/components/modal-report/modal-report.component';
+import { AuthService } from '../../../shared/core/services/auth/auth.service';
+import { PostReportStatus } from '../../../shared/core/enums/PostReportStatus.enum';
+import { PostReportDTO } from '../../../shared/core/models/interfaces/post-report.interface';
+import { ToastService } from '../../../shared/components/toast/shared/toast.service';
 
 @UntilDestroy()
 @Component({
@@ -19,6 +26,7 @@ export class PostsListComponent {
 
   @Input() currentUserId?: number;
   @Input() isAuthenticated: null | boolean = false;
+  @Input() reportInfo: any = {};
   @Input() likeInfo: any = {};
   @Input() posts: null | Post[] = [];
   @Input() starInfo: any = {};
@@ -28,12 +36,17 @@ export class PostsListComponent {
   @Output() disliked = new EventEmitter<void>();
   @Output() starred = new EventEmitter<void>();
   @Output() unstarred = new EventEmitter<void>();
+  @Output() reported = new EventEmitter<void>();
 
   constructor(
     public readonly sanitizer: DomSanitizer,
+    private readonly authService: AuthService,
+    private readonly modalService: NgbModal,
     private readonly postFavoritesService: PostFavoritesService,
     private readonly postLikesService: PostLikesService,
+    private readonly postReportsService: PostReportsService,
     private readonly router: Router,
+    private readonly toastService: ToastService,
   ) {}
 
   async onLike(e: MouseEvent, postId: number, userId?: number): Promise<void> {
@@ -72,14 +85,34 @@ export class PostsListComponent {
       });
   }
 
-  async onReport(e: MouseEvent): Promise<void> {
-    if (!this.isAuthenticated) {
+  async onReport(e: MouseEvent, post: Post): Promise<void> {
+    this.stopPropagation(e);
+
+    const currentUserId = await this.authService.getCurrentUserId();
+    const isUnauthenticated = !this.isAuthenticated || !currentUserId;
+    if (isUnauthenticated) {
       await this.router.navigateByUrl('/login');
       return;
     }
 
-    this.stopPropagation(e);
-    // TODO
+    try {
+      const description = await this.modalService.open(ModalReportComponent).result;
+
+      const payload: PostReportDTO = {
+        publication_id: post.publication_id,
+        utilisateur_id: currentUserId,
+        description,
+        statut: PostReportStatus.open,
+      };
+
+      this.postReportsService
+        .create('publication-signalements', payload)
+        .pipe(untilDestroyed(this))
+        .subscribe((_) => {
+          this.reported.emit();
+          this.toastService.showSuccess('Publication signalée !');
+        });
+    } catch (_) {}
   }
 
   async onStar(e: MouseEvent, postId: number, userId?: number): Promise<void> {

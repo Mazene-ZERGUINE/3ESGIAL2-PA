@@ -54,8 +54,8 @@ export class AdministrationUsersTableComponent {
         .subscribe((_) => {
           if (isMyself) {
             this.authService.deleteToken();
-            // this.router.navigateByUrl('signup');
-            location.href = '/signup';
+            this.router.navigateByUrl('signup');
+            // location.href = '/signup';
             return;
           }
 

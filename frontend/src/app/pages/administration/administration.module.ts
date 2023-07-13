@@ -20,6 +20,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { AdministrationCategoriesTableComponent } from './administration-categories-table/administration-categories-table.component';
 import { AdministrationPostsTableComponent } from './administration-posts-table/administration-posts-table.component';
 import { AdministrationUsersTableComponent } from './administration-users-table/administration-users-table.component';
+import { AdministrationReportedPostsTableComponent } from './administration-reported-posts-table/administration-reported-posts-table.component';
 
 @NgModule({
   declarations: [
@@ -38,6 +39,7 @@ import { AdministrationUsersTableComponent } from './administration-users-table/
     AdministrationCategoriesTableComponent,
     AdministrationPostsTableComponent,
     AdministrationUsersTableComponent,
+    AdministrationReportedPostsTableComponent,
   ],
   imports: [CommonModule, AdministrationRoutingModule, NgbPagination, ComponentsModule, ReactiveFormsModule],
 })

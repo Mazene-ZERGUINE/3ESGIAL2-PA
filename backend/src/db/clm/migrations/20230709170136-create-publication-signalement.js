@@ -2,38 +2,38 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
 	async up(queryInterface, Sequelize) {
-		await queryInterface.createTable('publication', {
-			publication_id: {
+		await queryInterface.createTable('publication_signalement', {
+			publication_signalement_id: {
 				allowNull: false,
 				autoIncrement: true,
 				primaryKey: true,
 				type: Sequelize.INTEGER,
 			},
-			titre: {
-				type: Sequelize.STRING,
-			},
-			description: {
-				type: Sequelize.TEXT,
-			},
-			statut: {
-				type: Sequelize.ENUM('actif', 'banni', 'inactif'),
+			publication_id: {
+				type: Sequelize.INTEGER,
+				// primaryKey: true,
+				allowNull: true,
+				references: {
+					model: 'publication',
+					key: 'publication_id',
+				},
+				onDelete: 'CASCADE',
 			},
 			utilisateur_id: {
 				type: Sequelize.INTEGER,
+				// primaryKey: true,
+				allowNull: true,
 				references: {
 					model: 'utilisateur',
 					key: 'utilisateur_id',
 				},
-				onDelete: 'CASCADE',
-			},
-			categorie_id: {
-				type: Sequelize.INTEGER,
-				allowNull: true,
-				references: {
-					model: 'categorie',
-					key: 'categorie_id',
-				},
 				onDelete: 'SET NULL',
+			},
+			statut: {
+				type: Sequelize.ENUM('ouvert', 'en cours', 'ferme'),
+			},
+			description: {
+				type: Sequelize.TEXT,
 			},
 			created_at: {
 				allowNull: false,
@@ -46,6 +46,6 @@ module.exports = {
 		});
 	},
 	async down(queryInterface, Sequelize) {
-		await queryInterface.dropTable('publication');
+		await queryInterface.dropTable('publication_signalement');
 	},
 };

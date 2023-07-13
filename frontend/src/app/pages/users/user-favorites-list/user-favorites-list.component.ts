@@ -87,14 +87,19 @@ export class UserFavoritesListComponent implements OnInit {
   }
 
   private subscribeToRouter(): void {
-    this.router.events.pipe(filter((e) => e instanceof NavigationEnd)).subscribe((e) => {
-      if (e instanceof NavigationEnd && e.url === '/login') {
-        return;
-      }
+    this.router.events
+      .pipe(
+        filter((e) => e instanceof NavigationEnd),
+        untilDestroyed(this),
+      )
+      .subscribe((e) => {
+        if (e instanceof NavigationEnd && e.url === '/login') {
+          return;
+        }
 
-      console.log('user favorites list subscribe to router');
-      this.getFavorites();
-    });
+        console.log('user favorites list subscribe to router');
+        this.getFavorites();
+      });
   }
 
   private async setDecodedToken(): Promise<void> {

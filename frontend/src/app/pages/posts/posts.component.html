@@ -45,6 +45,7 @@
   <app-posts-list
     [currentUserId]="currentUserId"
     [isAuthenticated]="isAuthenticated$ | async"
+    [reportInfo]="reportInfo$ | async"
     [likeInfo]="likeInfo$ | async"
     [starInfo]="starInfo$ | async"
     [posts]="posts$ | async"
@@ -53,6 +54,7 @@
     (disliked)="getPosts()"
     (starred)="getPosts()"
     (unstarred)="getPosts()"
+    (reported)="getPosts()"
   ></app-posts-list>
   <div class="d-flex justify-content-center mt-5" *ngIf="posts$ | async">
     <ngb-pagination

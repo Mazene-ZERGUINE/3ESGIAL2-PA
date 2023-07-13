@@ -51,7 +51,7 @@ sequelize-cli model:generate --name publication-appreciation --attributes public
 ## publication_signalement
 
 ```
-sequelize-cli model:generate --name publication_signalement --attributes
+sequelize-cli model:generate --name publication_signalement --attributes publication_id:integer,utilisateur_id:integer,statut:enum:'{ouvert, en cours, ferme}',description:string
 ```
 
 ## reputation

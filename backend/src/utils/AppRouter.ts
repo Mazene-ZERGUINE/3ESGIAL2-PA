@@ -25,6 +25,7 @@ import publicationFavoriRouter from '../routes/clm/publication-favori.router';
 import reputationRouter from '../routes/clm/reputation.router';
 import commentaireRouter from '../routes/clm/commentaire.router';
 import { dbSync } from '../db/client/dbSync';
+import publicationSignalementRouter from '../routes/clm/publication-signalement.router';
 
 export default class AppRouter {
 	private readonly categoryRoutes: any = require('../routes/client/categories.routes');
@@ -59,6 +60,7 @@ export default class AppRouter {
 			.use('/api/clm/categories', categorieRouter)
 			.use('/api/clm/images', imageRouter)
 			.use('/api/clm/publications', publicationRouter)
+			.use('/api/clm/publication-signalements', publicationSignalementRouter)
 			.use('/api/clm/appreciations/publications', publicationAppreciationRouter)
 			.use('/api/clm/favoris/publications', publicationFavoriRouter)
 			.use('/api/clm/reputations/', reputationRouter)

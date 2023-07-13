@@ -15,7 +15,7 @@ Publication.init(
 		},
 		titre: DataTypes.STRING,
 		description: DataTypes.TEXT,
-		statut: DataTypes.ENUM('actif', 'inactif'),
+		statut: DataTypes.ENUM('actif', 'banni', 'inactif'),
 		utilisateur_id: {
 			type: DataTypes.INTEGER,
 			references: {
