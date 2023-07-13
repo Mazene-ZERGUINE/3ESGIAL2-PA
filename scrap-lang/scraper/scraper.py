@@ -28,7 +28,6 @@ def fetch_all(table: BeautifulSoup):
     
     table_data = []
     
-    # Find all the rows within the table body (tbody)
     rows = table.find('tbody').find_all('tr') if table.find('tbody') else table.find_all('tr')
     
     for row in rows:
@@ -42,3 +41,11 @@ def get_page_titles(html_content: BeautifulSoup):
     heading_tags = html_content.find_all(['h1', 'h2', 'h3', 'h4', 'h5', 'h6'])
     headings = [tag.get_text() for tag in heading_tags]
     return headings
+
+
+def filter_data(content: BeautifulSoup , heading):
+    
+    heading_tag = heading.replace('"' , "")
+    data = content.find_all(heading_tag)
+    
+    print(data)

@@ -32,6 +32,8 @@ reserved = {
     'get_table_by_id': 'TABLEID',
     'fetch_all' : 'FETCH',
     'get_all_titles': "ALLTITLES",
+    'filter': 'FILTER',
+    'capacity':'CAPACITY',
     'false': 'FALSE',
     'true': 'TRUE'
 }

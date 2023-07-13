@@ -22,27 +22,31 @@ fun scrapHtmlPageDemo()
 /** scraping data from  a table */
 fun scrapTableDemo(content)
     start
-
        table = content::get_table_by_id("ENTable");
        table_data = table::fetch_all();
        print(table_data);
 
     end
 
+
 /** scraping all heading tags in an html page h1 , h2, h3 ..etc */
 fun scrapAllTitles(content)
     start
-
         titles = content::get_all_titles();
-        print(titles); 
+        size = titles::capacity(); 
+        i = 0; 
+        while (i < size - 1) {
+            print(titles{i};);
+            i++;
+        }
+
     end
 
 
-
-
+/** main function */
 fun main() 
     start 
-    
+
         website1 = "https://ec.europa.eu/eurostat/cache/infographs/energy_balances/enbal.html?geo=EU27_2020&unit=KTOE&language=EN&year=2021&fuel=fuelMainFuel&siec=TOTAL&details=0&chartOptions=0&stacking=normal&chartBal=&chart=&full=0&chartBalText=&order=DESC&siecs=&dataset=nrg_bal_s&decimals=0&agregates=0&fuelList=fuelElectricity,fuelCombustible,fuelNonCombustible,fuelOtherPetroleum,fuelMainPetroleum,fuelOil,fuelOtherFossil,fuelFossil,fuelCoal,fuelMainFuel"; 
         webiste2 = "https://www.iea.org/data-and-statistics/data-tools/oil-stocks-of-iea-countries"; 
         html1 = website1::scan();

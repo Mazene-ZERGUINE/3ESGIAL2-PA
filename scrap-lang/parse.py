@@ -130,6 +130,18 @@ def p_function(p):
 
 
 
+def p_size_stm(p):
+    ''' statement : NAME DOTE CAPACITY LPAREN RPAREN SEMI '''
+    p[0] = ('size' , p[1])
+
+def p_array(p):
+    ''' statement : NAME RACC expression LACC SEMI '''
+    p[0] = ('array' , p[1] , p[3])
+
+def p_filter_heading(p):
+    ''' statement : NAME DOTE FILTER LPAREN STRING RPAREN SEMI  '''
+    p[0] = ('filter' , p[1] , p[5])
+
 def p_get_title(p):
     ''' statement : NAME DOTE ALLTITLES LPAREN RPAREN SEMI '''
     p[0] = ('all_titles' , p[1])

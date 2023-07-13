@@ -1,6 +1,6 @@
 from urllib.parse import urlparse
 
-from scraper.scraper import fetch_all, get_page_titles, scrap_page_html, scrap_table
+from scraper.scraper import fetch_all, filter_data, get_page_titles, scrap_page_html, scrap_table
 
 
 
@@ -53,9 +53,18 @@ def evalInst(p):
     if p[0] == "table_id" : return get_table_by_id(p)
     if p[0] == 'fetch_all': return fetch_table_data(p)
     if p[0] == 'all_titles': return get_all_titles(p)
-
+    if p[0] == 'filter': return filter_element(p)
+    if p[0] == 'array': return array_stm(p)
+    if p[0] == 'size' : return len(names[p[1]])
 
     return 'undifined'
+
+
+def array_stm(p):
+    return names[p[1]][names[p[2]]]
+
+def filter_element(p):
+    filter_data(names[p[1]] , p[2])
 
 
 def get_all_titles(p):
