@@ -54,7 +54,7 @@ export class AdministrationReportedUserFormComponent {
           description: data.description,
           statut: data.statut,
         });
-        console.log(data);
+
         this.userReport = data;
       });
   }

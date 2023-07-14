@@ -1,7 +1,7 @@
 <h1 class="my-3 text-center">Partager des biens matériels pour un monde plus écologique.</h1>
 
 <div class="d-flex justify-content-center mt-5">
-  <div class="col-6 d-flex justify-content-center rounded bg-success bg-gradient bg-opacity-25 p-4">
+  <div class="col-10 col-md-6 d-flex justify-content-center rounded bg-success bg-gradient bg-opacity-25 p-4">
     <div class="me-5 align-self-center">📣 Pour participer</div>
     <a class="text-reset text-decoration-none" [routerLink]="!(isAuthenticated$ | async) ? '/login' : '/posts/add'">
       <button type="button" class="btn btn-outline-success">Déposer une annonce</button>
@@ -9,17 +9,12 @@
   </div>
 </div>
 <div class="d-flex justify-content-center mt-5">
-  <div class="col-6 d-flex justify-content-center rounded bg-info bg-gradient bg-opacity-25 p-4">
+  <div class="col-10 col-md-6 d-flex justify-content-center rounded bg-info bg-gradient bg-opacity-25 p-4">
     <div class="me-5 align-self-center">🔍 Pour parcourir</div>
     <a class="text-reset text-decoration-none" [routerLink]="'/posts'">
       <button type="button" class="btn btn-outline-info">Découvrir les annonces</button>
     </a>
   </div>
 </div>
-
-<!-- TODO -->
-<!--<div>-->
-<!--  Rechercher une annonce-->
-<!--</div>-->
 
 <router-outlet></router-outlet>

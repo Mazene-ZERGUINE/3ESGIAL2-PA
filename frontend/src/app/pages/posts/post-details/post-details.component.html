@@ -1,117 +1,128 @@
 <div class="row">
-  <!-- TODO -->
-  <div class="col my-3" *ngIf="post?.statut === statut.banned; else elseBlock">
+  <div
+    class="col my-3"
+    *ngIf="post?.utilisateur?.statut !== statut.active || post?.statut === statut.inactive; else elseBlock"
+  >
     <div class="d-flex justify-content-between">
-      <h1 class="my-3">La publication a été modérée.</h1>
+      <h1 class="my-3">La publication n'est plus accessible.</h1>
     </div>
   </div>
 
   <ng-template #elseBlock>
-    <div class="col my-3" *ngIf="post">
+    <div class="col my-3" *ngIf="post?.statut === statut.banned; else elsePostBlock">
       <div class="d-flex justify-content-between">
-        <h1 class="my-3">{{ post.titre }}</h1>
-        <div>
-          <button
-            title="Ajouter aux favoris."
-            class="btn btn-outline-warning"
-            (click)="onStar($event, post.publication_id, currentUserId)"
-            *ngIf="!starInfo?.starred; else elseUnstarButtonBlock"
-          >
-            <i class="bi bi-star"></i>
-          </button>
-          <ng-template #elseUnstarButtonBlock>
+        <h1 class="my-3">La publication a été modérée.</h1>
+      </div>
+    </div>
+    <ng-template #elsePostBlock>
+      <div class="col my-3" *ngIf="post">
+        <div class="d-flex justify-content-between">
+          <h1 class="my-3">{{ post.titre }}</h1>
+          <div>
             <button
-              title="Supprimer des favoris."
+              title="Ajouter aux favoris."
               class="btn btn-outline-warning"
-              (click)="onUnstar($event, post.publication_id, currentUserId)"
+              (click)="onStar($event, post.publication_id, currentUserId)"
+              *ngIf="!starInfo?.starred; else elseUnstarButtonBlock"
             >
-              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star"></i>
             </button>
-          </ng-template>
+            <ng-template #elseUnstarButtonBlock>
+              <button
+                title="Supprimer des favoris."
+                class="btn btn-outline-warning"
+                (click)="onUnstar($event, post.publication_id, currentUserId)"
+              >
+                <i class="bi bi-star-fill"></i>
+              </button>
+            </ng-template>
+          </div>
         </div>
-      </div>
-      <p>
-        <span class="badge rounded-pill text-bg-secondary">
-          {{ $any(post)['categorie']?.['libelle'] ?? 'sans catégorie' }}
-        </span>
-      </p>
-      <p>
-        <small class="text-body-secondary">
-          Par :
-          <a
-            [routerLink]="'/users/profile/' + $any(post)['utilisateur']['pseudonyme']"
-            class="fw-semibold mt-0 me-3 text-decoration-none text-reset"
+        <p>
+          <span class="badge rounded-pill text-bg-secondary">
+            {{ $any(post)['categorie']?.['libelle'] ?? 'sans catégorie' }}
+          </span>
+        </p>
+        <p>
+          <small class="text-body-secondary">
+            Par :
+            <a
+              [routerLink]="'/users/profile/' + $any(post)['utilisateur']['pseudonyme']"
+              class="fw-semibold mt-0 me-3 text-decoration-none text-reset"
+            >
+              {{ $any(post)['utilisateur']['nom'] }} {{ $any(post)['utilisateur']['prenom'] }}
+            </a>
+          </small>
+          <br />
+          <small class="text-body-secondary"
+            >Le : {{ post.created_at | date | date : 'dd MMMM yyyy' : '' : 'fr' }}</small
           >
-            {{ $any(post)['utilisateur']['nom'] }} {{ $any(post)['utilisateur']['prenom'] }}
-          </a>
-        </small>
-        <br />
-        <small class="text-body-secondary">Le : {{ post.created_at | date | date : 'dd MMMM yyyy' : '' : 'fr' }}</small>
-      </p>
-      <!-- TODO -->
-      <p *ngIf="true">{{ post.description }}</p>
-      <div class="row justify-content-center">
-        <div class="col-sd-auto col-md-6 rounded bg-dark p-0">
-          <ngbd-carousel-basic [images]="post.images"></ngbd-carousel-basic>
+        </p>
+        <!-- TODO -->
+        <p *ngIf="true">{{ post.description }}</p>
+        <div class="row justify-content-center">
+          <div class="col-sd-auto col-md-6 rounded bg-dark p-0">
+            <ngbd-carousel-basic [images]="post.images"></ngbd-carousel-basic>
+          </div>
         </div>
-      </div>
-      <span *ngIf="post.utilisateur_id !== currentUserId">
-        <button
-          class="btn btn-outline-info mx-2"
-          (click)="onReport(post)"
-          *ngIf="!isAuthenticated || !isReportedByCurrentUser; else elseButtonBlock"
-        >
-          <i class="bi bi-exclamation-triangle"></i>
-        </button>
-        <ng-template #elseButtonBlock>
-          <button title="Vous avez signalé la publication." class="btn btn-info mx-2 no-pointer">
+        <span *ngIf="post.utilisateur_id !== currentUserId">
+          <button
+            class="btn btn-outline-info mx-2"
+            (click)="onReport(post)"
+            *ngIf="!isAuthenticated || !isReportedByCurrentUser; else elseButtonBlock"
+          >
             <i class="bi bi-exclamation-triangle"></i>
           </button>
-          <!--                  <button-->
-          <!--                    title="Vous avez signalé la publication."-->
-          <!--                    class="btn btn-info mx-2 no-pointer"-->
-          <!--                    (click)="onReport($event)"-->
-          <!--                  >-->
-          <!--                    <i class="bi bi-exclamation-triangle"></i>-->
-          <!--                  </button>-->
-        </ng-template>
-      </span>
-      <!-- TODO -->
-      <button
-        title="Aimer."
-        class="btn btn-outline-success"
-        (click)="onLike(postId, currentUserId)"
-        *ngIf="!likeInfo?.liked; else elseDislikeButton"
-      >
-        <i class="bi bi-hand-thumbs-up-fill"></i>
-        {{ likeInfo?.count | thousandSuffix }}
-      </button>
-      <ng-template #elseDislikeButton>
-        <button title="Ne plus aimer." class="btn btn-success" (click)="onDislike(postId, currentUserId)">
+          <ng-template #elseButtonBlock>
+            <button title="Vous avez signalé la publication." class="btn btn-info mx-2 no-pointer">
+              <i class="bi bi-exclamation-triangle"></i>
+            </button>
+            <!--                  <button-->
+            <!--                    title="Vous avez signalé la publication."-->
+            <!--                    class="btn btn-info mx-2 no-pointer"-->
+            <!--                    (click)="onReport($event)"-->
+            <!--                  >-->
+            <!--                    <i class="bi bi-exclamation-triangle"></i>-->
+            <!--                  </button>-->
+          </ng-template>
+        </span>
+        <!-- TODO -->
+        <button
+          title="Aimer."
+          class="btn btn-outline-success"
+          (click)="onLike(postId, currentUserId)"
+          *ngIf="!likeInfo?.liked; else elseDislikeButton"
+        >
           <i class="bi bi-hand-thumbs-up-fill"></i>
           {{ likeInfo?.count | thousandSuffix }}
         </button>
-      </ng-template>
-      <a
-        [href]="'mailto: ' + post.utilisateur?.email"
-        class="mx-2"
-        *ngIf="post.utilisateur_id !== currentUserId && isAuthenticated"
-      >
-        <button class="btn btn-outline-primary" title="Envoyer un courriel">
-          <i class="bi bi-envelope-at"></i>
-        </button>
-      </a>
-      <!-- TODO -->
-      <span *ngIf="post.utilisateur_id === currentUserId || isAdmin">
-        <button class="btn btn-outline-warning mx-2" (click)="onEdit(post.publication_id)">
-          <i class="bi bi-pencil-fill"></i>
-        </button>
-        <button class="btn btn-outline-danger mx-2" (click)="onDelete('publications', postId)">
-          <i class="bi bi-trash-fill"></i>
-        </button>
-      </span>
-      <hr class="my-4" />
-      <app-post-comments [publicationId]="postId" [currentUserId]="currentUserId"></app-post-comments>
-    </div>
+        <ng-template #elseDislikeButton>
+          <button title="Ne plus aimer." class="btn btn-success" (click)="onDislike(postId, currentUserId)">
+            <i class="bi bi-hand-thumbs-up-fill"></i>
+            {{ likeInfo?.count | thousandSuffix }}
+          </button>
+        </ng-template>
+        <a
+          [href]="'mailto: ' + post.utilisateur?.email"
+          class="mx-2"
+          *ngIf="post.utilisateur_id !== currentUserId && isAuthenticated"
+        >
+          <button class="btn btn-outline-primary" title="Envoyer un courriel">
+            <i class="bi bi-envelope-at"></i>
+          </button>
+        </a>
+        <!-- TODO -->
+        <span *ngIf="post.utilisateur_id === currentUserId || isAdmin">
+          <button class="btn btn-outline-warning mx-2" (click)="onEdit(post.publication_id)">
+            <i class="bi bi-pencil-fill"></i>
+          </button>
+          <button class="btn btn-outline-danger mx-2" (click)="onDelete('publications', postId)">
+            <i class="bi bi-trash-fill"></i>
+          </button>
+        </span>
+        <hr class="my-4" />
+        <app-post-comments [publicationId]="postId" [currentUserId]="currentUserId"></app-post-comments>
+      </div>
+    </ng-template>
   </ng-template>
 </div>
