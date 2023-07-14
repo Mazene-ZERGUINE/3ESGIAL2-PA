@@ -1,0 +1,72 @@
+fun scrapHtmlPageDemo()
+    start
+        check = website::is_html();
+
+        if (check) -> { 
+            message = "scraping "?.website;
+            print(message);
+
+            /** scraping website data */ 
+            content = website::scan();
+
+            print(content); 
+            
+        } else {
+            message = "invalide url! "?.website?." is not a website";
+            print(message);
+        }
+    end
+
+
+fun scrapTableDemo(content)
+    start
+       table = content::get_table_by_id("ENTable");
+       table_data = table::fetch_all();
+       i = 0;
+       size = table_data::capacity();
+       while (i < size) {
+        print(table_data{i};);
+        i = i +1 ;
+       }
+
+    end
+
+
+fun scrapAllTitles(content)
+    start
+        data = content::get_all_titles();
+
+        allTitles = data::fetch_all();
+        size = allTitles::capacity();
+        
+        print("all data") ; 
+
+        i = 0; 
+        while(i < size) { 
+            print(allTitles{i};);
+            i++; 
+        }
+
+        print("one element")
+        allTitles::get_one("id")  /** en cours de construction */ 
+    end
+
+
+
+fun main() 
+    start 
+
+        website1 = "https://ec.europa.eu/eurostat/cache/infographs/energy_balances/enbal.html?geo=EU27_2020&unit=KTOE&language=EN&year=2021&fuel=fuelMainFuel&siec=TOTAL&details=0&chartOptions=0&stacking=normal&chartBal=&chart=&full=0&chartBalText=&order=DESC&siecs=&dataset=nrg_bal_s&decimals=0&agregates=0&fuelList=fuelElectricity,fuelCombustible,fuelNonCombustible,fuelOtherPetroleum,fuelMainPetroleum,fuelOil,fuelOtherFossil,fuelFossil,fuelCoal,fuelMainFuel"; 
+        webiste2 = "https://www.iea.org/data-and-statistics/data-tools/oil-stocks-of-iea-countries"; 
+        html1 = website1::scan();
+        html2 = webiste2::scan();
+
+
+        
+
+    end
+
+
+
+
+main(); 
