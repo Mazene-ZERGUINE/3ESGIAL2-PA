@@ -34,6 +34,10 @@ reserved = {
     'get_all_titles': "ALLTITLES",
     'filter': 'FILTER',
     'capacity':'CAPACITY',
+    'get_all_texts':'ALLTXT',
+    'get': 'GET',
+    'get_all':'GETALL',
+    'println': 'NEWLINE',
     'false': 'FALSE',
     'true': 'TRUE'
 }
