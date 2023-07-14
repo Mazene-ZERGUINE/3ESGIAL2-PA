@@ -1,4 +1,4 @@
-import { DataTypes, Model,  } from 'sequelize';
+import { DataTypes, Model } from 'sequelize';
 import { sequelize } from '../../db/clm/db_connection';
 import { Utilisateur } from './utilisateur';
 
@@ -39,12 +39,51 @@ UtilisateurSignalement.init(
 	},
 	{
 		sequelize,
-		modelName: 'utilisateur-signalement',
+		modelName: 'utilisateur_signalement',
 		freezeTableName: true,
 		timestamps: false,
 	},
 );
 
-//#region 		publication & utilisateur
-UtilisateurSignalement.belongsTo(Utilisateur, { foreignKey: 'utilisateur_id' });
-Utilisateur.hasMany(UtilisateurSignalement, { foreignKey: 'utilisateur_id' });
+//#region
+UtilisateurSignalement.belongsTo(Utilisateur, {
+	foreignKey: 'signaleur_id',
+	// as: 'signaleur',
+});
+
+Utilisateur.hasMany(UtilisateurSignalement, {
+	foreignKey: 'signaleur_id',
+	// as: 'signalements',
+	onDelete: 'SET NULL',
+});
+
+UtilisateurSignalement.belongsTo(Utilisateur, {
+	foreignKey: 'signale_id',
+	// as: 'signale',
+});
+
+Utilisateur.hasMany(UtilisateurSignalement, {
+	foreignKey: 'signale_id',
+	// as: 'signalements_recus',
+	onDelete: 'CASCADE',
+});
+
+// Utilisateur.belongsToMany(Utilisateur, {
+// 	through: UtilisateurSignalement,
+// 	as:"signaleur_utilisateur",
+// 	foreignKey: "signaleur_id",
+// 	otherKey:"signale_id",
+// 	onDelete:"SET NULL"
+// })
+//
+// Utilisateur.belongsToMany(Utilisateur, {
+// 	through: UtilisateurSignalement,
+// 	as:"signale_utilisateur",
+// 	foreignKey: "signale_id",
+// 	otherKey:"signaleur_id",
+// 	onDelete:"CASCADE"
+// })
+
+// Utilisateur.belongsToMany(Utilisateur, { as: 'utilisateur_signalement', through: 'UtilisateurSignalement' })
+
+//#endregion

@@ -8,6 +8,7 @@ import { Argon2 } from '../../utils/clm/argon.utils';
 import { Session } from '../../models/clm/session';
 import { CoreController } from './Core.controller';
 import { getEmailTemplate } from '../../utils/clm/email-template';
+import { Status } from '../../enum/clm/status.enum';
 
 export class AuthController extends CoreController {
 	static async logIn(req: Request, res: Response): Promise<void> {
@@ -32,6 +33,10 @@ export class AuthController extends CoreController {
 			const apiKey = process.env.API_KEY as string;
 			if (!apiKey) {
 				throw new Error('Clé secrète manquante.');
+			}
+			if (utilisateur.getDataValue('statut') === Status.banned) {
+				res.status(401).json({ message: 'Votre compte a été banni.' });
+				return;
 			}
 
 			const token = sign(

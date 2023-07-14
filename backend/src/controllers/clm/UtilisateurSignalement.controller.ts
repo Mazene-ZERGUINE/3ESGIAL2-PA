@@ -6,27 +6,47 @@ import { Utilisateur } from '../../models/clm/utilisateur';
 import { UtilisateurSignalement } from '../../models/clm/utilisateur-signalement';
 
 export class UtilisateurSignalementController extends CoreController {
-
 	static async create(req: Request, res: Response): Promise<void> {
-		const { description, utilisateur_id } = req.body;
-		const status = 'Ouvert';
+		const { signaleur_id, signale_id, description, statut, created_at, update_at } = req.body;
+		// TODO check
 
 		try {
-			if (!(await Utilisateur.findByPk(utilisateur_id))) {
-				res.status(400).json({ message: 'Utilisateur incorrect.' });
+			if (!(await Utilisateur.findByPk(signaleur_id))) {
+				res.status(400).json({ message: 'Utilisateur signalant incorrect.' });
+				return;
+			}
+			if (!(await Utilisateur.findByPk(signale_id))) {
+				res.status(400).json({ message: 'Utilisateur signalé incorrect.' });
 				return;
 			}
 
-			const SP = await UtilisateurSignalement.create({
-				description,
-				status,
-				utilisateur_id,
-				created_at: new Date(),
-				updated_at: null,
+			await UtilisateurSignalement.create({ ...req.body, created_at: new Date() });
+			res.status(201).end();
+		} catch (error) {
+			CoreController.handleError(error, res);
+		}
+	}
+
+	static async isReportedBySignaleurId(req: Request, res: Response): Promise<void> {
+		const { signaleur_id, signale_id } = req.params;
+		// TODO check
+
+		try {
+			if (!(await Utilisateur.findByPk(signaleur_id))) {
+				res.status(400).json({ message: "L'utilisateur signalant est incorrect." });
+				return;
+			}
+			if (!(await Utilisateur.findByPk(signale_id))) {
+				res.status(400).json({ message: "L'utilisateur signalé est incorrect." });
+				return;
+			}
+
+			const item = await UtilisateurSignalement.findOne({
+				where: { signaleur_id, signale_id },
+				include: { all: true, nested: true },
 			});
 
-			await UtilisateurSignalement.create({ SP });
-			res.status(201).end();
+			res.status(200).json({ data: { reported: item != null } });
 		} catch (error) {
 			CoreController.handleError(error, res);
 		}

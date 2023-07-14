@@ -3,25 +3,32 @@
 
 module.exports = {
 	async up(queryInterface, Sequelize) {
-		await queryInterface.createTable('utilisateur-signalement', {
-			signalement_personne_id: {
+		await queryInterface.createTable('utilisateur_signalement', {
+			utilisateur_signalement_id: {
 				allowNull: false,
 				autoIncrement: true,
 				primaryKey: true,
 				type: Sequelize.INTEGER,
 			},
-			description: {
-				type: Sequelize.TEXT,
-			},
-			status: {
-				type: Sequelize.STRING,
-			},
-			utilisateur_id: {
+			signaleur_id: {
 				type: Sequelize.INTEGER,
 				references: {
 					model: 'utilisateur',
 					key: 'utilisateur_id',
 				},
+			},
+			signale_id: {
+				type: Sequelize.INTEGER,
+				references: {
+					model: 'utilisateur',
+					key: 'utilisateur_id',
+				},
+			},
+			description: {
+				type: Sequelize.TEXT,
+			},
+			statut: {
+				type: Sequelize.ENUM('ouvert', 'en cours', 'ferme'),
 			},
 			created_at: {
 				allowNull: false,
@@ -34,6 +41,6 @@ module.exports = {
 		});
 	},
 	async down(queryInterface, Sequelize) {
-		await queryInterface.dropTable('utilisateur-signalement');
+		await queryInterface.dropTable('utilisateur_signalement');
 	},
 };
