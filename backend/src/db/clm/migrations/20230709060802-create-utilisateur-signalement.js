@@ -16,6 +16,7 @@ module.exports = {
 					model: 'utilisateur',
 					key: 'utilisateur_id',
 				},
+				onDelete: 'SET NULL',
 			},
 			signale_id: {
 				type: Sequelize.INTEGER,
@@ -23,6 +24,7 @@ module.exports = {
 					model: 'utilisateur',
 					key: 'utilisateur_id',
 				},
+				onDelete: 'CASCADE',
 			},
 			description: {
 				type: Sequelize.TEXT,

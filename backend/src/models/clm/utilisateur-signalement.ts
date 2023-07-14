@@ -50,7 +50,6 @@ UtilisateurSignalement.belongsTo(Utilisateur, {
 	foreignKey: 'signaleur_id',
 	// as: 'signaleur',
 });
-
 Utilisateur.hasMany(UtilisateurSignalement, {
 	foreignKey: 'signaleur_id',
 	// as: 'signalements',
@@ -61,7 +60,6 @@ UtilisateurSignalement.belongsTo(Utilisateur, {
 	foreignKey: 'signale_id',
 	// as: 'signale',
 });
-
 Utilisateur.hasMany(UtilisateurSignalement, {
 	foreignKey: 'signale_id',
 	// as: 'signalements_recus',

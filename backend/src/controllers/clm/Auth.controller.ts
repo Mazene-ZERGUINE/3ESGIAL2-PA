@@ -35,7 +35,7 @@ export class AuthController extends CoreController {
 				throw new Error('Clé secrète manquante.');
 			}
 			if (utilisateur.getDataValue('statut') === Status.banned) {
-				res.status(401).json({ message: 'Votre compte a été banni.' });
+				res.status(401).json({ message: 'Vous ne pouvez plus vous connecter.' });
 				return;
 			}
 
