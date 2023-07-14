@@ -39,6 +39,10 @@ export abstract class CoreService {
     return this.httpClient.get<T>(this.getPath(path, id));
   }
 
+  getOne<T>(path: string): Observable<T> {
+    return this.httpClient.get<T>(this.getPath(path));
+  }
+
   //#endregion  GET methods
 
   //#region     UPDATE methods

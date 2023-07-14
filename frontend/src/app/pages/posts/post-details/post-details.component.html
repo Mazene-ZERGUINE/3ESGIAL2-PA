@@ -92,7 +92,11 @@
           {{ likeInfo?.count | thousandSuffix }}
         </button>
       </ng-template>
-      <a [href]="'mailto: ' + post.utilisateur?.email" class="mx-2" *ngIf="post.utilisateur_id !== currentUserId">
+      <a
+        [href]="'mailto: ' + post.utilisateur?.email"
+        class="mx-2"
+        *ngIf="post.utilisateur_id !== currentUserId && isAuthenticated"
+      >
         <button class="btn btn-outline-primary" title="Envoyer un courriel">
           <i class="bi bi-envelope-at"></i>
         </button>

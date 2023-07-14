@@ -13,6 +13,10 @@ import { UserPostsService } from '../shared/services/user-posts/user-posts.servi
 import { HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from '../../../shared/core/services/auth/auth.service';
 import { UserReputationsService } from '../shared/services/user-reputations/user-reputations.service';
+import { UserReportsService } from '../shared/services/user-reports/user-reports.service';
+import { UserReportDTO } from '../../../shared/core/models/interfaces/user-report.interface';
+import { UserReportStatus } from '../../../shared/core/models/interfaces/UserReportStatus.enum';
+import { HttpError } from '../../../shared/core/enums/http-error.enums';
 
 @UntilDestroy()
 @Component({
@@ -21,8 +25,9 @@ import { UserReputationsService } from '../shared/services/user-reputations/user
   styleUrls: ['./user-profile-details.component.scss'],
 })
 export class UserProfileDetailsComponent implements OnInit {
-  currentUsername?: string;
+  currentUser?: any;
   isAuthenticated: boolean;
+  isReportedByCurrentUser?: boolean;
   postsCount = 0;
   reputation = 0;
   usernameParam: string;
@@ -37,6 +42,7 @@ export class UserProfileDetailsComponent implements OnInit {
     private readonly router: Router,
     private readonly userPostsService: UserPostsService,
     private readonly userProfileService: UserProfileService,
+    private readonly userReportsService: UserReportsService,
     private readonly userReputationsService: UserReputationsService,
   ) {
     this.usernameParam = this.route.snapshot.paramMap.get('username') || '';
@@ -46,18 +52,21 @@ export class UserProfileDetailsComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     // TODO utilisateur inexistant
     this.getUserByPseudonyme();
-    this.getVote();
+
+    if (this.isAuthenticated) {
+      this.getVote();
+    }
     this.getUserReputation();
 
-    await this.setCurrentUsername();
+    await this.setCurrentUser();
   }
 
-  async setCurrentUsername(): Promise<any> {
+  async setCurrentUser(): Promise<any> {
     const token = await this.jwtHelper.tokenGetter();
-    this.currentUsername = this.jwtHelper.decodeToken(token)?.pseudonyme;
+    this.currentUser = this.jwtHelper.decodeToken(token);
   }
 
-  async onReport(): Promise<void> {
+  async onReport(user: User, currentUser: any): Promise<void> {
     const isUnauthenticated = !this.isAuthenticated || !(await this.authService.getCurrentUserId());
     if (isUnauthenticated) {
       await this.router.navigateByUrl('/login');
@@ -66,7 +75,22 @@ export class UserProfileDetailsComponent implements OnInit {
 
     try {
       const description = await this.modalService.open(ModalReportComponent).result;
-      // TODO
+
+      const payload: UserReportDTO = {
+        signaleur_id: currentUser?.utilisateur_id,
+        signale_id: user.utilisateur_id,
+        description,
+        statut: UserReportStatus.open,
+        created_at: new Date(),
+        updated_at: null,
+      };
+
+      this.userReportsService
+        .create('utilisateur-signalements', payload)
+        .pipe(untilDestroyed(this))
+        .subscribe((_) => {
+          this.getUserByPseudonyme();
+        });
     } catch (_) {}
   }
 
@@ -92,6 +116,20 @@ export class UserProfileDetailsComponent implements OnInit {
       .subscribe((data) => (this.reputation = data.reputation));
   }
 
+  getHasUserReported(): void {
+    this.userReportsService
+      .getOne<Response<{ reported: boolean }>>(
+        `utilisateur-signalements/signales/${this.user?.utilisateur_id}/signaleurs/${this.currentUser?.utilisateur_id}`,
+      )
+      .pipe(
+        map((res) => res?.data),
+        untilDestroyed(this),
+      )
+      .subscribe((data) => {
+        this.isReportedByCurrentUser = data?.reported;
+      });
+  }
+
   getUserByPseudonyme(): void {
     this.userPostsService
       .count<Response<number>>(`utilisateurs/${this.usernameParam}/publications/count/public`)
@@ -112,12 +150,16 @@ export class UserProfileDetailsComponent implements OnInit {
         untilDestroyed(this),
       )
       .subscribe((data) => {
-        if (data instanceof HttpErrorResponse) {
+        if (data instanceof HttpErrorResponse && data.status === HttpError['404NotFound']) {
           this.router.navigateByUrl('/not-found', { skipLocationChange: true });
           return;
         }
 
         this.user = data;
+
+        if (this.isAuthenticated) {
+          this.getHasUserReported();
+        }
       });
   }
 

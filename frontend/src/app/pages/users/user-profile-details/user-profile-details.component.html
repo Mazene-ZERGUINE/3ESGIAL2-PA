@@ -2,13 +2,19 @@
   <div class="col my-3" *ngIf="user">
     <div class="d-flex justify-content-between">
       <h1 class="my-3">{{ user.pseudonyme }}</h1>
-      <div>
-        <button class="btn btn-outline-info" disabled (click)="onReport()">
+      <div *ngIf="currentUser?.pseudonyme !== user?.pseudonyme">
+        <button
+          class="btn btn-outline-info"
+          (click)="onReport(user, currentUser)"
+          *ngIf="!isReportedByCurrentUser; else elseButtonBlock"
+        >
           <i class="bi bi-person-exclamation icon-large"></i>
         </button>
-        <!--        <button class="btn btn-info" (click)="onReport()">-->
-        <!--          <i class="bi bi-person-exclamation icon-large"></i>-->
-        <!--        </button>-->
+        <ng-template #elseButtonBlock>
+          <button class="btn btn-info no-pointer">
+            <i class="bi bi-person-exclamation icon-large"></i>
+          </button>
+        </ng-template>
       </div>
     </div>
     <!-- TODO -->
@@ -27,7 +33,7 @@
       <p><b>Ville</b> : {{ user.ville }}</p>
     </section>
 
-    <div class="d-flex justify-content-center" *ngIf="usernameParam !== currentUsername">
+    <div class="d-flex justify-content-center" *ngIf="usernameParam !== currentUser?.pseudonyme">
       <button
         class="btn btn-outline-success"
         title="+1"

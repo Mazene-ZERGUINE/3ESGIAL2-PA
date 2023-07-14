@@ -21,6 +21,7 @@ import { AdministrationCategoriesTableComponent } from './administration-categor
 import { AdministrationPostsTableComponent } from './administration-posts-table/administration-posts-table.component';
 import { AdministrationUsersTableComponent } from './administration-users-table/administration-users-table.component';
 import { AdministrationReportedPostsTableComponent } from './administration-reported-posts-table/administration-reported-posts-table.component';
+import { AdministrationReportedUsersTableComponent } from './administration-reported-users-table/administration-reported-users-table.component';
 
 @NgModule({
   declarations: [
@@ -40,6 +41,7 @@ import { AdministrationReportedPostsTableComponent } from './administration-repo
     AdministrationPostsTableComponent,
     AdministrationUsersTableComponent,
     AdministrationReportedPostsTableComponent,
+    AdministrationReportedUsersTableComponent,
   ],
   imports: [CommonModule, AdministrationRoutingModule, NgbPagination, ComponentsModule, ReactiveFormsModule],
 })

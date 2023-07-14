@@ -254,7 +254,7 @@ export class PostsComponent implements OnInit {
               ),
               !this.currentUserId
                 ? of({ data: { reported: false } })
-                : this.postReportsService.getOneById<Response<{ reported: true }>>(
+                : this.postReportsService.getOneById<Response<{ reported: boolean }>>(
                     `publication-signalements/publications/${post.publication_id}/utilisateurs`,
                     this.currentUserId,
                   ),

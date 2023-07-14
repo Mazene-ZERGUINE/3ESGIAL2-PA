@@ -4,4 +4,5 @@ export enum Entity {
   publication = 'publication',
   publicationSignalement = 'publication_signalement',
   utilisateur = 'utilisateur',
+  utilisateurSignalement = 'utilisateur_signalement',
 }
