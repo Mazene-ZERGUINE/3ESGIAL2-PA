@@ -44,7 +44,7 @@ export class AdministrationReportedPostFormComponent {
 
   getPostReport() {
     this.postReportsService
-      .getOneById<Response<any>>('publication-signalements', 1)
+      .getOneById<Response<any>>('publication-signalements', this.idParam)
       .pipe(
         map((res) => res?.data),
         untilDestroyed(this),
