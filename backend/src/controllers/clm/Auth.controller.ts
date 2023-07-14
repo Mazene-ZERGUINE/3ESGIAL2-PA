@@ -88,6 +88,10 @@ export class AuthController extends CoreController {
 				res.status(400).end();
 				return;
 			}
+			if (utilisateur.getDataValue('statut') === Status.banned) {
+				res.status(401).json({ message: 'Vous ne pouvez plus changer le mot de passe.' });
+				return;
+			}
 
 			const randomPassword = Math.random().toString(36).substring(2);
 			utilisateur.set({ mot_de_passe: await Argon2.hash(randomPassword) });
