@@ -6,7 +6,6 @@ import { ToastService } from '../../shared/components/toast/shared/toast.service
 import { AuthService } from '../../shared/core/services/auth/auth.service';
 import { catchError, of } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
-import { HttpError } from '../../shared/core/enums/http-error.enums';
 
 @UntilDestroy()
 @Component({
@@ -20,7 +19,6 @@ export class ForgottenPasswordComponent implements OnInit {
   constructor(
     private readonly authService: AuthService,
     private readonly fb: FormBuilder,
-    // private readonly signUpService: SignUpService,
     private readonly toastService: ToastService,
   ) {}
 
@@ -43,7 +41,7 @@ export class ForgottenPasswordComponent implements OnInit {
     }
 
     this.authService
-      .sendMailWithPassword(this.form.value)
+      .sendResetConfirmationMail(this.form.value)
       .pipe(
         catchError((err) => of(err)),
         untilDestroyed(this),
