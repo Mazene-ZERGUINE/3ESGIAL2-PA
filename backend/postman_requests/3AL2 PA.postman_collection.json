@@ -807,6 +807,63 @@
 			]
 		},
 		{
+			"name": "utilisateur signalements",
+			"item": [
+				{
+					"name": "get all",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{ADMIN_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}/clm/utilisateur-signalements?page=1",
+							"host": ["{{HOST}}"],
+							"path": ["clm", "utilisateur-signalements"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get one by id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{ADMIN_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}/clm/utilisateur-signalements/1",
+							"host": ["{{HOST}}"],
+							"path": ["clm", "utilisateur-signalements", "1"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "client",
 			"item": [
 				{
