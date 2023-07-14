@@ -115,9 +115,11 @@
     <div class="mb-3">
       <label class="form-label required" for="statut">Statut</label>
       <select class="form-select" formControlName="statut" id="statut" aria-label="Sélection de statut">
-        <option *ngFor="let status of statuses" [value]="status">
-          {{ status }}
-        </option>
+        <ng-container *ngFor="let status of statuses">
+          <option [value]="status" *ngIf="status !== 'inactif'">
+            {{ status }}
+          </option>
+        </ng-container>
       </select>
       <small
         class="text-danger my-2"

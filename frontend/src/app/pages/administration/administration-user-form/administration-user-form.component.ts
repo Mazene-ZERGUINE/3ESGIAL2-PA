@@ -9,6 +9,7 @@ import { Role } from '../../sign-up/shared/enums/role.enum';
 import {
   onlyLettersRegex,
   startsWithLetterWhichContainsLetterAndNumbersRegex,
+  startsWithLetterWhichContainsLettersAndSpacesAndApostrophesAndCannotEndWithSpacesApostrophesDashes,
   startsWithNumberWhichContainsLetterOrNumberRegex,
   statusRegex,
 } from '../../../shared/utils/regex.utils';
@@ -87,8 +88,18 @@ export class AdministrationUserFormComponent {
 
   initAddForm(): void {
     this.form = this.fb.group({
-      nom: this.fb.control('', [Validators.required, Validators.pattern(onlyLettersRegex)]),
-      prenom: this.fb.control('', [Validators.required, Validators.pattern(onlyLettersRegex)]),
+      nom: this.fb.control('', [
+        Validators.required,
+        Validators.pattern(
+          startsWithLetterWhichContainsLettersAndSpacesAndApostrophesAndCannotEndWithSpacesApostrophesDashes,
+        ),
+      ]),
+      prenom: this.fb.control('', [
+        Validators.required,
+        Validators.pattern(
+          startsWithLetterWhichContainsLettersAndSpacesAndApostrophesAndCannotEndWithSpacesApostrophesDashes,
+        ),
+      ]),
       email: this.fb.control('', [Validators.required, Validators.email]),
       mot_de_passe: this.fb.control('', [Validators.required, Validators.minLength(this.passwordMinLength)]),
       pseudonyme: this.fb.control('', [
@@ -107,8 +118,18 @@ export class AdministrationUserFormComponent {
 
   initEditForm(): void {
     this.form = this.fb.group({
-      nom: this.fb.control('', [Validators.required, Validators.pattern(onlyLettersRegex)]),
-      prenom: this.fb.control('', [Validators.required, Validators.pattern(onlyLettersRegex)]),
+      nom: this.fb.control('', [
+        Validators.required,
+        Validators.pattern(
+          startsWithLetterWhichContainsLettersAndSpacesAndApostrophesAndCannotEndWithSpacesApostrophesDashes,
+        ),
+      ]),
+      prenom: this.fb.control('', [
+        Validators.required,
+        Validators.pattern(
+          startsWithLetterWhichContainsLettersAndSpacesAndApostrophesAndCannotEndWithSpacesApostrophesDashes,
+        ),
+      ]),
       email: this.fb.control('', [Validators.required, Validators.email]),
       // mot_de_passe: this.fb.control('', [Validators.required, Validators.minLength(this.passwordMinLength)]),
       pseudonyme: this.fb.control('', [
@@ -140,12 +161,11 @@ export class AdministrationUserFormComponent {
     }
 
     const role = Role.utilisateur;
-    const statut = Status.active;
     const payload: UserDTO = {
       ...this.form.value,
       ville: formattedVille,
       role,
-      statut,
+      statut: this.isEditPage ? this.form.get('statut')?.value : Status.active,
     };
 
     if (this.isEditPage) {

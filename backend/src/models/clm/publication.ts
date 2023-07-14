@@ -83,7 +83,7 @@ Utilisateur.belongsToMany(Publication, {
 	otherKey: 'publication_id',
 	onDelete: 'CASCADE',
 });
-//#endregion	publication & publication_favori & utilisateur
+//#endregion	publication & publication_favori & utilislateur
 
 //#region publication & PublicationFavori
 // Publication.belongsToMany(PublicationFavori, {

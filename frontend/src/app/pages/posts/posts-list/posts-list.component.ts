@@ -22,7 +22,7 @@ import { ToastService } from '../../../shared/components/toast/shared/toast.serv
   styleUrls: ['./posts-list.component.scss'],
 })
 export class PostsListComponent {
-  readonly activeStatus = Status.active;
+  readonly status = Status;
 
   @Input() currentUserId?: number;
   @Input() isAuthenticated: null | boolean = false;

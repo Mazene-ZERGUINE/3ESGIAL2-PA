@@ -97,7 +97,6 @@ export class UserFavoritesListComponent implements OnInit {
           return;
         }
 
-        console.log('user favorites list subscribe to router');
         this.getFavorites();
       });
   }

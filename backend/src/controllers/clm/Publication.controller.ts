@@ -8,6 +8,8 @@ import { Utilisateur } from '../../models/clm/utilisateur';
 import { Categorie } from '../../models/clm/categorie';
 import { Status } from '../../enum/clm/status.enum';
 import { Image } from '../../models/clm/image';
+import { Commentaire } from '../../models/clm/commentaire';
+import { PublicationFavori } from '../../models/clm/publication_favori';
 
 export class PublicationController extends CoreController {
 	static async create(req: Request, res: Response): Promise<void> {
@@ -74,14 +76,22 @@ export class PublicationController extends CoreController {
 				offset: (providedPage - 1) * CoreController.PAGE_SIZE,
 				limit: CoreController.PAGE_SIZE,
 				where: { statut: Status.active },
-				include: {
-					all: true,
-					nested: true,
-				},
+				// include: {
+				// 	all: true,
+				// 	nested: true,
+				// },
+				include: [
+					{ model: Image },
+					{ model: Categorie },
+					{ model: Commentaire },
+					{ model: PublicationFavori },
+					{ model: Utilisateur, where: { statut: Status.active } },
+				],
 				order: [['publication_id', 'DESC']],
+				distinct: true,
 			});
 
-			res.status(200).json({ data: data });
+			res.status(200).json({ data });
 		} catch (error) {
 			CoreController.handleError(error, res);
 		}
@@ -188,7 +198,6 @@ export class PublicationController extends CoreController {
 			}
 			if (Array.isArray(removed_files)) {
 				for (const removedFile of removed_files) {
-					console.log('removed file: ' + removedFile);
 					const image = await Image.findOne({ where: { libelle: removedFile, publication_id: publicationId } });
 					if (!image) {
 						continue;

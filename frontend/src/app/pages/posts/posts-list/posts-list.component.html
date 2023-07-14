@@ -4,7 +4,7 @@
   </div>
   <ng-template #elsePostsBlock>
     <div class="col-10 col-sm-7" *ngFor="let post of posts; trackBy: trackById">
-      <div class="col card my-5 mb-3" *ngIf="post.statut === activeStatus">
+      <div class="col card my-5 mb-3" *ngIf="post.statut === status.active">
         <a
           class="text-reset text-decoration-none"
           [routerLink]="'/posts/' + post.publication_id"
@@ -52,7 +52,14 @@
                 </div>
                 <p class="card-text">
                   <small class="text-body-secondary">
-                    Par : {{ $any(post)['utilisateur']['nom'] }} {{ $any(post)['utilisateur']['prenom'] }}
+                    Par :
+                    {{ $any(post)['utilisateur']['nom'] }}
+                    {{ $any(post)['utilisateur']['prenom'] }}
+                    {{
+                      $any(post)['utilisateur']['statut'] !== status.inactive
+                        ? ''
+                        : $any(post)['utilisateur']['statut'] === status.inactive
+                    }}
                   </small>
                 </p>
                 <p class="card-text">
@@ -76,13 +83,6 @@
                   <button title="Vous avez signalé la publication." class="btn btn-info mx-2 no-pointer">
                     <i class="bi bi-exclamation-triangle"></i>
                   </button>
-                  <!--                  <button-->
-                  <!--                    title="Vous avez signalé la publication."-->
-                  <!--                    class="btn btn-info mx-2 no-pointer"-->
-                  <!--                    (click)="onReport($event)"-->
-                  <!--                  >-->
-                  <!--                    <i class="bi bi-exclamation-triangle"></i>-->
-                  <!--                  </button>-->
                 </ng-template>
               </span>
               <!-- TODO -->

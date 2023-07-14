@@ -12,5 +12,5 @@ export interface UserDTO {
 }
 
 export interface User extends UserDTO {
-  id: number;
+  utilisateur_id: number;
 }

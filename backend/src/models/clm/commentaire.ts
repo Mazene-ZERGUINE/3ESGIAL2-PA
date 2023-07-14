@@ -46,11 +46,25 @@ Commentaire.init(
 );
 
 //#region 		publication & utilisateur
-Commentaire.belongsTo(Utilisateur, { foreignKey: 'utilisateur_id' });
-Utilisateur.hasMany(Commentaire, { foreignKey: 'utilisateur_id', onDelete: 'SET NULL' });
+Commentaire.belongsTo(Utilisateur, {
+	foreignKey: 'utilisateur_id',
+	// as: 'commentaire_utilisateur',
+});
+Utilisateur.hasMany(Commentaire, {
+	foreignKey: 'utilisateur_id',
+	// as: 'utilisateur_commentaires',
+	onDelete: 'SET NULL',
+});
 
-Commentaire.belongsTo(Publication, { foreignKey: 'publication_id' });
-Publication.hasMany(Commentaire, { foreignKey: 'publication_id', onDelete: 'CASCADE' });
+Commentaire.belongsTo(Publication, {
+	foreignKey: 'publication_id',
+	// as: 'commentaire_publication',
+});
+Publication.hasMany(Commentaire, {
+	foreignKey: 'publication_id',
+	// as: 'publication_commentaires',
+	onDelete: 'CASCADE',
+});
 //#endregion	publication & utilisateur
 
 //#region 		utilisateur & commentaire + commentaire & publication
