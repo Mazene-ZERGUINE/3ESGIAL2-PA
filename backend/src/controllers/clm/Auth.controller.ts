@@ -137,7 +137,6 @@ export class AuthController extends CoreController {
 	}
 
 	static async sendMailWithPassword(req: Request, res: Response): Promise<void> {
-		// const { email } = req.body;
 		const { token } = req.query;
 		if (typeof token !== 'string') {
 			res.status(400).end();
