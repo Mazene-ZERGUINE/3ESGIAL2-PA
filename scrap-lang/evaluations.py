@@ -34,7 +34,7 @@ def evalInst(p):
     if p[0] == 'PRINT':
         if len(p) == 3:
 
-            print("scrape-lang >> " , evalExpr(p[2]))
+            print(evalExpr(p[2]))
             return evalInst(p[1])
         else:
             
@@ -59,7 +59,7 @@ def evalInst(p):
     if p[0] == 'all_titles': return get_all_titles(p)
     if p[0] == 'filter': return filter_element(p)
     if p[0] == 'array': return array_stm(p)
-    if p[0] == 'size' : return len(names[p[1]])
+    if p[0] == 'size' : return evalExpr(p)
     if p[0] == 'all_txt': return get_all_texts(p)
     if p[0] == 'get_one': return get_one_element(p)
     if p[0] == 'get_all' : return get_all_elements(p)
@@ -71,12 +71,32 @@ def evalInst(p):
 
 
 
+# adding elements to an array 
 def eval_include(p):
-    print(p)
+    if p[1] not in names or p[2] not in names:
+        raise Exception(f"{p[1]} {p[2]} not initialized")
+
+    data_list: dict = names[p[1]].copy()
+    var = names[p[2]]
+    key: str = p[3].replace('"', "")
+
+    if key in data_list:
+        # If the key exists, append the element to the existing list
+        if isinstance(data_list[key], list):
+            data_list[key].append(var)
+        else:
+            data_list[key] = [data_list[key], var]
+    else:
+        # If the key doesn't exist, create a new key with the element
+        data_list[key] = var
+
+    names[p[1]] = data_list
+
+
 
 
 def eval_array(p):  
-    var = []
+    var = {}
     names[p[1]] = var
 
 
@@ -178,6 +198,8 @@ def eval_multi_assignes(p , t):
         else:
             names[item1] = item2 
 def evalExpr(p):
+
+        
     if type(p) == int : return p
     if type(p) == str : 
         if '"' in p :
@@ -202,6 +224,13 @@ def evalExpr(p):
         if(p[0] == "!=") : return evalExpr(p[1]) != evalExpr(p[2])
         if(p[0] == "&") : return evalExpr(p[1]) & evalExpr(p[2])
         if(p[0] == "|") : return evalExpr(p[1]) | evalExpr(p[2])
+
+        if p[0] == 'size': 
+            if isinstance(names[p[1]] , list) or isinstance(names[p[1]] , dict):
+                return len(names[p[1]])
+            else:
+                raise Exception(f" {p[1]} is not a list ")
+   
         
     return 'undifined'
 
@@ -240,7 +269,6 @@ def eval_function_call(p):
               
 def eval_for_loop(p):
     evalInst(p[1])
-
     if names[p[1][1]] < evalExpr(p[2]) :
         while names[p[1][1]] <  evalExpr(p[2]) :
             evalInst(p[4])

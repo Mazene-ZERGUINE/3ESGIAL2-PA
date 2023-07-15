@@ -37,7 +37,7 @@ reserved = {
     'get_all_texts':'ALLTXT',
     'get': 'GET',
     'get_all':'GETALL',
-    'Array': 'ARRAY',
+    'Dict': 'ARRAY',
     'println': 'NEWLINE',
     'include':'INCLUDE',
     'false': 'FALSE',

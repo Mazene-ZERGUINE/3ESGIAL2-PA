@@ -18,7 +18,10 @@ def p_bloc(p):
         p[0] = ('bloc', p[1], 'empty')
 
 
-
+def p_capacity_expression(p):
+    ''' expression : NAME DOTE CAPACITY LPAREN RPAREN  '''
+    p[0] = ('size' , p[1])
+    
 def p_statement_assign(p):
     
     '''statement : NAME EQUALS expression SEMI 
@@ -33,7 +36,7 @@ def p_while_statement(p):
     p[0] = ('WHILE' , p[2] , p[4])
 
 def p_for_loop(p):
-    ''' statement : FOR LPAREN statement TO expression COMMA statement RPAREN RACC bloc LACC '''
+    ''' statement : FOR LPAREN statement TO expression COMMA statement RPAREN RACC bloc LACC  '''
     p[0] = ('FOR' , p[3] , p[5] , p[7] , p[10])
 
 
@@ -50,8 +53,8 @@ def p_eval_concatenation(p):
 
 
 def p_array_add(p):
-    ''' statement : NAME DOTE INCLUDE LPAREN NAME RPAREN SEMI '''
-    p[0] = ('include', p[1] , p[5])
+    ''' statement : NAME DOTE INCLUDE LPAREN NAME COMMA STRING RPAREN SEMI '''
+    p[0] = ('include', p[1] , p[5] , p[7])
 
 def p_array_init(p):
     ''' statement : NAME EQUALS ARRAY LPAREN RPAREN SEMI '''
@@ -162,11 +165,12 @@ def p_get_all_texts(p):
     p[0] = ('all_txt' , p[1])
     
 def p_size_stm(p):
-    ''' statement : NAME DOTE CAPACITY LPAREN RPAREN SEMI '''
+    ''' expression : NAME DOTE CAPACITY LPAREN RPAREN SEMI '''
     p[0] = ('size' , p[1])
 
 def p_array(p):
-    ''' statement : NAME RACC expression LACC SEMI '''
+    ''' statement : NAME RACC expression LACC SEMI 
+                  | NAME RACC STRING LACC SEMI '''
     p[0] = ('array' , p[1] , p[3])
 
 def p_filter_heading(p):
