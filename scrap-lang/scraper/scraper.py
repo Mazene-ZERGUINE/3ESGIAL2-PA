@@ -29,6 +29,9 @@ def fetch_all(data: BeautifulSoup):
     if isinstance(data, list):
         titles = [header.text.strip() for header in data if header.name.startswith('h')]
         texts = [tag.text.strip() for tag in data if tag.name == 'p']
+        links = [a.get('href') for a in data]
+        if len(links) > 0:
+            return links
         if len(titles) > 0:
             return titles
         if len(texts) > 0:
@@ -57,6 +60,10 @@ def fetch_all(data: BeautifulSoup):
     else:
         return None
 
+
+def get_all_links(html_content: BeautifulSoup):
+    content = html_content.find_all("a")
+    return content
 
 
 # gets all the texts in the passed html element 

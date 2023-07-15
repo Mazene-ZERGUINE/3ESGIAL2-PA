@@ -40,6 +40,7 @@ reserved = {
     'Dict': 'ARRAY',
     'println': 'NEWLINE',
     'include':'INCLUDE',
+    'get_all_links':'LINKS',
     'false': 'FALSE',
     'true': 'TRUE'
 }

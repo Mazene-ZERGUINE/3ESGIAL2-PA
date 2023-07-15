@@ -1,6 +1,6 @@
 from urllib.parse import urlparse
 
-from scraper.scraper import fetch_all, filter_data, get_all_by_classname, get_one_by_classname, get_page_titles, get_texts, scrap_page_html, scrap_table
+from scraper.scraper import fetch_all, filter_data, get_all_by_classname, get_all_links, get_one_by_classname, get_page_titles, get_texts, scrap_page_html, scrap_table
 
 
 
@@ -14,8 +14,8 @@ functions = {}
 global_vars = {}
 
 def evalInst(p):
-    # Normalement faire que 
     if p == 'empty' : return 
+    if isinstance(p , bool): return p    
 
     if p[0] == 'bloc':
         evalInst(p[1])
@@ -66,9 +66,17 @@ def evalInst(p):
     if p[0] == 'new_line': print("\n" * p[1])
     if p[0] == 'init_array': eval_array(p)
     if p[0] == 'include': eval_include(p)
-
+    if p[0] == 'links' : return eval_links(p)
+    
     return 'undifined'
 
+
+
+def eval_links(p):
+    if p[1] not in names:
+        raise Exception(f"{p[1]} not initilized ")  
+    
+    return get_all_links(names[p[1]])
 
 
 # adding elements to an array 
@@ -287,11 +295,11 @@ def eval_while_loop(p):
 
 
 def eval_if_elseif_else(p) : 
-    
     if (len(p) == 3) : 
         if evalExpr(p[1]) != 'undifined':
             if evalExpr(p[1]) == True : return evalInst(p[2])
         else:
+            
             if evalInst(p[1]) == True : return evalInst(p[2])
     elif len(p) == 4:
         if evalExpr(p[1]) == True : return evalInst(p[2]) 
