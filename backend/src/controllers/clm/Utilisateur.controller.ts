@@ -1,5 +1,7 @@
 import { Request, Response } from 'express';
-import { decode } from 'jsonwebtoken';
+import { decode, sign, verify } from 'jsonwebtoken';
+import { createTransport } from 'nodemailer';
+import { MailOptions } from 'nodemailer/lib/smtp-transport';
 
 import { CoreController } from './Core.controller';
 import { Utilisateur } from '../../models/clm/utilisateur';
@@ -8,12 +10,41 @@ import { Argon2 } from '../../utils/clm/argon.utils';
 import { Publication } from '../../models/clm/publication';
 import { Role } from '../../enum/clm/role.enum';
 import { PublicationFavori } from '../../models/clm/publication_favori';
+import { getSignupConfirmationEmailTemplate } from '../../utils/clm/sign-up-confirmation-email-template';
 
 export class UtilisateurController extends CoreController {
 	static async create(req: Request, res: Response): Promise<void> {
-		const { email, mot_de_passe, pseudonyme, nom, prenom, departement, ville, role, statut } = req.body;
-
+		const { token } = req.query;
 		try {
+			if (typeof token !== 'string') {
+				res.status(400).end();
+				return;
+			}
+
+			let decodedToken = decodeURIComponent(token);
+			const apiKey: undefined | string = process.env.API_KEY;
+			if (!apiKey) {
+				throw new Error('Clé incorrecte.');
+			}
+
+			decodedToken = decodedToken?.trim();
+			if (!decodedToken) {
+				res.status(400).end();
+				return;
+			}
+
+			const payload = verify(decodedToken, apiKey);
+			const isPayloadInvalid = !payload || typeof payload === 'string';
+			if (isPayloadInvalid) {
+				res.status(401).end();
+				return;
+			}
+
+			const { email, mot_de_passe, pseudonyme, nom, prenom, departement, ville, role, statut } = payload;
+			if (!email || !mot_de_passe || !pseudonyme || !nom || !prenom || !departement || !ville || !role || !statut) {
+				res.status(400).end();
+				return;
+			}
 			if (await Utilisateur.findOne({ where: { email } })) {
 				res.status(409).json({ message: 'Le mail existe déjà.' });
 				return;
@@ -26,10 +57,73 @@ export class UtilisateurController extends CoreController {
 				res.status(400).json({ message: "Le département n'existe pas." });
 				return;
 			}
-			// TODO: role, statut...
+			// TODO check role, statut...
 
-			await Utilisateur.create({ ...req.body, mot_de_passe: await Argon2.hash(mot_de_passe) });
-			res.status(201).end();
+			await Utilisateur.create({
+				email,
+				mot_de_passe: await Argon2.hash(mot_de_passe),
+				pseudonyme,
+				nom,
+				prenom,
+				departement,
+				ville,
+				role,
+				statut,
+			});
+
+			res.redirect(301, 'http://localhost:4200/login');
+		} catch (error) {
+			CoreController.handleError(error, res);
+		}
+	}
+
+	static async sendMailWithConfirmation(req: Request, res: Response): Promise<void> {
+		const { email, mot_de_passe, pseudonyme, nom, prenom, departement, ville, role, statut } = req.body;
+		if (!email || !mot_de_passe || !pseudonyme || !nom || !prenom || !departement || !ville || !role || !statut) {
+			res.status(400).end();
+			return;
+		}
+		// TODO check role, statut...
+
+		try {
+			const apiKey = process.env.API_KEY as string;
+			if (!apiKey) {
+				throw new Error('Clé secrète manquante.');
+			}
+
+			if (await Utilisateur.findOne({ where: { email } })) {
+				res.status(409).json({ message: 'Le mail existe déjà.' });
+				return;
+			}
+			if (await Utilisateur.findOne({ where: { pseudonyme } })) {
+				res.status(409).json({ message: 'Le pseudonyme existe déjà.' });
+				return;
+			}
+			if (!(departement in frenchDepartmentsData)) {
+				res.status(400).json({ message: "Le département n'existe pas." });
+				return;
+			}
+
+			const token = sign({ email, mot_de_passe, pseudonyme, nom, prenom, departement, ville, role, statut }, apiKey);
+
+			const transporter = createTransport({
+				service: 'gmail',
+				secure: false,
+				auth: {
+					user: 'clm480416@gmail.com',
+					pass: 'wyvigfqonzvghouv',
+				},
+			});
+
+			const mailOptions: MailOptions = {
+				from: 'CLM <clm480416@gmail.com>',
+				to: email,
+				subject: "Confirmation d'inscription",
+				html: getSignupConfirmationEmailTemplate({ prenom, token }),
+			};
+
+			await transporter.sendMail(mailOptions);
+			res.status(200).end();
 		} catch (error) {
 			CoreController.handleError(error, res);
 		}
