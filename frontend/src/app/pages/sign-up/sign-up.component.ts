@@ -90,11 +90,11 @@ export class SignUpComponent implements OnInit {
     };
 
     this.signUpService
-      .create('utilisateurs', payload)
+      .create('utilisateurs/signup/confirmation', payload)
       .pipe(untilDestroyed(this))
       .subscribe((_) => {
         this.router.navigateByUrl('/login');
-        this.toastService.showSuccess('Inscription réussie !');
+        this.toastService.showSuccess("Demande d'inscription envoyée sur votre email !");
       });
   }
 }
