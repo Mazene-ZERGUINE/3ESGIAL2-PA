@@ -171,7 +171,7 @@ public class TicketsController implements Initializable {
 		String ticketDescription = this.description.getText();
 
 		if (ticket_title.trim().isEmpty() || ticketTag.trim().isEmpty()) {
-			notifierService.notify(NotificationType.ERROR, "Erreur" , "Titre est obligatoir");
+			notifierService.notify(NotificationType.ERROR, "Erreur" , "Le titre est obligatoire.");
 			return;
 		}
 		var selectedProject = projectsListView.getSelectionModel().getSelectedItems().get(0);
@@ -359,7 +359,7 @@ public class TicketsController implements Initializable {
 				sceneService.switchScene(stage, "gantt-view.fxml", null);
 			}
 		} else {
-			notifierService.notify(NotificationType.WARNING , "Attention" , "Cette fonctionlité n'est pas disponible offline");
+			notifierService.notify(NotificationType.WARNING , "Attention" , "Cette fonctionnalité n'est pas disponible hors-ligne.");
 		}
 	}
 
@@ -417,7 +417,7 @@ public class TicketsController implements Initializable {
 	public void onExportBtnClicked(MouseEvent event) throws IOException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
 
 		if (StorageService.getInstance().isOffline()) {
-			notifierService.notify(NotificationType.WARNING , "Attention" , "cette fonctionnalité n'est pas disponible offline");
+			notifierService.notify(NotificationType.WARNING , "Attention" , "Cette fonctionnalité n'est pas disponible hors-ligne.");
 			return;
 		}
 
@@ -468,7 +468,7 @@ public class TicketsController implements Initializable {
 
 					exportMethod.invoke(exporterInstance, createObjectToExport() , filePath);
 
-					notifierService.notify(NotificationType.SUCCESS , "Fichier sauvgarder" , "Fichier " + fileName + " est sauvarder dans " + filePath );
+					notifierService.notify(NotificationType.SUCCESS , "Fichier sauvegardé" , "Le fichier " + fileName + " est sauvegardé dans " + filePath );
 					Desktop.getDesktop().open(new File(filePath));
 
 					classLoader.close();

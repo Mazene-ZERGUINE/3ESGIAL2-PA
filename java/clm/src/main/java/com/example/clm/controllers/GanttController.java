@@ -101,7 +101,7 @@ public class GanttController implements Initializable {
 				sceneService.switchScene(stage, "tickets-view.fxml", null);
 			}
 		} else {
-			new NotifierService().notify(NotificationType.WARNING , "Attention" , "Cette fonctionlité n'est pas disponible offline");
+			new NotifierService().notify(NotificationType.WARNING , "Attention" , "Cette fonctionnalité n'est pas disponible hors-ligne.");
 		}
 	}
 	public void getAllProjets() {
@@ -224,7 +224,7 @@ public class GanttController implements Initializable {
 							Tooltip.install(newNode, tooltip);
 						} else {
 							newNode.setStyle("-fx-bar-fill: #eb7777;");
-							Tooltip tooltip = new Tooltip("Taâche: \s\s " + element.getLabel() + "\s \s  \n" +
+							Tooltip tooltip = new Tooltip("Tâche: \s\s " + element.getLabel() + "\s \s  \n" +
 								"--------------------" + " \s\s\n" +
 								"De: \s\s" + from + " \s\s \n" +
 								"Jusqu'à:\s\s " + to + "\s\s  \n" +

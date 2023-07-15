@@ -245,7 +245,7 @@ public class CategoriesController  implements Initializable {
 
 		if (StorageService.getInstance().isOffline()) {
 
-			notifierService.notify(NotificationType.WARNING , "Attention" ,"Connexion perdu vous etes en mode offline");
+			notifierService.notify(NotificationType.WARNING , "Attention" ,"Connexion perdue. Vous êtes en mode hors-ligne.");
 			StorageService.getInstance().setOffline(true);
 			Paint offlineColor = Color.RED;
 			this.conectionCircle.setFill(offlineColor);
@@ -373,7 +373,7 @@ public class CategoriesController  implements Initializable {
 		ObservableList<String> selectedItems = membersList.getSelectionModel().getSelectedItems();
 
 		if (StorageService.getInstance().isOffline()) {
-			notifierService.notify(NotificationType.WARNING , "Attention" ,"Connexion perdu vous etes en mode offline");
+			notifierService.notify(NotificationType.WARNING , "Attention" ,"Connexion perdue. Vous êtes en mode hors-ligne.");
 			StorageService.getInstance().setOffline(true);
 			Paint offlineColor = Color.RED;
 			this.conectionCircle.setFill(offlineColor);
@@ -402,7 +402,7 @@ public class CategoriesController  implements Initializable {
 
 			try {
 				if (StorageService.getInstance().isOffline()) {
-					notifierService.notify(NotificationType.WARNING , "Attention" ,"Connexion perdu vous etes en mode offline");
+					notifierService.notify(NotificationType.WARNING , "Attention" ,"Connexion perdue. Vous êtes en mode hors-ligne.");
 				}
 				StorageService.getInstance().setOffline(false);
 				offlineColor = Color.GREEN;
@@ -420,7 +420,7 @@ public class CategoriesController  implements Initializable {
 				clearFields();
 				notifierService.notify(NotificationType.SUCCESS, "Succès", "Projet ajouté.");
 			} catch (Exception e) {
-				notifierService.notify(NotificationType.ERROR, "Erreur" , "ce project existe déja");
+				notifierService.notify(NotificationType.ERROR, "Erreur" , "Ce projet existe déja.");
 				StorageService.getInstance().setOffline(false);
 			}
 		}
@@ -450,7 +450,7 @@ public class CategoriesController  implements Initializable {
 		}
 
 		if (StorageService.getInstance().isOffline()) {
-			notifierService.notify(NotificationType.WARNING , "Attention" ,"Connexion perdu vous etes en mode offline");
+			notifierService.notify(NotificationType.WARNING , "Attention" ,"Connexion perdue. Vous êtes en mode hors-ligne.");
 			StorageService.getInstance().setOffline(true);
 			Paint offlineColor = Color.RED;
 			this.conectionCircle.setFill(offlineColor);
@@ -469,7 +469,7 @@ public class CategoriesController  implements Initializable {
 			categoriesListView.getItems().clear();
 			getAllCategories();
 			clearFields();
-			notifierService.notify(NotificationType.SUCCESS , "Modifier" , "Project modifier");
+			notifierService.notify(NotificationType.SUCCESS , "Modifier" , "Projet modifié.");
 		} else {
 			StorageService.getInstance().setOffline(true);
 			Paint offlineColor = Color.GREEN;
@@ -536,7 +536,7 @@ public class CategoriesController  implements Initializable {
 				sceneService.switchScene(stage, "tickets-view.fxml", null);
 			}
 		} else {
-			notifierService.notify(NotificationType.WARNING , "Attention" , "Cette fonctionlité n'est pas disponible offline");
+			notifierService.notify(NotificationType.WARNING , "Attention" , "Cette fonctionnalité n'est pas disponible hors-ligne.");
 		}
 	}
 
@@ -551,7 +551,7 @@ public class CategoriesController  implements Initializable {
 				sceneService.switchScene(stage, "gantt-view.fxml", null);
 			}
 		} else {
-			notifierService.notify(NotificationType.WARNING , "Attention" , "Cette fonctionlité n'est pas disponible offline");
+			notifierService.notify(NotificationType.WARNING , "Attention" , "Cette fonctionnalité n'est pas disponible hors-ligne.");
 		}
 	}
 
@@ -626,13 +626,13 @@ public class CategoriesController  implements Initializable {
 	public void onExportBtnClicked(MouseEvent event) throws IOException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
 
 		if (StorageService.getInstance().isOffline()) {
-			notifierService.notify(NotificationType.WARNING , "Attention" , "cette fonctionnalité n'est pas disponible offline");
+			notifierService.notify(NotificationType.WARNING , "Attention" , "Cette fonctionnalité n'est pas disponible hors-ligne.");
 			return;
 		}
 
 		List <Categorie> data = this.createObjectToExport();
 		if (data.size() == 0) {
-			notifierService.notify(NotificationType.WARNING , "Avertissement" , "pas de donnée à exporter");
+			notifierService.notify(NotificationType.WARNING , "Avertissement" , "Pas de donnée à exporter.");
 			return;
 		}
 		Stage stage = new Stage();
@@ -677,7 +677,7 @@ public class CategoriesController  implements Initializable {
 
 					exportMethod.invoke(exporterInstance, createObjectToExport() , filePath);
 
-					notifierService.notify(NotificationType.SUCCESS , "Fichier sauvgarder" , "Fichier " + fileName + " est sauvarder dans " + filePath );
+					notifierService.notify(NotificationType.SUCCESS , "Fichier sauvegardé" , "Le fichier " + fileName + " est sauvegardé dans " + filePath );
 					Desktop.getDesktop().open(new File(filePath));
 
 					classLoader.close();

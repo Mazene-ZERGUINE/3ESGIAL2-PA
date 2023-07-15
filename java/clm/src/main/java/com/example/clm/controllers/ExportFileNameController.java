@@ -25,7 +25,7 @@ public class ExportFileNameController implements Initializable {
 		String fileName = this.fileNameTextArea.getText();
 		if (fileName.trim().isEmpty()) {
 			NotifierService notifierService = new NotifierService();
-			notifierService.notify(NotificationType.ERROR , "Erreur" , "Nom de fichier est obligatoir") ;
+			notifierService.notify(NotificationType.ERROR , "Erreur" , "Le nom du fichier est obligatoire.") ;
 			return;
 		}
 		StorageService.getInstance().setExportFileName(fileName);

@@ -212,7 +212,7 @@ public class MembersController  implements Initializable {
 		}
 
 		if (StorageService.getInstance().isOffline()) {
-			notifierService.notify(NotificationType.WARNING, "Attention", "Connexion perdu vous etes en mode offline");
+			notifierService.notify(NotificationType.WARNING, "Attention", "Connexion perdue. Vous êtes en mode hors-ligne.");
 			StorageService.getInstance().setOffline(true);
 			Paint offlineColor = Color.RED;
 			this.conectionCircle.setFill(offlineColor);
@@ -256,9 +256,9 @@ public class MembersController  implements Initializable {
 				getAllMembers();
 				clearFields();
 
-				notifierService.notify(NotificationType.SUCCESS, "Success", "Utilisateur ajouté.");
+				notifierService.notify(NotificationType.SUCCESS, "Succès", "Utilisateur ajouté.");
 			} catch (IOException e) {
-				notifierService.notify(NotificationType.ERROR, "Erreur", "email exist déja");
+				notifierService.notify(NotificationType.ERROR, "Erreur", "L'email existe déja.");
 			}
 		}
 
@@ -333,7 +333,7 @@ public class MembersController  implements Initializable {
 			getAllMembers();
 			clearFields();
 
-			notifierService.notify(NotificationType.SUCCESS, "Success", "Utilisateur mis à jour.");
+			notifierService.notify(NotificationType.SUCCESS, "Succès", "Utilisateur mis à jour.");
 		} catch (IOException e) {
 			StorageService.getInstance().getUsersList()
 					.stream()
@@ -362,7 +362,7 @@ public class MembersController  implements Initializable {
 		}
 
 		if (StorageService.getInstance().isOffline()) {
-			notifierService.notify(NotificationType.WARNING, "Attention", "Connexion perdu vous etes en mode offline");
+			notifierService.notify(NotificationType.WARNING, "Attention", "Connexion perdue. Vous êtes en mode hors-ligne.");
 			StorageService.getInstance().setOffline(true);
 			Paint offlineColor = Color.RED;
 			this.conectionCircle.setFill(offlineColor);
@@ -390,7 +390,7 @@ public class MembersController  implements Initializable {
 				api.deleteTypeRequest(baseUrl + "users/" + user.getEmail());
 				this.tableView.getItems().remove(selectedUser);
 				getAllMembers();
-				notifierService.notify(NotificationType.SUCCESS, "Success", "Utilisateur supprimé.");
+				notifierService.notify(NotificationType.SUCCESS, "Succès", "Utilisateur supprimé.");
 		} catch (Exception e) {
 				System.out.println("something went wrong");
 			}
@@ -458,7 +458,7 @@ public class MembersController  implements Initializable {
 					sceneService.switchScene(stage, "gantt-view.fxml", null);
 				}
 			} else {
-				notifierService.notify(NotificationType.WARNING , "Attention" , "Cette fonctionlité n'est pas disponible offline");
+				notifierService.notify(NotificationType.WARNING , "Attention" , "Cette fonctionnalité n'est pas disponible hors-ligne.");
 			}
 	}
 
@@ -473,7 +473,7 @@ public class MembersController  implements Initializable {
 		}
 
 		if (StorageService.getInstance().isOffline()) {
-			notifierService.notify(NotificationType.WARNING , "Attention" ,"Connexion perdu vous etes en mode offline");
+			notifierService.notify(NotificationType.WARNING , "Attention" ,"Connexion perdue. Vous êtes en mode hors-ligne.");
 			StorageService.getInstance().setOffline(true);
 			Paint offlineColor = Color.RED;
 			this.conectionCircle.setFill(offlineColor);
@@ -482,7 +482,7 @@ public class MembersController  implements Initializable {
 			this.tableView.getItems().clear();
 
 			StorageService.getInstance().setOffline(true);
-			notifierService.notify(NotificationType.WARNING, "Attention", "Connexion peru vous etes en mode offline");
+			notifierService.notify(NotificationType.WARNING, "Attention", "Connexion perdue. Vous êtes en mode hors-ligne.");
 			this.tableView.getItems().clear();
 			this.backupList$.addAll(StorageService.getInstance().getUsersList());
 			this.tableView.setItems(backupList$);
@@ -577,7 +577,7 @@ public class MembersController  implements Initializable {
 				sceneService.switchScene(stage, "tickets-view.fxml", null);
 			}
 		} else {
-			notifierService.notify(NotificationType.WARNING , "Attention" , "Cette fonctionlité n'est pas disponible offline");
+			notifierService.notify(NotificationType.WARNING , "Attention" , "Cette fonctionnalité n'est pas disponible hors-ligne.");
 		}
 	}
 	@FXML
@@ -591,7 +591,7 @@ public class MembersController  implements Initializable {
 				.put("password" , password);
 			JSONObject response = new JSONObject(api.postTypeRequest(baseUrl + "users/update_password/" + auth.getUserId() , data).toString());
 			if (response.getInt("status_code") == 200) {
-				notifierService.notify(NotificationType.SUCCESS , "Success" , "Mot de passe modifier");
+				notifierService.notify(NotificationType.SUCCESS , "Succès" , "Mot de passe modifié.");
 			}
 	}
 
@@ -650,7 +650,7 @@ public class MembersController  implements Initializable {
 
 					exportMethod.invoke(exporterInstance, createObjectToExport() , filePath);
 
-					notifierService.notify(NotificationType.SUCCESS , "Fichier sauvgarder" , "Fichier " + fileName + " est sauvarder dans " + filePath );
+					notifierService.notify(NotificationType.SUCCESS , "Fichier sauvegardé" , "Le fichier " + fileName + " est sauvegardé dans " + filePath );
 					Desktop.getDesktop().open(new File(filePath));
 
 					classLoader.close();

@@ -44,7 +44,7 @@ private static NotifierService notifier = new NotifierService();
 				loadAndDisplayImagesFromFolder(this.formatBox , subfolder.getName());
 			}
 		} else {
-				notifier.notify(NotificationType.WARNING , "Avertisement" , "Auccune format d'éxport n'est enregistrer pour le moment");
+				notifier.notify(NotificationType.WARNING , "Avertissement" , "Aucun format d'export n'est enregistré pour le moment.");
 				return;
 		}
 		try {

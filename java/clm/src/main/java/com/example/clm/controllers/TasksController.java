@@ -210,7 +210,7 @@ public class TasksController implements Initializable {
 			JSONObject jsonResponse = new JSONObject(response.toString());
 			if (jsonResponse.getInt("status_code") == 200) {
 				refreshList();
-				notifierService.notify(NotificationType.SUCCESS, "SUCCESS", "Tache supprimée");
+				notifierService.notify(NotificationType.SUCCESS, "Succès", "Tâche supprimée.");
 			}
 		} catch (Exception e) {
 			if (StorageService.getInstance().isOffline()) {
@@ -228,7 +228,7 @@ public class TasksController implements Initializable {
 	public void onExportBtnClicked(MouseEvent event) throws IOException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
 
 		if (StorageService.getInstance().isOffline()) {
-			notifierService.notify(NotificationType.WARNING , "Attention" , "cette fonctionnalité n'est pas disponible offline");
+			notifierService.notify(NotificationType.WARNING , "Attention" , "Cette fonctionnalité n'est pas disponible hors-ligne.");
 			return;
 		}
 		
@@ -277,7 +277,7 @@ public class TasksController implements Initializable {
 
 						exportMethod.invoke(exporterInstance, createObjectToExport() , filePath);
 
-						notifierService.notify(NotificationType.SUCCESS , "Fichier sauvgarder" , "Fichier " + fileName + " est sauvarder dans " + filePath );
+						notifierService.notify(NotificationType.SUCCESS , "Fichier sauvegardé" , "Le fichier " + fileName + " est sauvegardé dans " + filePath );
 						Desktop.getDesktop().open(new File(filePath));
 
 						classLoader.close();
@@ -475,7 +475,7 @@ public class TasksController implements Initializable {
 				sceneService.switchScene(stage, "tickets-view.fxml", null);
 			}
 		} else {
-			notifierService.notify(NotificationType.WARNING , "Attention" , "Cette fonctionlité n'est pas disponible offline");
+			notifierService.notify(NotificationType.WARNING , "Attention" , "Cette fonctionnalité n'est pas disponible hors-ligne.");
 		}
 	}
 
@@ -490,7 +490,7 @@ public class TasksController implements Initializable {
 				sceneService.switchScene(stage, "gantt-view.fxml", null);
 			}
 		} else {
-			notifierService.notify(NotificationType.WARNING , "Attention" , "Cette fonctionlité n'est pas disponible offline");
+			notifierService.notify(NotificationType.WARNING , "Attention" , "Cette fonctionnalité n'est pas disponible hors-ligne.");
 		}
 	}
 	@Override

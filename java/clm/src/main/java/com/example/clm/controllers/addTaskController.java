@@ -69,7 +69,7 @@ public class addTaskController implements Initializable {
 		try {
 			response = api.getTypeRequest(baseUrl + "categories/project/" + categoryId);
 		} catch (IOException ex) {
-			notifierService.notify(NotificationType.WARNING , "Attention" , "Connection perdu vous etes en mode hros ligne");
+			notifierService.notify(NotificationType.WARNING , "Attention" , "Connection perdue. Vous êtes en mode hors-ligne.");
 
 		}
 		JSONObject jsonResponse = new JSONObject(response.toString());
@@ -125,7 +125,7 @@ public class addTaskController implements Initializable {
 		LocalDate sixMonthsAfterToday = now.plusMonths(6);
 
 		if (taskDeadline.isAfter(sixMonthsAfterToday)) {
-			notifierService.notify(NotificationType.ERROR , "Erreur" , "6 mois au maximum pour une tache");
+			notifierService.notify(NotificationType.ERROR , "Erreur" , "6 mois au plus tard pour une tâche.");
 			return;
 		}
 
@@ -155,7 +155,7 @@ public class addTaskController implements Initializable {
 				this.startDate.setValue(null);
 
 			} else {
-				notifierService.notify(NotificationType.ERROR , "Erreur" , "Une erreur est survenu lors de l'ajout.");
+				notifierService.notify(NotificationType.ERROR , "Erreur" , "Une erreur est survenue lors de l'ajout.");
 			}
 		} catch (Exception e) {
 			Tasks task = new Tasks(

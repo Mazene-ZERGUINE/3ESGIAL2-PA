@@ -45,12 +45,12 @@ public class ConsoleApp {
 
 
             if (input.equals("--help")) {
-                System.out.println("clm --version: verifier la version de  CLM");
-                System.out.println("clm check-updates: verifier les mis a jour de  CLM");
-                System.out.println("clm check-export-formats: verifier les nouveau format d'export disponible");
-                System.out.println("clm install-export-format <format> : install le nouveau d'export" );
-                System.out.println("clm check-themes : verifier  les nouveau themes de l'application" );
-                System.out.println("clm install-theme <theme> : install le nouveau d'export" );
+                System.out.println("clm --version : vérifier la version de CLM");
+                System.out.println("clm check-updates : vérifier les mis a jour de CLM");
+                System.out.println("clm check-export-formats : vérifier les nouveaux formats d'export disponibles");
+                System.out.println("clm install-export-format <format> : install le nouveau format d'export" );
+                System.out.println("clm check-themes : vérifier  les nouveaux thèmes de l'application" );
+                System.out.println("clm install-theme <theme> : installe le nouveau thème" );
                 System.out.println();
             } else if (input.equals("clm --version")) {
                 getAppVersion();
@@ -80,20 +80,20 @@ public class ConsoleApp {
                 System.out.println();
             }
             else {
-                System.out.println("\u001B[31m" +  "wrong input Tapez la commande help pour voir la liste des commandes du CLI" + "\u001B[0m");
+                System.out.println("\u001B[31m" +  "Mauvaise commmande... Tapez la commande help pour voir la liste des commandes du CLI" + "\u001B[0m");
             }
         }
     }
 
 
     private static void installTheme(String theme) throws IOException {
-        System.out.println("télechargement et installation de theme " + theme);
+        System.out.println("Téléchargement et installation de thème " + theme);
         String themeToDowload =  "http://localhost:3000/themes/" + theme + ".css";
         String savePath = "../themes/" + theme + ".css";
         try {
             downloadFile(themeToDowload, savePath);
         } catch (IOException e) {
-            System.out.println("\u001B[31m" +  "format " + theme + " n'existe pas tappez <clm check-export-formats> pour regarder tous les formats disponibles" + "\u001B[0m");
+            System.out.println("\u001B[31m" +  "format " + theme + " n'existe pas. Tapez <clm check-export-formats> pour regarder tous les formats disponibles" + "\u001B[0m");
             return;
         }
         Path source = Path.of(savePath);
@@ -103,7 +103,7 @@ public class ConsoleApp {
         Files.move(source, target, StandardCopyOption.REPLACE_EXISTING);
         progressBar();
 
-        System.out.println(  "\u001B[32m" + "Téléchargement terminer"  + "\u001B[0m");
+        System.out.println(  "\u001B[32m" + "Téléchargement terminé"  + "\u001B[0m");
     }
     private static void checkThemes() {
         try {
@@ -115,10 +115,10 @@ public class ConsoleApp {
                     System.out.println(" > " + formatsList.getString(i));
                 }
             } else {
-                System.out.println("error ocured while sending http request");
+                System.out.println("Une erreur est survenue lors de la requête HTTP.");
             }
         } catch (Exception e) {
-            System.out.println(" > pas de nouveau theme disponible");
+            System.out.println(" > pas de nouveau thème disponible");
             System.out.println(e.getCause() + " " + e.getMessage());
         }
     }
@@ -129,7 +129,7 @@ public class ConsoleApp {
         try {
             downloadFile(formatToDownload, savePath);
         } catch (IOException e) {
-            System.out.println("\u001B[31m" +  "format " + exportFormat + "n'existe pas tappez <clm check-export-formats> pour regarder tous les formats disponibles" + "\u001B[0m");
+            System.out.println("\u001B[31m" +  "format " + exportFormat + "n'existe pas. Tapez <clm check-export-formats> pour regarder tous les formats disponibles" + "\u001B[0m");
             return;
         }
         String dest = "../plugins/" + exportFormat ;
@@ -138,7 +138,7 @@ public class ConsoleApp {
         zipFile.delete();
         System.out.println( "\u001B[32m" +  "Téléchargement du format "  +  exportFormat  + "\u001B[0m");
         progressBar();
-        System.out.println(  "\u001B[32m" + "Téléchargement terminer"  + "\u001B[0m");
+        System.out.println(  "\u001B[32m" + "Téléchargement terminé"  + "\u001B[0m");
     }
 
     private static void checkExportsFormat() {
@@ -151,7 +151,7 @@ public class ConsoleApp {
                     System.out.println(" > " + formatsList.getString(i));
                 }
             } else {
-                System.out.println("error ocured while sending http request");
+                System.out.println("Une erreur est survenue lors de la requête HTTP.");
             }
         } catch (Exception e) {
             System.out.println(" > pas de format d'export disponible");
@@ -172,10 +172,10 @@ public class ConsoleApp {
             }
             data = new JSONObject(jsonContent.toString());
         } catch (IOException e) {
-            System.out.println("Error reading from the file: " + e.getMessage());
+            System.out.println("Erreur de lecteur du fichier : " + e.getMessage());
         }
-        System.out.println( "\u001B[32m" + " > CLM verssion: " + data.getString("version")  + "\u001B[0m");
-        System.out.println(" > equipe: " + data.getString("author"));
+        System.out.println( "\u001B[32m" + " > CLM version: " + data.getString("version")  + "\u001B[0m");
+        System.out.println(" > équipe: " + data.getString("author"));
         System.out.println(" > date de sortie:" + data.getString("release_date"));
         System.out.println();
     }
@@ -194,7 +194,7 @@ public class ConsoleApp {
             }
             data = new JSONObject(jsonContent.toString());
         } catch (IOException e) {
-            System.out.println("Error reading from the file: " + e.getMessage());
+            System.out.println("Erreur de lecteur du fichier : " + e.getMessage());
         }
 
         String appVersion = data.getString("version");
@@ -204,10 +204,10 @@ public class ConsoleApp {
             JSONObject response = new JSONObject(api.getTypeRequest(baseUrl + "check_updates/" + data.getString("version") ).toString()) ;
 
             if (!response.getString("version").isEmpty()) {
-                System.out.println("\u001B[32m" + " > des nouveau mis à jour sont disponible " + "\u001B[0m");
+                System.out.println("\u001B[32m" + " > de nouvelles mises à jour sont disponibles " + "\u001B[0m");
             }
                 System.out.println("\u001B[32m" + " > version" + response.getString("version") + "\u001B[0m");
-                System.out.println(" > voulez vous mettre à jour CLM? yes/no");
+                System.out.println(" > voulez-vous mettre à jour CLM ? yes/no");
 
                 String res = new Scanner(System.in).nextLine();
                 if (res.equals("yes")) {
@@ -220,14 +220,14 @@ public class ConsoleApp {
                     try {
                         downloadFile(updateJarFileUrl, savePath);
                     } catch (IOException e) {
-                        System.out.println("An error occurred while downloading the file: " + e.getMessage());
+                        System.out.println("Une erreur est survenue lors du téléchargement du fichier : " + e.getMessage());
                         System.out.println(e.getCause() + " " + e.getMessage());
                         throw  e;
                     }
-                    System.out.println("Téléchargement des mis à jours");
+                    System.out.println("Téléchargement des mises à jour");
                     progressBar();
 
-                    System.out.println( "\u001B[32m" + "Téléchargement terminer" + "\u001B[0m");
+                    System.out.println( "\u001B[32m" + "Téléchargement terminée" + "\u001B[0m");
                     // replacing older jar file withe the updates jar file //
                     String sourceFilePath = "./tmp/clm.jar";
                     String destinationFilePath = "./clm.jar";
@@ -238,19 +238,19 @@ public class ConsoleApp {
                     try {
                         Files.copy(sourceFile.toPath(), destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
                     } catch (IOException e) {
-                        System.out.println("An error occurred while replacing the file: " + e.getMessage());
+                        System.out.println("Une erreur est survenue lors du remplacement du fichier : " + e.getMessage());
                     }
 
 
-                    System.out.println("Instalation des mis à jour");
+                    System.out.println("Installation des mises à jour");
                     progressBar();
-                    System.out.println("\u001B[32m" +  "Instalation Terminé" + "\u001B[0m");
+                    System.out.println("\u001B[32m" +  "Installation terminée" + "\u001B[0m");
 
-                    System.out.println("Redamarage de CLM");
+                    System.out.println("Redeémarrage de CLM");
                     Thread.sleep(2000);
 
                     // restarting the application to see the new updates //
-                    System.out.println("starting system updates");
+                    System.out.println("Démarrage des mises à jour système...");
                     ProcessBuilder processBuilder = new ProcessBuilder("pkill", "-f", "/usr/bin/java -jar ./clm.jar");
                     Process process = processBuilder.start();
                     String currentDirectory = System.getProperty("user.dir");
@@ -268,7 +268,7 @@ public class ConsoleApp {
 
             }
         } catch (Exception e) {
-            System.out.println(" > pas de mis à jour détecter!");
+            System.out.println(" > pas de mise à jour détectée !");
         }
 
     }

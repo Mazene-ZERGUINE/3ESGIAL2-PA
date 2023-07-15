@@ -77,11 +77,11 @@ public class SignInController implements Initializable {
 			responseCode = api.postTypeRequestWithResponseCode(baseUrl + "trello/signin", data);
 		}
 		catch (Exception e) {
-			notifierService.notify(NotificationType.ERROR, "Erreur", "Une erreur est apparu. Réessayer plus tard.");
+			notifierService.notify(NotificationType.ERROR, "Erreur", "Une erreur est apparue. Réessayer plus tard.");
 		}
 
 		if (responseCode >= 500) {
-			notifierService.notify(NotificationType.ERROR, "Erreur", "Une erreur est apparu. Réessayer plus tard.");
+			notifierService.notify(NotificationType.ERROR, "Erreur", "Une erreur est apparue. Réessayer plus tard.");
 			return;
 		}
 
@@ -154,7 +154,7 @@ private void recoverPassword(MouseEvent event) throws IOException {
 			String email = recoverEmail.getText();
 
 			if ( email.trim().isEmpty() ) {
-				notifierService.notify(NotificationType.ERROR , "Erreur" , "Email est obligatoir");
+				notifierService.notify(NotificationType.ERROR , "Erreur" , "L'email est obligatoire.");
 				return;
 			}
 
@@ -167,19 +167,19 @@ private void recoverPassword(MouseEvent event) throws IOException {
 			response = api.postTypeRequest(baseUrl + "client/recover_password" , data ) ;
 			JSONObject json = new JSONObject(response.toString());
 			if (json.getInt("status_code") == 200) {
-				notifierService.notify(NotificationType.SUCCESS , "Email evoyée" , "un email contenat votre nouveau mot de passe est envoyée à \n " + email);
+				notifierService.notify(NotificationType.SUCCESS , "Email envoyé" , "Un email contenant votre nouveau mot de passe a été envoyé à \n " + email);
 
 				Stage stage = (Stage) this.recoverEmail.getScene().getWindow();
 				stage.close();
 			} else if(json.getInt("status_code") == 400 ) {
-				notifierService.notify(NotificationType.ERROR , "Email non trouvé" , "compte n'existe pas");
+				notifierService.notify(NotificationType.ERROR , "Email non trouvé" , "Le compte n'existe pas.");
 
 			} else {
-				notifierService.notify(NotificationType.ERROR , "Email non trouvé" , "Une erreur est survenu");
+				notifierService.notify(NotificationType.ERROR , "Email non trouvé" , "Une erreur est survenue.");
 
 			}
 		} catch (IOException e) {
-			notifierService.notify(NotificationType.ERROR , "Email non trouvé" , "compte n'existe pas");
+			notifierService.notify(NotificationType.ERROR , "Email non trouvé" , "Le compte n'existe pas.");
 		}
 
 	}
@@ -207,7 +207,7 @@ private void recoverPassword(MouseEvent event) throws IOException {
 		try {
 
 			api.getTypeRequest(baseUrl + "client/check_updates/" + data.getString("version"));
-			new NotifierService().notify(NotificationType.INFORMATION, "Information" , "Des mis à jour sont disponible");
+			new NotifierService().notify(NotificationType.INFORMATION, "Information" , "Des mises à jour sont disponibles.");
 		} catch (Exception e) {
 			System.out.println(e.getMessage() + " " + e.getCause());
 
