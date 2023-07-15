@@ -32,6 +32,7 @@ export class PostDetailsComponent implements OnInit, OnDestroy {
   currentUserId?: number;
   isAdmin: boolean;
   isAuthenticated: boolean;
+  isLoading = true;
   likeInfo?: { count: number; liked: boolean };
   post?: Post;
   starInfo?: { starred: boolean } = { starred: false };
@@ -263,7 +264,8 @@ export class PostDetailsComponent implements OnInit, OnDestroy {
             this.getReportByPostId(this.postId);
           }
         }),
-        catchError((err) => {
+        catchError((_) => {
+          this.isLoading = false;
           this.router.navigateByUrl('/not-found', { skipLocationChange: true });
           return of(null);
         }),
@@ -275,6 +277,7 @@ export class PostDetailsComponent implements OnInit, OnDestroy {
         }
 
         this.post = data;
+        this.isLoading = false;
       });
   }
 

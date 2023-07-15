@@ -23,6 +23,7 @@ export class UserFavoritesListComponent implements OnInit {
   collectionSize = 0;
   decodedToken: any;
   favorites?: Favorite[];
+  isLoading = true;
   pageParam = 1;
   starInfo: { [key: string]: { starred: boolean } } = {};
 
@@ -45,7 +46,7 @@ export class UserFavoritesListComponent implements OnInit {
   onPageChange(page: number): void {
     this.pageParam = page;
 
-    this.router.navigate(['administration', 'posts'], { queryParams: { page } });
+    this.router.navigate(['users', 'favorites'], { queryParams: { page } });
   }
 
   async onUnstar(e: MouseEvent, postId: number): Promise<void> {
@@ -64,10 +65,16 @@ export class UserFavoritesListComponent implements OnInit {
     const { pseudonyme } = this.decodedToken;
 
     this.userFavoritesService
-      .getOneByField<Response<{ count: number; rows: Favorite[] }>>('utilisateurs', `${pseudonyme}/favoris`)
+      .getOneByField<Response<{ count: number; rows: Favorite[] }>>(
+        'utilisateurs',
+        `${pseudonyme}/favoris?page=${this.pageParam}`,
+      )
       .pipe(
         map((res) => res?.data),
-        catchError((err) => of(err)),
+        catchError((err) => {
+          this.isLoading = false;
+          return of(err);
+        }),
         untilDestroyed(this),
       )
       .subscribe((data) => {
@@ -77,6 +84,7 @@ export class UserFavoritesListComponent implements OnInit {
 
         this.collectionSize = data.count;
         this.favorites = data.rows;
+        this.isLoading = false;
       });
   }
 

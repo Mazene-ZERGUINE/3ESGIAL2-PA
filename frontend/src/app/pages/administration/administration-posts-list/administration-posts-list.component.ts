@@ -17,10 +17,11 @@ import { Post } from '../../posts/shared/models/post.interface';
 })
 export class AdministrationPostsListComponent {
   collectionSize = 0;
-  posts: Post[] = [];
   entityName = Entity.publication;
+  isLoading = true;
   pageParam = 1;
   path = Path.posts;
+  posts: Post[] = [];
 
   constructor(
     private readonly administrationPostsService: AdministrationPostsService,
@@ -50,19 +51,8 @@ export class AdministrationPostsListComponent {
       )
       .subscribe((data) => {
         this.posts = data;
+        this.isLoading = false;
       });
-  }
-
-  onAdd(): void {
-    // TODO
-  }
-
-  onEdit(id: number): void {
-    // TODO
-  }
-
-  onDelete(id: number): void {
-    // TODO
   }
 
   onPageChange(page: number): void {

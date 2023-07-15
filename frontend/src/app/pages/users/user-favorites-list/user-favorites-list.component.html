@@ -1,77 +1,88 @@
-<div class="row justify-content-center">
-  <h1 class="my-3">Mes favoris</h1>
-  <div *ngIf="!favorites || favorites?.length === 0; else elsePostsBlock">
-    <p>Il n'y a pas de publications.</p>
-  </div>
-  <ng-template #elsePostsBlock>
-    <div class="col-10 col-sm-7" *ngFor="let favorite of favorites">
-      <div class="col card my-5 mb-3" *ngIf="favorite.publication.statut === activeStatus">
-        <a class="text-reset text-decoration-none" [routerLink]="'/posts/' + favorite.publication_id">
-          <div class="row g-0">
-            <div class="col-md-4">
-              <div class="ratio ratio-1x1">
-                <span
-                  *ngIf="favorite.publication.images.length === 0; else elseImageBlock"
-                  class="text-secondary py-5 d-flex align-items-center justify-content-center"
-                >
-                  Pas d'image
-                </span>
-                <ng-template #elseImageBlock>
-                  <img
-                    [src]="'http://' + favorite.publication.images[0].lien"
-                    class="img-fluid rounded-start"
-                    [alt]="favorite.publication.images[0].libelle"
-                  />
-                </ng-template>
-              </div>
-            </div>
-            <div class="col-md-8">
-              <div class="card-body">
-                <div class="d-flex justify-content-between">
-                  <h5 class="card-title">{{ favorite.publication.titre }}</h5>
-                  <button
-                    title="Supprimer des favoris."
-                    class="btn btn-outline-warning"
-                    (click)="onUnstar($event, favorite.publication_id)"
-                  >
-                    <!--                  <button-->
-                    <!--                    title="Supprimer des favoris."-->
-                    <!--                    class="btn btn-outline-warning"-->
-                    <!--                  >-->
-                    <i class="bi bi-star-fill"></i>
-                  </button>
-                </div>
-                <p class="card-text">
-                  <small class="text-body-secondary">
-                    Par : {{ $any(favorite.publication)['utilisateur']['nom'] }}
-                    {{ $any(favorite.publication)['utilisateur']['prenom'] }}
-                  </small>
-                </p>
-                <p class="card-text">
-                  <small class="text-body-secondary">
-                    Le : {{ favorite.created_at | date | date : 'dd MMMM yyyy' : '' : 'fr' }}
-                  </small>
-                </p>
-              </div>
-            </div>
-          </div>
-        </a>
-      </div>
+<ng-container *ngIf="isLoading; else elseBlock">
+  <div class="d-flex justify-content-center" *ngIf="isLoading">
+    <div class="spinner-border text-success" role="status">
+      <span class="visually-hidden">Chargement...</span>
     </div>
-  </ng-template>
+  </div>
+</ng-container>
 
-  <ngb-pagination
-    class="d-flex justify-content-center mt-5"
-    aria-label="Pagination de catégories"
-    [collectionSize]="collectionSize"
-    [(page)]="pageParam"
-    [pageSize]="20"
-    (pageChange)="onPageChange($event)"
-    [maxSize]="3"
-    [rotate]="true"
-    [boundaryLinks]="true"
-    *ngIf="collectionSize >= 1"
-  ></ngb-pagination>
+<ng-template #elseBlock>
+  <div class="row justify-content-center">
+    <h1 class="my-3">Mes favoris</h1>
+    <div *ngIf="!favorites || favorites?.length === 0; else elsePostsBlock">
+      <p>Il n'y a pas de publications.</p>
+    </div>
 
-  <app-back-to-top></app-back-to-top>
-</div>
+    <ng-template #elsePostsBlock>
+      <div class="col-10 col-sm-7" *ngFor="let favorite of favorites">
+        <div class="col card my-5 mb-3" *ngIf="favorite.publication.statut === activeStatus">
+          <a class="text-reset text-decoration-none" [routerLink]="'/posts/' + favorite.publication_id">
+            <div class="row g-0">
+              <div class="col-md-4">
+                <div class="ratio ratio-1x1">
+                  <span
+                    *ngIf="favorite.publication.images.length === 0; else elseImageBlock"
+                    class="text-secondary py-5 d-flex align-items-center justify-content-center"
+                  >
+                    Pas d'image
+                  </span>
+                  <ng-template #elseImageBlock>
+                    <img
+                      [src]="'http://' + favorite.publication.images[0].lien"
+                      class="img-fluid rounded-start"
+                      [alt]="favorite.publication.images[0].libelle"
+                    />
+                  </ng-template>
+                </div>
+              </div>
+              <div class="col-md-8">
+                <div class="card-body">
+                  <div class="d-flex justify-content-between">
+                    <h5 class="card-title">{{ favorite.publication.titre }}</h5>
+                    <button
+                      title="Supprimer des favoris."
+                      class="btn btn-outline-warning"
+                      (click)="onUnstar($event, favorite.publication_id)"
+                    >
+                      <!--                  <button-->
+                      <!--                    title="Supprimer des favoris."-->
+                      <!--                    class="btn btn-outline-warning"-->
+                      <!--                  >-->
+                      <i class="bi bi-star-fill"></i>
+                    </button>
+                  </div>
+                  <p class="card-text">
+                    <small class="text-body-secondary">
+                      Par : {{ $any(favorite.publication)['utilisateur']['nom'] }}
+                      {{ $any(favorite.publication)['utilisateur']['prenom'] }}
+                    </small>
+                  </p>
+                  <p class="card-text">
+                    <small class="text-body-secondary">
+                      Le : {{ favorite.created_at | date | date : 'dd MMMM yyyy' : '' : 'fr' }}
+                    </small>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </ng-template>
+
+    <ngb-pagination
+      class="d-flex justify-content-center mt-5"
+      aria-label="Pagination de catégories"
+      [collectionSize]="collectionSize"
+      [(page)]="pageParam"
+      [pageSize]="20"
+      (pageChange)="onPageChange($event)"
+      [maxSize]="3"
+      [rotate]="true"
+      [boundaryLinks]="true"
+      *ngIf="collectionSize >= 1"
+    ></ngb-pagination>
+
+    <app-back-to-top></app-back-to-top>
+  </div>
+</ng-template>
