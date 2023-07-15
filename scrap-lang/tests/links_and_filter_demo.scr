@@ -1,13 +1,14 @@
+/** getting all the links in a passes element */ 
 fun scrapAllLinks(htmlContent)
     start 
-
+        /** geting all the <a> elements */
         links = htmlContent::get_all_links();
-            href = links::fetch_all();
+        /** fetching the links */
+        href = links::fetch_all();
 
             for (i = 0 to href::capacity() , i++) {
                 print(href{i};);
             }
-
             dataArray = Dict();
             dataArray::include(href, "links"); 
     end
@@ -17,12 +18,13 @@ fun scrapAllLinks(htmlContent)
 
 fun filterContent(htmlContent)
     start 
-
+        /** getting the div with class name article  */
         content = htmlContent::get(DIV ,"article");
-
+        /** getting all the html elements that containes the word chaleur */
         data = content::filter("chaleur");
         
         display = data::fetch_all();
+        /** fetching only the texts of with the word chaleur */
         allTexts = display{"texts"}; 
 
         for (i = 0 to allTexts::capacity() , i++) {
@@ -30,6 +32,7 @@ fun filterContent(htmlContent)
             1::println();
 
             data = allTexts{i};
+            /** saving data in content.txt file */ 
             data::save(TXT , "content.txt");
         }
          
