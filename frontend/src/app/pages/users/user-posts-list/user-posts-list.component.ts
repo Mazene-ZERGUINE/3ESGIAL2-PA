@@ -18,6 +18,7 @@ import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 })
 export class UserPostsListComponent implements OnInit {
   entityName = Entity.publication;
+  isLoading = true;
   page = 1;
   path = Path.posts;
   posts: Partial<Post>[] = [];
@@ -81,6 +82,7 @@ export class UserPostsListComponent implements OnInit {
       )
       .subscribe((data) => {
         this.posts = data;
+        this.isLoading = false;
       });
   }
 

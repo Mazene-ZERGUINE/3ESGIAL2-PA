@@ -1,20 +1,30 @@
-<app-administration-posts-table
-  [entityName]="entityName"
-  [items]="posts"
-  (deleted)="getPosts()"
-></app-administration-posts-table>
+<ng-container *ngIf="isLoading; else elseBlock">
+  <div class="d-flex justify-content-center" *ngIf="isLoading">
+    <div class="spinner-border text-success" role="status">
+      <span class="visually-hidden">Chargement...</span>
+    </div>
+  </div>
+</ng-container>
 
-<ngb-pagination
-  class="d-flex justify-content-center mt-5"
-  aria-label="Posts pagination"
-  [collectionSize]="collectionSize"
-  [(page)]="pageParam"
-  [pageSize]="20"
-  (pageChange)="onPageChange($event)"
-  [maxSize]="3"
-  [rotate]="true"
-  [boundaryLinks]="true"
-  *ngIf="collectionSize >= 1"
-></ngb-pagination>
+<ng-template #elseBlock>
+  <app-administration-posts-table
+    [entityName]="entityName"
+    [items]="posts"
+    (deleted)="getPosts()"
+  ></app-administration-posts-table>
 
-<app-back-to-top></app-back-to-top>
+  <ngb-pagination
+    class="d-flex justify-content-center mt-5"
+    aria-label="Posts pagination"
+    [collectionSize]="collectionSize"
+    [(page)]="pageParam"
+    [pageSize]="20"
+    (pageChange)="onPageChange($event)"
+    [maxSize]="3"
+    [rotate]="true"
+    [boundaryLinks]="true"
+    *ngIf="collectionSize >= 1"
+  ></ngb-pagination>
+
+  <app-back-to-top></app-back-to-top>
+</ng-template>

@@ -67,6 +67,7 @@ export abstract class CoreController {
 						all: true,
 						nested: true,
 					},
+					distinct: true,
 				});
 
 				res.status(200).json({ data: items });
@@ -108,6 +109,7 @@ export abstract class CoreController {
 					offset: (providedPage - 1) * CoreController.PAGE_SIZE,
 					limit: CoreController.PAGE_SIZE,
 					order: [[`${modelName}_id`, 'DESC']],
+					distinct: true,
 				});
 
 				res.status(200).json({ data: items });
@@ -140,6 +142,7 @@ export abstract class CoreController {
 						nested: true,
 					},
 					order: [[field, order]],
+					distinct: true,
 				});
 
 				res.status(200).json({ data: items });
