@@ -1,0 +1,62 @@
+fun scrapAllLinks(htmlContent)
+    start 
+
+        links = htmlContent::get_all_links();
+            href = links::fetch_all();
+
+            for (i = 0 to href::capacity() , i++) {
+                print(href{i};);
+            }
+
+            dataArray = Dict();
+            dataArray::include(href, "links"); 
+    end
+
+
+
+
+fun filterContent(htmlContent)
+    start 
+
+        content = htmlContent::get(DIV ,"article");
+
+        data = content::filter("chaleur");
+        
+        display = data::fetch_all();
+        allTexts = display{"texts"}; 
+
+        for (i = 0 to allTexts::capacity() , i++) {
+            print(allTexts{i};);
+            1::println();
+
+            data = allTexts{i};
+            data::save(TXT , "content.txt");
+        }
+         
+    end
+
+
+
+fun main()
+    start
+
+        website = "https://www.ecologie.gouv.fr/vagues-chaleur-plan-national-anticiper"; 
+        check = website::is_html();
+
+        if (check) -> {
+
+            htmlContent = website::scan();
+
+            message = "scraping all the links in the" ?. website ?. "website"; 
+            print(message) ;          
+            1::println();
+
+            filterContent(htmlContent);
+
+        } else {
+            print("this is not a valide url!");
+        }
+
+    end
+
+main();

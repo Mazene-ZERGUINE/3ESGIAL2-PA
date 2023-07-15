@@ -41,6 +41,7 @@ reserved = {
     'println': 'NEWLINE',
     'include':'INCLUDE',
     'get_all_links':'LINKS',
+    'save': 'SAVE',
     'false': 'FALSE',
     'true': 'TRUE'
 }

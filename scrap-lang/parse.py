@@ -170,6 +170,10 @@ def p_function(p):
 
 
 
+def p_save_statement(p):
+    ''' statement : NAME DOTE SAVE LPAREN NAME COMMA STRING RPAREN SEMI '''
+    p[0] = ('save' , p[1] , p[5] , p[7])
+
 def p_get_all_texts(p):
     ''' statement : NAME DOTE ALLTXT LPAREN RPAREN SEMI '''
     
