@@ -64,9 +64,20 @@ def evalInst(p):
     if p[0] == 'get_one': return get_one_element(p)
     if p[0] == 'get_all' : return get_all_elements(p)
     if p[0] == 'new_line': print("\n" * p[1])
+    if p[0] == 'init_array': eval_array(p)
+    if p[0] == 'include': eval_include(p)
 
     return 'undifined'
 
+
+
+def eval_include(p):
+    print(p)
+
+
+def eval_array(p):  
+    var = []
+    names[p[1]] = var
 
 
 def get_all_elements(p):

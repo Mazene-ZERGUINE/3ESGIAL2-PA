@@ -48,6 +48,16 @@ def p_eval_concatenation(p):
 
 
 
+
+def p_array_add(p):
+    ''' statement : NAME DOTE INCLUDE LPAREN NAME RPAREN SEMI '''
+    p[0] = ('include', p[1] , p[5])
+
+def p_array_init(p):
+    ''' statement : NAME EQUALS ARRAY LPAREN RPAREN SEMI '''
+    p[0] = ('init_array' , p[1])
+
+
 def p_println(p):
     ''' statement : NUMBER DOTE NEWLINE LPAREN RPAREN SEMI '''
     p[0] = ('new_line', p[1])
