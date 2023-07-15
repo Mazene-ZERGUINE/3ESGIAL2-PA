@@ -18,7 +18,10 @@ def p_bloc(p):
         p[0] = ('bloc', p[1], 'empty')
 
 
-
+def p_capacity_expression(p):
+    ''' expression : NAME DOTE CAPACITY LPAREN RPAREN  '''
+    p[0] = ('size' , p[1])
+    
 def p_statement_assign(p):
     
     '''statement : NAME EQUALS expression SEMI 
@@ -33,7 +36,7 @@ def p_while_statement(p):
     p[0] = ('WHILE' , p[2] , p[4])
 
 def p_for_loop(p):
-    ''' statement : FOR LPAREN statement TO NUMBER COMMA statement RPAREN RACC bloc LACC '''
+    ''' statement : FOR LPAREN statement TO expression COMMA statement RPAREN RACC bloc LACC  '''
     p[0] = ('FOR' , p[3] , p[5] , p[7] , p[10])
 
 
@@ -45,6 +48,31 @@ def p_eval_concatenation(p):
         p[0] = ("concat", p[1])
     else:
         p[0] = ("concat", p[1], p[3])
+
+
+
+
+def p_array_add(p):
+    ''' statement : NAME DOTE INCLUDE LPAREN NAME COMMA STRING RPAREN SEMI '''
+    p[0] = ('include', p[1] , p[5] , p[7])
+
+def p_array_init(p):
+    ''' statement : NAME EQUALS ARRAY LPAREN RPAREN SEMI '''
+    p[0] = ('init_array' , p[1])
+
+
+def p_println(p):
+    ''' statement : NUMBER DOTE NEWLINE LPAREN RPAREN SEMI '''
+    p[0] = ('new_line', p[1])
+
+
+def p_get_all(p):
+    ''' statement : NAME DOTE GETALL LPAREN NAME COMMA STRING RPAREN SEMI '''
+    p[0] = ('get_all' , p[1] , p[5] , p[7])
+
+def p_get_one(p):
+    ''' statement : NAME DOTE GET LPAREN NAME COMMA STRING RPAREN SEMI '''
+    p[0] = ('get_one' , p[1] , p[5] , p[7])
 
 
 def p_statement_comment(p):
@@ -130,12 +158,19 @@ def p_function(p):
 
 
 
+
+def p_get_all_texts(p):
+    ''' statement : NAME DOTE ALLTXT LPAREN RPAREN SEMI '''
+    
+    p[0] = ('all_txt' , p[1])
+    
 def p_size_stm(p):
-    ''' statement : NAME DOTE CAPACITY LPAREN RPAREN SEMI '''
+    ''' expression : NAME DOTE CAPACITY LPAREN RPAREN SEMI '''
     p[0] = ('size' , p[1])
 
 def p_array(p):
-    ''' statement : NAME RACC expression LACC SEMI '''
+    ''' statement : NAME RACC expression LACC SEMI 
+                  | NAME RACC STRING LACC SEMI '''
     p[0] = ('array' , p[1] , p[3])
 
 def p_filter_heading(p):
@@ -258,6 +293,7 @@ def p_expression_name(p):
 
 def p_error(p):
     print("Syntax error at '%s'" % p.value)
+    return
 
 
 def p_expression_true(p):

@@ -1,0 +1,55 @@
+
+fun main()
+    start
+        /** checking if the websit url is valide */ 
+        webiste = "https://www.ecologie.gouv.fr/ayons-bons-reflexes-prevenir-feux-foret" ; 
+        check = webiste::is_html();
+
+        if (check) -> {
+            /** getting all the html content of the selected webist */
+            htmlContent = webiste::scan() ; 
+            
+            /** getting the div with the class name content */
+            text_content = htmlContent::get(DIV, "content");
+
+            /** getting all the divs with the class name text bloc inside of content class */
+            textBlocks = text_content::get_all(DIV, "texte bloc"); 
+
+            size = textBlocks::capacity();   
+
+            dataArray = Dict() ; 
+
+            print(dataArray);
+            for (i = 0 to size, i++) {
+                textBlock = textBlocks{i}; 
+
+                /** getting all the titles inside each text bloc div */
+                title = textBlock::get_all_titles();
+                titlesDisplay = title::fetch_all();
+               
+               /** print all titles in the firest div than saving it in the array */
+               for (j = 0 to titlesDisplay::capacity() , j++) {
+                print(titlesDisplay{j};);
+               }
+                dataArray::include(titlesDisplay , "titles"); 
+                
+                /** getting all the texts of each text bloc div */
+                texts = textBlock::get_all_texts();
+                textDisplay = texts::fetch_all();
+
+                for (k = 0 to textDisplay::capacity() , k++) {
+                    print(textDisplay{k};);
+                }
+
+                dataArray::include(textDisplay , "texts");
+
+                2::println();    
+            }
+
+        } else {
+            message = webiste ?. "is not a valide url!" ; 
+            print(message) ; 
+        }
+    end
+
+main(); 

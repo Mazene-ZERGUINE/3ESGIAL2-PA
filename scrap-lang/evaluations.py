@@ -1,6 +1,11 @@
 from urllib.parse import urlparse
 
-from scraper.scraper import fetch_all, filter_data, get_page_titles, scrap_page_html, scrap_table
+from scraper.scraper import fetch_all, filter_data, get_all_by_classname, get_one_by_classname, get_page_titles, get_texts, scrap_page_html, scrap_table
+
+
+
+tags_with_data = ["A", "ABBR", "ADDRESS", "ARTICLE", "B", "BLOCKQUOTE", "BUTTON", "CODE", "DIV", "EM", "H1", "H2", "H3", 
+                  "H4", "H5", "H6", "LABEL", "LI", "OL", "P", "PRE", "SPAN", "STRONG", "TABLE", "TD", "TH", "UL"]
 
 
 
@@ -29,24 +34,23 @@ def evalInst(p):
     if p[0] == 'PRINT':
         if len(p) == 3:
 
-            print("scrape-lang >> " , evalExpr(p[2]))
+            print(evalExpr(p[2]))
             return evalInst(p[1])
         else:
             
             
             if evalExpr(p[1]) != 'undifined':
-                print("scrap-lang >> ", evalExpr(p[1]))
+                print(evalExpr(p[1]))
                 return evalInst(p[1])
             else:
                 
-                print("scrap-lang >> ", evalInst(p[1]))
+                print(evalInst(p[1]))
                 return evalInst(p[1])
     if p[0] == "IF": eval_if_elseif_else(p)
     if p[0] == "FOR" : eval_for_loop(p)
     if p[0] == "WHILE" : eval_while_loop(p)
     if p[0] == 'function' : eval_function(p) 
     if p[0] == 'CALL' : eval_function_call(p)
-    if p[0] == 'RETURN' : print('scrap-lang >>  return value : ' , evalExpr(p[1]))
     if p[0] == 'is_html': return check_if_website(p)
     if p[0] == 'concat': return str_concat(p)
     if p[0] == 'scan' : return scrap_data(p)
@@ -55,15 +59,89 @@ def evalInst(p):
     if p[0] == 'all_titles': return get_all_titles(p)
     if p[0] == 'filter': return filter_element(p)
     if p[0] == 'array': return array_stm(p)
-    if p[0] == 'size' : return len(names[p[1]])
+    if p[0] == 'size' : return evalExpr(p)
+    if p[0] == 'all_txt': return get_all_texts(p)
+    if p[0] == 'get_one': return get_one_element(p)
+    if p[0] == 'get_all' : return get_all_elements(p)
+    if p[0] == 'new_line': print("\n" * p[1])
+    if p[0] == 'init_array': eval_array(p)
+    if p[0] == 'include': eval_include(p)
 
     return 'undifined'
 
 
+
+# adding elements to an array 
+def eval_include(p):
+    if p[1] not in names or p[2] not in names:
+        raise Exception(f"{p[1]} {p[2]} not initialized")
+
+    data_list: dict = names[p[1]].copy()
+    var = names[p[2]]
+    key: str = p[3].replace('"', "")
+
+    if key in data_list:
+        # If the key exists, append the element to the existing list
+        if isinstance(data_list[key], list):
+            data_list[key].append(var)
+        else:
+            data_list[key] = [data_list[key], var]
+    else:
+        # If the key doesn't exist, create a new key with the element
+        data_list[key] = var
+
+    names[p[1]] = data_list
+
+
+
+
+def eval_array(p):  
+    var = {}
+    names[p[1]] = var
+
+
+def get_all_elements(p):
+    
+    
+    if p[2] not in tags_with_data:
+        raise Exception(f" {p[2]} is not a valide html element")
+    
+    if p[1] not in names:
+        raise Exception(f"{p[1]} not initilized ")
+    
+    return get_all_by_classname(names[p[1]] , p[2].lower(), p[3].replace('"' , ""))    
+
+
+def get_one_element(p):
+        
+    if p[2] not in tags_with_data:
+        raise Exception(f" {p[2]} is not a valide html element")
+    
+    if p[1] not in names:
+        raise Exception(f"{p[1]} not initilized ")
+    
+    return get_one_by_classname(names[p[1]] , p[2].lower(), p[3].replace('"' , ""))
+
+def get_all_texts(p):
+    if p[1] not in names: 
+        raise Exception( p[1],"is not a table element")
+
+    return get_texts(names[p[1]])
+
 def array_stm(p):
-    return names[p[1]][names[p[2]]]
+    
+    var = names[p[1]]
+    index = evalExpr(p[2])
+    
+    
+            
+    if p[1] not in names: 
+        raise Exception( p[1],"is not a table element")
+    return var[index]
 
 def filter_element(p):
+    if p[1] not in names: 
+        raise Exception( p[1],"is not a table element")
     filter_data(names[p[1]] , p[2])
 
 
@@ -120,6 +198,8 @@ def eval_multi_assignes(p , t):
         else:
             names[item1] = item2 
 def evalExpr(p):
+
+        
     if type(p) == int : return p
     if type(p) == str : 
         if '"' in p :
@@ -144,6 +224,13 @@ def evalExpr(p):
         if(p[0] == "!=") : return evalExpr(p[1]) != evalExpr(p[2])
         if(p[0] == "&") : return evalExpr(p[1]) & evalExpr(p[2])
         if(p[0] == "|") : return evalExpr(p[1]) | evalExpr(p[2])
+
+        if p[0] == 'size': 
+            if isinstance(names[p[1]] , list) or isinstance(names[p[1]] , dict):
+                return len(names[p[1]])
+            else:
+                raise Exception(f" {p[1]} is not a list ")
+   
         
     return 'undifined'
 
@@ -182,12 +269,12 @@ def eval_function_call(p):
               
 def eval_for_loop(p):
     evalInst(p[1])
-    if names[p[1][1]] < p[2] :
-        while names[p[1][1]] <= p[2] :
+    if names[p[1][1]] < evalExpr(p[2]) :
+        while names[p[1][1]] <  evalExpr(p[2]) :
             evalInst(p[4])
             evalInst(p[3])
-    elif names[p[1][1]] > p[2] :
-        while names[p[1][1]] >= p[2] :
+    elif names[p[1][1]] > evalExpr(p[2]) :
+        while names[p[1][1]] >  evalExpr(p[2]) :
             evalInst(p[4])
             evalInst(p[3]) 
 

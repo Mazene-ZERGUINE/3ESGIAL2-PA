@@ -1,0 +1,9 @@
+
+
+webiste = "https://www.iea.org/data-and-statistics/data-tools/oil-stocks-of-iea-countries"; 
+
+check = webiste::is_html();
+
+if (check) -> data = webiste::scan();
+
+print(data); 
