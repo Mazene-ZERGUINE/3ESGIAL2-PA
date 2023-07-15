@@ -91,7 +91,7 @@ export class AuthService {
     return this.httpClient.get<void>(`${this.API_URL}/log-out`);
   }
 
-  sendMailWithPassword(payload: { email: string }): Observable<void> {
-    return this.httpClient.post<void>(`${this.API_URL}/forgotten-password`, payload);
+  sendResetConfirmationMail(payload: { email: string }): Observable<void> {
+    return this.httpClient.post<void>(`${this.API_URL}/forgotten-password/confirmation`, payload);
   }
 }

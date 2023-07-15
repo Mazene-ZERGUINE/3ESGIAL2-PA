@@ -1,11 +1,11 @@
-export function getEmailTemplate(data: { [key: string]: any }): string {
+export function getResetPasswordConfirmationEmailTemplate(data: { [key: string]: any }): string {
 	return `
 <!doctype html>
 <html lang="en-US">
 
 <head>
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
-    <title>CLM | Mot de passe oublié</title>
+    <title>CLM | Confirmation d'envoi du mot de passe</title>
     <meta name="description" content="Modèle HTML du mot de passe oublié.">
     <style type="text/css">
         a:hover {text-decoration: underline !important;}
@@ -41,14 +41,22 @@ export function getEmailTemplate(data: { [key: string]: any }): string {
                                 <tr>
                                     <td style="padding:0 35px;">
                                         <h1 style="color:#1e1e2d; font-weight:500; margin:0;font-size:32px;font-family:'Rubik',sans-serif;">Mot de passe oublié</h1>
-                                        <span
-                                            style="display:inline-block; vertical-align:middle; margin:29px 0 26px; border-bottom:1px solid #cecece; width:100px;"></span>
+                                        <span style="display:inline-block; vertical-align:middle; margin:29px 0 26px; border-bottom:1px solid #cecece; width:100px;"></span>
                                         <p style="color:#455056; font-size:15px;line-height:24px; margin:0;">
-                                            ${data.prenom}, voici votre nouveau mot de passe :
+                                            ${data.prenom}, cliquez pour réinitialiser le mot de passe :
                                         </p>
-                                        <a style="background:#38761d;text-decoration:none !important; font-weight:500; margin-top:35px; color:#fff;text-transform:uppercase; font-size:14px;padding:10px 24px;display:inline-block;border-radius:50px;">
-                                        	${data.mot_de_passe}
+                                        <a
+                                        	href="http://localhost:3000/api/clm/auth/forgotten-password/reset?token=${encodeURIComponent(
+																						data.token,
+																					)}"
+                                        	target="_blank"
+                                        	style="background:#38761d;text-decoration:none !important; font-weight:500; margin-top:35px; color:#fff;text-transform:uppercase; font-size:14px;padding:10px 24px;display:inline-block;border-radius:50px;"
+                                        >
+                                        	Envoyer
                                         </a>
+																				<p style="color:#455056; font-size:15px;line-height:24px; margin:0;">
+																					Si vous n'êtes pas l'initiateur de la demande, veuillez ignorer ce courriel.
+																				</p>
                                     </td>
                                 </tr>
                                 <tr>
