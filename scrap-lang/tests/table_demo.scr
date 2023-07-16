@@ -1,21 +1,19 @@
 /** scraping all the data of the table from the passed html content */
-fun scrapTableDemo(content)
+fun scrapTableDemo(content) => data
+
     start
-    /** selecting the table html element from the passed content by it's id */
-       table = content::get_table_by_id("ENTable");
 
-       /** fetching all the data in the table */
-       table_data = table::fetch_all();
+            table = htmlContent::get_table_by_id("ENTable");
+            data = table::fetch_all();
 
-        print(table_data);
     end
 
 
 /** main function checking the website url and scraping passing the content to the table scrapting function */  
-fun main()
+fun main() 
     start
 
-        website = "https://ec.europa.eu/eurostat/cache/infographs/energy_balances/enbal.html?geo=EU27_2020&unit=KTOE&language=EN&year=2021&fuel=fuelMainFuel&siec=TOTAL&details=0&chartOptions=0&stacking=normal&chartBal=&chart=&full=0&chartBalText=&order=DESC&siecs=&dataset=nrg_bal_s&decimals=0&agregates=0&fuelList=fuelElectricity,fuelCombustible,fuelNonCombustible,fuelOtherPetroleum,fuelMainPetroleum,fuelOil,fuelOtherFossil,fuelFossil,fuelCoal,fuelMainFuel"; 
+        website = "https://ec.europa.eu/eurostat/cache/infographs/energy_balances/enbal.html?geo=EU27_2020&unit=KTOE&language=EN&year=2021&fuel=fuelMainFuel&siec=TOTAL&details=0&chartOptions=0&stacking=normal&chartBal=&chart=&full=0&chartBalText=&order=DESC&siecs=&dataset=nrg_bal_s&decimals=0&agregates=0&fuelList=fuelElectricity,fuelCombustible,fuelNonCombustible,fuelOtherPetroleum,fuelMainPetroleum,fuelOil,fuelOtherFossil,fuelFossil,fuelCoal,fuelMainFuel" ;
         check = website::is_html();
         /** checking if the url is a valide website */
         if (check) -> {
@@ -24,7 +22,9 @@ fun main()
             /** scanning all the website content */
             htmlContent = website::scan();
 
-            scrapTableDemo(htmlContent);
+            displayContent = scrapTableDemo(htmlContent);
+
+            print(displayContent);
 
         } else {
             message = website ?."is not a valid url!" ; 

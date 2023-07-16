@@ -51,7 +51,7 @@ tokens = [
     'NAME','NUMBER',
     'PLUS','MINUS','TIMES','DIVIDE','EQUALS', "ISEQUAL", "NOTEQUAL",
     'LPAREN','RPAREN', 'SEMI', "ET" , "OU",'RACC' , 'LACC', 'THEN' , "COMMA", 'STRING',
-    'SUP' , "INFF"  , "INCR" , "DECR" , 'PLUSEQ' , 'MINEQ' , 'COMMENT' , 'COMMENTS' , "DOTE" , "CONCAT"] + list(reserved.values())
+    'SUP' , "INFF"  , "INCR" , "DECR" , 'PLUSEQ' , 'MINEQ' , 'COMMENT' , 'COMMENTS' , "DOTE" , "CONCAT" , "FRETURN"] + list(reserved.values())
 
 t_PLUS    = r'\+'
 t_MINUS   = r'-'
@@ -79,6 +79,7 @@ t_STRING = r'"[^"]+"'
 t_COMMENTS = r'\/\*.*\*\/'
 t_DOTE = r'\::'
 t_CONCAT = r'\?.'
+t_FRETURN = r'=>'
 
 
 
