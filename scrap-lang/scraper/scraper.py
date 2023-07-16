@@ -66,7 +66,19 @@ def fetch_all(data: BeautifulSoup):
 
             scraping_completed = True
 
-        
+        scraping_completed = False
+        while not scraping_completed:
+            for row in body_rows:
+                row_data = {}
+                cells = row.find_all('td')
+                for index, cell in enumerate(cells):
+                    header = headers[index]
+                    cell_text = cell.text.strip()
+                    row_data[header] = cell_text
+                table_data.append(row_data)
+
+            scraping_completed = True
+
         return table_data
 
     else:
