@@ -14,8 +14,6 @@ fun scrapAllLinks(htmlContent)
     end
 
 
-
-
 fun filterContent(htmlContent)
     start 
         /** getting the div with class name article  */
