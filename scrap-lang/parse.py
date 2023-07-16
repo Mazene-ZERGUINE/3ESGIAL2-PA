@@ -18,6 +18,8 @@ def p_bloc(p):
         p[0] = ('bloc', p[1], 'empty')
 
 
+
+
 def p_capacity_expression(p):
     ''' expression : NAME DOTE CAPACITY LPAREN RPAREN  '''
     p[0] = ('size' , p[1])
@@ -30,6 +32,10 @@ def p_statement_assign(p):
     p[0] = ('ASSIGN', p[1], p[3])
     
 
+
+def p_get_links(p):
+    ''' statement : NAME DOTE LINKS LPAREN RPAREN SEMI '''
+    p[0] = ('links' , p[1])
 
 def p_while_statement(p):
     ''' statement : WHILE expression RACC bloc LACC '''
@@ -74,6 +80,11 @@ def p_get_one(p):
     ''' statement : NAME DOTE GET LPAREN NAME COMMA STRING RPAREN SEMI '''
     p[0] = ('get_one' , p[1] , p[5] , p[7])
 
+
+
+def p_is_html_expression(p):
+    ''' expression : NAME DOTE HTML LPAREN RPAREN '''
+    p[0] = ('is_html' , p[1])
 
 def p_statement_comment(p):
     '''statement : COMMENTS'''
@@ -158,6 +169,10 @@ def p_function(p):
 
 
 
+
+def p_save_statement(p):
+    ''' statement : NAME DOTE SAVE LPAREN NAME COMMA STRING RPAREN SEMI '''
+    p[0] = ('save' , p[1] , p[5] , p[7])
 
 def p_get_all_texts(p):
     ''' statement : NAME DOTE ALLTXT LPAREN RPAREN SEMI '''

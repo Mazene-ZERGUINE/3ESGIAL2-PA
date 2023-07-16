@@ -1,6 +1,8 @@
+import csv
+import json
 from urllib.parse import urlparse
 
-from scraper.scraper import fetch_all, filter_data, get_all_by_classname, get_one_by_classname, get_page_titles, get_texts, scrap_page_html, scrap_table
+from scraper.scraper import fetch_all, filter_data, get_all_by_classname, get_all_links, get_one_by_classname, get_page_titles, get_texts, scrap_page_html, scrap_table
 
 
 
@@ -8,14 +10,16 @@ tags_with_data = ["A", "ABBR", "ADDRESS", "ARTICLE", "B", "BLOCKQUOTE", "BUTTON"
                   "H4", "H5", "H6", "LABEL", "LI", "OL", "P", "PRE", "SPAN", "STRONG", "TABLE", "TD", "TH", "UL"]
 
 
+supported_save_formats = [ 'JSON'  , 'TXT' , 'CSV' ]
+
 
 names = {}
 functions = {}
 global_vars = {}
 
 def evalInst(p):
-    # Normalement faire que 
     if p == 'empty' : return 
+    if isinstance(p , bool): return p    
 
     if p[0] == 'bloc':
         evalInst(p[1])
@@ -66,9 +70,44 @@ def evalInst(p):
     if p[0] == 'new_line': print("\n" * p[1])
     if p[0] == 'init_array': eval_array(p)
     if p[0] == 'include': eval_include(p)
-
+    if p[0] == 'links' : return eval_links(p)
+    if p[0] == 'save': eval_save_file(p)
+     
     return 'undifined'
 
+
+
+
+
+def eval_save_file(p):
+    if (p[2]) not in supported_save_formats:
+        raise Exception(f" {p[3]} is not a supported save format ")
+
+    file_path = p[3].replace('"' , "")
+    data = names[p[1]]
+    
+    print(data);
+    
+    if p[2] == "JSON":
+        with open(file_path , "w") as json_file:
+            json.dump(data , json_file )
+    
+
+    if p[2] == 'CSV':
+        with open(file_path, "w", newline="") as csv_file:
+            writer = csv.writer(csv_file)
+            writer.writerow(data.keys())
+            writer.writerows(zip(*data.values()))
+    
+    if p[2] == 'TXT':
+        with open(file_path , "a") as txt_file:
+            txt_file.write(data)
+    
+def eval_links(p):
+    if p[1] not in names:
+        raise Exception(f"{p[1]} not initilized ")  
+    
+    return get_all_links(names[p[1]])
 
 
 # adding elements to an array 
@@ -142,7 +181,8 @@ def array_stm(p):
 def filter_element(p):
     if p[1] not in names: 
         raise Exception( p[1],"is not a table element")
-    filter_data(names[p[1]] , p[2])
+    
+    return filter_data(names[p[1]] , p[2])
 
 
 def get_all_titles(p):
@@ -287,11 +327,11 @@ def eval_while_loop(p):
 
 
 def eval_if_elseif_else(p) : 
-    
     if (len(p) == 3) : 
         if evalExpr(p[1]) != 'undifined':
             if evalExpr(p[1]) == True : return evalInst(p[2])
         else:
+            
             if evalInst(p[1]) == True : return evalInst(p[2])
     elif len(p) == 4:
         if evalExpr(p[1]) == True : return evalInst(p[2]) 

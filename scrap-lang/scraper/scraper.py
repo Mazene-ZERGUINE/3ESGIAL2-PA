@@ -29,10 +29,23 @@ def fetch_all(data: BeautifulSoup):
     if isinstance(data, list):
         titles = [header.text.strip() for header in data if header.name.startswith('h')]
         texts = [tag.text.strip() for tag in data if tag.name == 'p']
-        if len(titles) > 0:
+        links = [a.get('href') for a in data if a.get('href') is not None]
+        
+        
+        if len(links) > 0 and len(titles) == 0 and len(texts) == 0:
+            return links
+        elif len(titles) > 0 and len(links) == 0 and len(texts) == 0:
             return titles
-        if len(texts) > 0:
+        elif len(texts) > 0 and len(titles) == 0 and len(links) == 0:
             return texts
+        else:
+            results = {}
+            results['texts'] = texts
+            results['titles'] = titles
+            results['links'] = links
+            
+            return results
+        
     elif data.name == 'table':
         table_data = []
         
@@ -57,6 +70,10 @@ def fetch_all(data: BeautifulSoup):
     else:
         return None
 
+
+def get_all_links(html_content: BeautifulSoup):
+    content = html_content.find_all("a")
+    return content
 
 
 # gets all the texts in the passed html element 
@@ -87,8 +104,17 @@ def get_all_by_classname(html_content: BeautifulSoup, tag: str, class_name: str)
 
 
 
-def filter_data(content: BeautifulSoup , heading):
+def filter_data(content: BeautifulSoup , filter_word: str):
     
-    heading_tag = heading.replace('"' , "")
-    data = content.find_all(heading_tag)
+    filter_word = filter_word.replace('"' , "").lower()
+
+    results = []
+    seen_elements = set()
+
+    for element in content.find_all():
+        if filter_word in element.text.lower() and element not in seen_elements:
+            results.append(element)
+            seen_elements.add(element)
+    
+    return list(seen_elements)
     
