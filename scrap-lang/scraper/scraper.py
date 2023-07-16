@@ -66,6 +66,7 @@ def fetch_all(data: BeautifulSoup):
 
             scraping_completed = True
 
+        
         return table_data
 
     else:

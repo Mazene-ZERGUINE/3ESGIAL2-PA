@@ -1,13 +1,11 @@
 /** scraping all the data of the table from the passed html content */
-fun scrapTableDemo(content)
+fun scrapTableDemo(content) => data
+
     start
-    /** selecting the table html element from the passed content by it's id */
-       table = content::get_table_by_id("ENTable");
 
-       /** fetching all the data in the table */
-       table_data = table::fetch_all();
+            table = htmlContent::get_table_by_id("ENTable");
+            data = table::fetch_all();
 
-        print(table_data);
     end
 
 

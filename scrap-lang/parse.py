@@ -36,6 +36,8 @@ def p_get_links(p):
     ''' statement : NAME DOTE LINKS LPAREN RPAREN SEMI '''
     p[0] = ('links' , p[1])
 
+
+
 def p_while_statement(p):
     ''' statement : WHILE expression RACC bloc LACC '''
     p[0] = ('WHILE' , p[2] , p[4])
