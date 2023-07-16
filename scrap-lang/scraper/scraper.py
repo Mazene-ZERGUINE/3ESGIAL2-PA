@@ -24,7 +24,6 @@ def scrap_table(content: BeautifulSoup , table_id):
     return table 
 
 
-# fetchs all data of  a passed content 
 def fetch_all(data: BeautifulSoup):
     if isinstance(data, list):
         titles = [header.text.strip() for header in data if header.name.startswith('h')]
@@ -48,26 +47,27 @@ def fetch_all(data: BeautifulSoup):
         
     elif data.name == 'table':
         table_data = []
-        
+
         header_rows = data.find_all('th')
         headers = [header.text.strip() for header in header_rows]
-        
+
         body_rows = data.find('tbody').find_all('tr') if data.find('tbody') else data.find_all('tr')
-        
-        for row in body_rows:
-            row_data = {}
-            cells = row.find_all('td')
-            for index, cell in enumerate(cells):
-                header = headers[index]
-                cell_text = cell.text.strip()
-                row_data[header] = cell_text
-            table_data.append(row_data)
 
-        
+        scraping_completed = False
+        while not scraping_completed:
+            for row in body_rows:
+                row_data = {}
+                cells = row.find_all('td')
+                for index, cell in enumerate(cells):
+                    header = headers[index]
+                    cell_text = cell.text.strip()
+                    row_data[header] = cell_text
+                table_data.append(row_data)
+
+            scraping_completed = True
+
         return table_data
-    
 
-    
     else:
         return None
 
