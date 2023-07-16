@@ -16,6 +16,7 @@ supported_save_formats = [ 'JSON'  , 'TXT' , 'CSV' ]
 names = {}
 functions = {}
 global_vars = {}
+return_values = {}
 
 def evalInst(p):
     if p == 'empty' : return 
@@ -27,6 +28,19 @@ def evalInst(p):
         return 
     if p[0] == 'global' : global_vars[p[1]] = evalExpr(p[2])
     if p[0] == 'ASSIGN':
+        
+        if type(p[2]) == tuple and len(p[2]) == 3 and p[2][0] == "CALL":
+             if p[2][1] not in functions:
+                 raise Exception(f"unidfinde reference to {p[2][1]} function")
+             
+             if p[2][1] not in return_values:
+                 raise Exception(f"function {p[2][1]} dose not return any value")
+             
+             if return_values[p[2][1]] == "void":
+                 raise Exception(f"function {p[2][1]} retun type is void")
+             
+             #print(names[return_values[p[2][1]]])
+        
         if type(p[1]) == tuple:
             eval_multi_assignes(p[1] , p[2])
         else:
@@ -54,7 +68,10 @@ def evalInst(p):
     if p[0] == "FOR" : eval_for_loop(p)
     if p[0] == "WHILE" : eval_while_loop(p)
     if p[0] == 'function' : eval_function(p) 
-    if p[0] == 'CALL' : eval_function_call(p)
+    if p[0] == 'CALL' : 
+        eval_function_call(p)
+        if p[1] in return_values:
+            return evalExpr(return_values[p[1]])
     if p[0] == 'is_html': return check_if_website(p)
     if p[0] == 'concat': return str_concat(p)
     if p[0] == 'scan' : return scrap_data(p)
@@ -73,8 +90,16 @@ def evalInst(p):
     if p[0] == 'links' : return eval_links(p)
     if p[0] == 'save': eval_save_file(p)
      
+    if p[0] == 'RETURN': return eval_return_statment(p)
+
     return 'undifined'
 
+
+def eval_return_statment(p):
+    if p[1] not in names:
+        raise Exception(f"{p[1]} {p[2]} not initialized")
+    
+    return_values[p[1]] = names[p[1]]        
 
 
 
@@ -275,6 +300,9 @@ def evalExpr(p):
     return 'undifined'
 
 def eval_function(p):
+    if p[4] != "empty":
+        return_values[p[1]] = p[4]
+    
     if p[3] == 'empty' :
         functions[p[1]] = p[2]
     else :
@@ -282,6 +310,8 @@ def eval_function(p):
         
         
 def eval_function_call(p):
+
+        
     if p[2] == 'empty':
         return evalInst(functions[p[1]])
     else:
@@ -305,6 +335,8 @@ def eval_function_call(p):
                 names[function_params[0][i]] = call_params[0][i]
         
         return evalInst(functions[p[1]][0]) 
+    
+    
     
               
 def eval_for_loop(p):

@@ -63,6 +63,7 @@ def fetch_all(data: BeautifulSoup):
                 row_data[header] = cell_text
             table_data.append(row_data)
 
+        
         return table_data
     
 

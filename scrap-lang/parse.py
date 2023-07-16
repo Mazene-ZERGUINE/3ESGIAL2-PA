@@ -8,7 +8,6 @@ def p_start(p):
     #printTreeGraph(p[1])
     evalInst(p[1])
 
-
 def p_bloc(p):
     """bloc : bloc statement
     | statement"""
@@ -154,18 +153,26 @@ def p_multi_compare(p):
 
 
 def p_return_statamene(p):
-    '''statement : RETURN expression SEMI'''
+    '''statement : RETURN expression SEMI '''
     p[0] = ('RETURN', p[2])
 
     
 def p_function(p):
-    ''' statement : FUNCTION NAME LPAREN RPAREN START bloc END 
-                  | FUNCTION NAME LPAREN params RPAREN START bloc END '''
+    ''' statement : FUNCTION NAME LPAREN RPAREN  START bloc END 
+                  | FUNCTION NAME LPAREN params RPAREN  START bloc END 
+                  | FUNCTION NAME LPAREN RPAREN FRETURN NAME START bloc END  
+                  | FUNCTION NAME LPAREN params RPAREN FRETURN NAME START bloc END '''
     
     if len(p) == 8 :
-        p[0] = ('function' , p[2] , p[6] , 'empty')
+        p[0] = ('function' , p[2] , p[6] , 'empty' , 'empty')
+    
+    elif len(p) == 10:
+        p[0] = ('function' , p[2] , p[8] , 'empty' , p[7])
+    
+    elif len(p) == 11:
+        p[0] = ('function' , p[2] , p[9] , p[4] , p[7])
     else:
-        p[0] = ('function' , p[2] , p[7] , p[4])
+        p[0] = ('function' , p[2] , p[7] , p[4] , 'empty')
 
 
 
