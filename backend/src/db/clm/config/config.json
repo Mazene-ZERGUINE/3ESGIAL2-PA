@@ -1,9 +1,10 @@
 {
 	"development": {
 		"username": "psql",
-		"password": "test",
+		"password": "psql",
 		"database": "clm",
-		"host": "127.0.0.1",
+		"host": "postgres",
+		"port": 5432,
 		"dialect": "postgres"
 	}
 }
