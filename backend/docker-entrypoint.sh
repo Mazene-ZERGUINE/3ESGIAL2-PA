@@ -8,7 +8,7 @@ do
 done
 
 # Run migrations and seeders
-npm run db:drop:create:migrate:seed
+npm run db:migrate:seed
 
 # Start your application
 exec "$@"
