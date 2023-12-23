@@ -4,7 +4,7 @@
 until nc -z -v -w30 postgres 5432
 do
   echo "Waiting for PostgreSQL to be ready..."
-  sleep 2
+  sleep 5
 done
 
 # Run migrations and seeders
