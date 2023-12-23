@@ -53,11 +53,6 @@ export class UtilisateurController extends CoreController {
 				res.status(409).json({ message: 'Le pseudonyme existe déjà.' });
 				return;
 			}
-			if (!(departement in frenchDepartmentsData)) {
-				res.status(400).json({ message: "Le département n'existe pas." });
-				return;
-			}
-			// TODO check role, statut...
 
 			await Utilisateur.create({
 				email,
@@ -71,7 +66,7 @@ export class UtilisateurController extends CoreController {
 				statut,
 			});
 
-			res.redirect(301, 'http://localhost:4200/login');
+			res.end();
 		} catch (error) {
 			CoreController.handleError(error, res);
 		}
@@ -83,7 +78,6 @@ export class UtilisateurController extends CoreController {
 			res.status(400).end();
 			return;
 		}
-		// TODO check role, statut...
 
 		try {
 			const apiKey = process.env.API_KEY as string;
@@ -97,10 +91,6 @@ export class UtilisateurController extends CoreController {
 			}
 			if (await Utilisateur.findOne({ where: { pseudonyme } })) {
 				res.status(409).json({ message: 'Le pseudonyme existe déjà.' });
-				return;
-			}
-			if (!(departement in frenchDepartmentsData)) {
-				res.status(400).json({ message: "Le département n'existe pas." });
 				return;
 			}
 
@@ -123,7 +113,7 @@ export class UtilisateurController extends CoreController {
 			};
 
 			await transporter.sendMail(mailOptions);
-			res.status(200).end();
+			res.status(200).json({ success: true }).end();
 		} catch (error) {
 			CoreController.handleError(error, res);
 		}
