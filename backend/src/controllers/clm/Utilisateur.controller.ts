@@ -244,7 +244,7 @@ export class UtilisateurController extends CoreController {
 				return;
 			}
 
-			res.status(200).json({ data: utilisateur });
+			res.status(200).json(utilisateur);
 		} catch (error) {
 			CoreController.handleError(error, res);
 		}
@@ -278,12 +278,12 @@ export class UtilisateurController extends CoreController {
 	}
 
 	static async updateByPseudonyme(req: Request, res: Response): Promise<void> {
-		const { email, pseudonyme, nom, prenom, departement, ville, role, statut } = req.body;
+		const { email, pseudonyme, nom, prenom, departement, ville, role, statut, mot_de_passe } = req.body;
 		const { pseudonyme: pseudonymeParam } = req.params;
 		// TODO check pseudo...
 
 		try {
-			const currentUser = await Utilisateur.findOne({ where: { pseudonyme: pseudonymeParam } });
+			const currentUser = await Utilisateur.findOne({ where: { utilisateur_id: pseudonymeParam } });
 			if (!currentUser) {
 				res.status(404).end();
 				return;
@@ -304,16 +304,14 @@ export class UtilisateurController extends CoreController {
 					return;
 				}
 			}
-			if (!(departement in frenchDepartmentsData)) {
-				res.status(400).json({ message: "Le département n'existe pas." + departement });
-				return;
-			}
 
 			// TODO: role, statut...
 			currentUser.setAttributes({
 				...req.body,
-				mot_de_passe: currentUser?.getDataValue('mot_de_passe'),
+				mot_de_passe: await Argon2.hash(mot_de_passe),
 			});
+
+			console.log(currentUser);
 
 			await currentUser.save();
 			res.status(200).end();
