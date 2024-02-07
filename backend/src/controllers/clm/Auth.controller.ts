@@ -54,7 +54,7 @@ export class AuthController extends CoreController {
 				utilisateur_id: utilisateur.getDataValue('utilisateur_id'),
 			});
 
-			res.status(200).json({ access_token: token });
+			res.status(200).json({ access_token: token, user: utilisateur.getDataValue('pseudonyme') });
 		} catch (error) {
 			CoreController.handleError(error, res);
 		}
