@@ -1,3 +1,4 @@
+import { Model } from './../../enum/model.enum';
 import { Request, Response } from 'express';
 
 export abstract class CoreController {
@@ -112,7 +113,7 @@ export abstract class CoreController {
 					distinct: true,
 				});
 
-				res.status(200).json({ data: items });
+				res.status(200).json(items);
 			} catch (error) {
 				CoreController.handleError(error, res);
 			}
@@ -156,6 +157,25 @@ export abstract class CoreController {
 		return async (req: Request, res: Response) => {
 			try {
 				const item = await model.findByPk(req.params.id, {
+					include: { all: true, nested: true },
+				});
+				if (!item) {
+					res.status(404).end();
+					return;
+				}
+
+				res.status(200).json({ data: item });
+			} catch (error) {
+				CoreController.handleError(error, res);
+			}
+		};
+	}
+
+	static getImageByPublication(model: any) {
+		return async (req: Request, res: Response) => {
+			try {
+				const item = await model.findOne({
+					where: { publication_id: req.params.id },
 					include: { all: true, nested: true },
 				});
 				if (!item) {

@@ -11,7 +11,7 @@ router
 	.get('/active', PublicationController.getAllActive)
 	.get('/count/all', PublicationController.coreCount(Publication))
 	.get('/:id', PublicationController.coreGetOneByPk(Publication))
-	.post('/', [isAuthenticated, multerConfig.array('images', 3)], PublicationController.create)
+	.post('/', [isAuthenticated, multerConfig.single('image')], PublicationController.create)
 	.post('/search', PublicationController.search)
 	.put('/:id', [isAuthenticated, multerConfig.array('images', 3)], PublicationController.updateById)
 	.delete('/:id', isAuthenticated, PublicationController.coreDeleteById(Publication));

@@ -8,7 +8,7 @@ import { isAuthenticated } from '../../middlewares/clm/auth.middleware';
 const router = Router();
 router
 	.get('/', ImageController.coreGetAllWithoutInclude(Image, 'image'))
-	// .get('/:id', ImageController.coreGetOneByPk(Image))
+	.get('/:id', ImageController.getImageByPublication(Image))
 	.delete('/:id', isAuthenticated, ImageController.coreDeleteById(Image)); // todo: might replace the method
 
 export default router;

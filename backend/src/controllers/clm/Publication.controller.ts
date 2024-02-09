@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { Op } from 'sequelize';
 import * as fs from 'fs';
+const path = require('path');
 
 import { CoreController } from './Core.controller';
 import { Publication } from '../../models/clm/publication';
@@ -13,20 +14,24 @@ import { PublicationFavori } from '../../models/clm/publication_favori';
 
 export class PublicationController extends CoreController {
 	static async create(req: Request, res: Response): Promise<void> {
-		const files = req.files;
-		const { titre, description, statut, utilisateur_id, categorie_id } = req.body;
-		// TODO check
+		const file = req.file;
+		const { titre, description, utilisateur_id } = req.body;
+
+		const rootDir = path.resolve(__dirname, '../');
+
+		console.log(rootDir);
 
 		try {
-			if (statut !== Status.active) {
-				res.status(400).json({ message: 'Statut incorrect.' });
-				return;
-			}
-			if (!(await Utilisateur.findByPk(utilisateur_id))) {
+			var statut = 'actif';
+			var categorie_id = 1;
+			const utilisateur = await Utilisateur.findByPk(utilisateur_id);
+			if (!utilisateur) {
 				res.status(400).json({ message: 'Utilisateur incorrect.' });
 				return;
 			}
-			if (!(await Categorie.findByPk(categorie_id))) {
+
+			const categorie = await Categorie.findByPk(categorie_id);
+			if (!categorie) {
 				res.status(400).json({ message: 'Catégorie incorrecte.' });
 				return;
 			}
@@ -41,29 +46,26 @@ export class PublicationController extends CoreController {
 				updated_at: null,
 			});
 
-			if (!files || !Array.isArray(files)) {
-				res.status(201).end();
-				return;
-			}
+			console.log(__dirname);
 
-			for (const file of files) {
+			if (file) {
+				console.log(file);
 				await Image.create({
 					titre,
 					libelle: file.originalname,
-					lien: `${process.env.HOST}${process.env.PORT ? `:${process.env.PORT}` : ''}/${file.path}`,
+					lien: `${file.path}`,
 					publication_id: publication.getDataValue('publication_id'),
 				});
 			}
 
 			res.status(201).end();
 		} catch (error) {
-			if (Array.isArray(files)) {
-				for (const file of files) {
-					fs.unlink(file.path, (err) => console.error(err));
-				}
+			if (file) {
+				fs.unlink(file.path, (err) => console.error(err));
 			}
 
-			CoreController.handleError(error, res);
+			console.error(error);
+			res.status(500).json({ message: 'Internal Server Error' });
 		}
 	}
 
